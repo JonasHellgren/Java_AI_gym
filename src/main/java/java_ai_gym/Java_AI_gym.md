@@ -5,6 +5,11 @@ The package described in this document is coded in Java, a Java version of Open 
 ## Scope
 The ambition is to cover a sub set of the environments in "original" Open AI gym, the focus is on problems with discrete actions. 
 
+## Deep reinforcement learning
+The deep reinforcement learning algorithm is presented below, it is a vital ingredient in this repository.
+Replay buffer, clipping rewards and target network are tricks to make the network training more stable.
+
+![node](../java_ai_gym/mdpics/DQNalgo.png)
 
 ## Major classes 
 The major clases in the package are the abstract classes: 1) Environment and 2) AgentNeuralNetwork.
