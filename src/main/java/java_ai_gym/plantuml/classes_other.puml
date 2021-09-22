@@ -1,0 +1,20 @@
+@startuml
+'https://plantuml.com/class-diagram
+class State {
+Map<String,Integer> discreteVariables
+Map<String,Double> continuousVariables
+
++createVariable(name,value)
++setVariable(name,value)
++getVariable(name)
++List<String> getVariableNames()
++String toString()
+}
+
+class ReplayBuffer {
++ void addExperience(Experience experience, int REPLAY_BUFFER_MAXSIZE)
++ List<Experience> getMiniBatch(int batchLength)
++ List<Experience> getMiniBatchPrioritizedExperienceReplay(...)
+}
+
+@enduml

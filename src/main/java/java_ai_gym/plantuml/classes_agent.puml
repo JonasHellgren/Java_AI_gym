@@ -1,0 +1,65 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+
+interface Learnable {
+    + int chooseBestAction(State state);
+    + double findMaxQ(State state);
+    + int chooseRandomAction(List<Integer> aSet);
+    + int chooseAction(double fractionEpisodesFinished);
+    + void writeMemory(State oldState, Integer Action, Double value);
+    + double readMemory(State state, int Action);
+}
+
+class AgentTabular {
+State state;
+double[][] Qsa;
++ writeMemory(State oldState, Integer Action, Double value);
+}
+
+abstract class AgentNeuralNetwork {
+State state;
+ReplayBuffer replayBuffer
+MultiLayerNetwork network
+MultiLayerNetwork networkTarget
+Random random
+double bellmanErrorStep
+List<Double> bellmanErrorList
+
+ScalerExponential learningRateScaler;
+ScalerExponential probRandActionScaler;
+
++ State getState()
++ int chooseBestAction(State state)
++ double findMaxQ(State state)
++ chooseRandomAction(List<Integer> actions)
++ double readMemory(State state, int action)
+
++ boolean isItTimeToFit()
++ INDArray calcOutFromNetwork(State state,MultiLayerNetwork network)
++ DataSetIterator createTrainingData(List<Experience> miniBatch)
++ double getBellmanErrorAverage(int nofSteps)
++ MultiLayerNetwork createNetwork()
++ boolean isItTimeToUpdateTargetNetwork()
++ updateTargetNetwork()
++ savePolicy(String filePath)
++ loadPolicy(String filePath)
+
+- double readMemory(INDArray inputNetwork, int action)
+- double findMaxQTargetNetwork(State state)
+- INDArray calcOutFromNetwork(INDArray inputNetwork,MultiLayerNetwork network)
+- void changeBellmanErrorVariableInBufferItem(Experience exp)
+- addTrainingExample(INDArray inputNDSet, INDArray outPutNDSet,.....)
+- INDArray modifyNetworkOut(Experience exp, INDArray inputNetwork, INDArray outFromNetwork)
+
+}
+
+Learnable  <|-- AgentTabular
+Learnable  <|-- AgentNeuralNetwork
+
+AgentNeuralNetwork  <|-- SixRoomsAgentNeuralNetwork
+AgentNeuralNetwork  <|-- MountainCarAgentNeuralNetwork
+AgentNeuralNetwork  <|-- CartPoleAgentNeuralNetwork
+AgentNeuralNetwork  <|-- PongAgentNeuralNetwork
+
+@enduml

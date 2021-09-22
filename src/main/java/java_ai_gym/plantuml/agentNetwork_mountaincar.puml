@@ -1,0 +1,22 @@
+@startmindmap
+
+* hidden layer
+** hidden layer
+*** hidden layer
+**** out layer
+*****_ Q(S)
+
+left side
+
+**_ position, velocity
+
+
+legend
+
+2 signals (in), 50 neurons (hidden), 50 neurons (hidden), 3 signals (out)
+TANH activation function in hidden layers
+
+end legend
+
+
+@endmindmap

@@ -1,0 +1,61 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+
+abstract class Environment {
+    private State templateState=new State();
+    protected FrameEnvironment animationFrame;
+    protected FrameEnvironment plotFrame;
+    public GraphicsSettings gfxSettings =new GraphicsSettings();
+    public PolicyTestSettings policyTestSettings= new PolicyTestSettings();
+
+    + abstract void render(State state,double maxQ, int action);
+    + abstract void createVariablesInState(State state) ;
+
+     abstract StepReturn step(int action, State state);
+     abstract boolean isTerminalState(State state);
+     abstract boolean isFailsState(State state);
+     abstract boolean isTerminalStatePolicyTest(State state);
+     abstract boolean isPolicyTestSuccessful(State state);
+     abstract void setRandomStateValuesStart(State state);
+
+    + State getTemplateState()
+    + PolicyTestReturn testPolicy(...);
+     RunPolicyReturn runPolicy(...);
+    + boolean isTimeForPolicyTest(int iEpisode)
+    + printPolicyTest(..);
+    + simulateEpisode(AgentNeuralNetwork agent, ...)
+    + animatePolicy(AgentNeuralNetwork agent,..)
+}
+
+class StepReturn  {
+State state;
+Double reward;
+Boolean termState;
+ }
+
+ abstract class EnvironmentParametersAbstract  {
+ List<String> discreteStateVariableNames;
+ List<String> continuousStateVariableNames;
+ List<Integer> discreteActionsSpace;
+
+ abstract int getIdxState(State state);
+ abstract  int getIdxAction(int action);
+
+ }
+
+
+class EnvironmentParameters {
+Environment specific paremeters
+}
+
+Environment  <|-- SixRooms
+Environment  <|-- MountainCar
+Environment  <|-- CartPole
+Environment  <|-- Pong
+
+
+EnvironmentParametersAbstract  <|-- EnvironmentParameters
+
+
+@enduml

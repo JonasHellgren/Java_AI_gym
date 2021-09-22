@@ -1,0 +1,22 @@
+@startmindmap
+
+* hidden layer
+** hidden layer
+*** hidden layer
+**** out layer
+*****_ Q(S)
+
+left side
+
+**_ roomNr
+
+
+legend
+
+1 signal (in), 20 neurons (hidden), 20 neurons (hidden), 6 neurons (out))
+TANH activation function in hidden layers
+
+end legend
+
+
+@endmindmap

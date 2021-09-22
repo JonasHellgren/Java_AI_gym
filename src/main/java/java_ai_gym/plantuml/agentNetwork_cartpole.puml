@@ -1,0 +1,22 @@
+@startmindmap
+
+* hidden layer
+** hidden layer
+*** hidden layer
+**** out layer
+*****_ Q(S)
+
+left side
+
+**_ x, xDot, theta, thetaDot
+
+
+legend
+
+4 signals (in), 24 neurons (hidden), 20 neurons (hidden), 2 signals (out)
+LeakyRelu activation function in hidden layers
+
+end legend
+
+
+@endmindmap
