@@ -1,4 +1,4 @@
-package java_ai_gym;
+package java_ai_gym.test_dqn;
 
 import java_ai_gym.models_common.Environment;
 import java_ai_gym.models_common.Experience;
@@ -27,7 +27,8 @@ public class TestLearningMountainCarNetwork {
     String filePathInit = "c:/temp/montcar/init/";
 
 
-    @Test //@Ignore
+    @Test
+    @Ignore
     //https://www.saashanair.com/dqn-code/
     public void runLearningTextBook() throws InterruptedException, IOException {
         // episode: a full iteration when the agent starts from a random state and finds the terminal state

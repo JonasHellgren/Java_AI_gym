@@ -1,4 +1,4 @@
-package java_ai_gym;
+package java_ai_gym.test_dqn;
 
 import java_ai_gym.models_common.State;
 import java_ai_gym.models_common.StepReturn;

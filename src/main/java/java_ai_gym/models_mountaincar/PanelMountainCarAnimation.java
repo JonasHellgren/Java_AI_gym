@@ -98,7 +98,6 @@ public class PanelMountainCarAnimation extends JPanel {
 
         drawPlot(g2d);
         textCarStates(g2d,carPosition.x, carPosition.y,velocity);
-
     }
 
 }
