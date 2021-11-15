@@ -8,23 +8,23 @@ import java.awt.*;
 
 public class PanelPongAnimation extends JPanel {
 
-    final int BALL_RADIUS=10;
-    final int RACKET_WIDTH=50;
-    final int RACKET_HEIGHT=10;
+    final int BALL_RADIUS_PIXELS = 10;
+    final int RACKET_WIDTH_PIXELS = 50;
+    final int RACKET_HEIGHT_PIXELS = 10;
 
     ScaleLinear xScaler;
     ScaleLinear yScaler;
     protected Position2D ballPosition;
     protected Position2D racketPos;
-    protected Color ballColor=Color.BLUE;
-    protected Color racketColor=Color.BLACK;
+    protected Color ballColor = Color.BLUE;
+    protected Color racketColor = Color.BLACK;
     double maxQ;
     public JLabel labelPosX;
     public JLabel labelPosY;
 
     public PanelPongAnimation(ScaleLinear xScaler,
-                                     ScaleLinear yScaler,
-                                     Position2D ballPosition, Position2D racketPos) {
+                              ScaleLinear yScaler,
+                              Position2D ballPosition, Position2D racketPos) {
         this.xScaler = xScaler;
         this.yScaler = yScaler;
         this.ballPosition = ballPosition;
@@ -41,21 +41,21 @@ public class PanelPongAnimation extends JPanel {
     private void plotBall(Graphics2D g2d) {
         g2d.setColor(ballColor);
 
-        g2d.drawOval(
-                xScaler.calcOut(ballPosition.x)-BALL_RADIUS,
-                yScaler.calcOut(ballPosition.y)-BALL_RADIUS,
-                BALL_RADIUS,
-                BALL_RADIUS);
+        g2d.fillOval(
+                xScaler.calcOut(ballPosition.x) - BALL_RADIUS_PIXELS,
+                yScaler.calcOut(ballPosition.y) - BALL_RADIUS_PIXELS,
+                2*BALL_RADIUS_PIXELS,
+                2*BALL_RADIUS_PIXELS);
     }
 
     private void plotRacket(Graphics2D g2d) {
         g2d.setColor(racketColor);
 
-        g2d.drawRect(
-                xScaler.calcOut(racketPos.x) - RACKET_WIDTH/2 ,
-                yScaler.calcOut(racketPos.y) + RACKET_HEIGHT/2 ,
-                RACKET_WIDTH,
-                RACKET_HEIGHT);
+        g2d.fillRect(
+                xScaler.calcOut(racketPos.x) - RACKET_WIDTH_PIXELS / 2,
+                yScaler.calcOut(racketPos.y) + RACKET_HEIGHT_PIXELS / 2,
+                RACKET_WIDTH_PIXELS,
+                RACKET_HEIGHT_PIXELS);
     }
 
     @Override
@@ -67,7 +67,8 @@ public class PanelPongAnimation extends JPanel {
 
         plotBall(g2d);
         plotRacket(g2d);
-        //textCarStates(g2d,carPosition.x, carPosition.y,velocity);
+        //textBallStates(g2d,carPosition.x, carPosition.y,velocity);
+        //textRacketStates
     }
 
 }

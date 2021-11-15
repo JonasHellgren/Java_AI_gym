@@ -34,7 +34,7 @@ import java.util.List;
  *          Episode length is greater than 200
  */
 
-public class MountainCar extends EnvironmentNetworkAgent {
+public class MountainCar extends EnvironmentForNetworkAgent {
 
     public EnvironmentParameters parameters = this.new EnvironmentParameters();
 

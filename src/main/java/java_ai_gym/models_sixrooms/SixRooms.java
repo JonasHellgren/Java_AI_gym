@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  * Entering goal room 5 gives high reward and terminates an episode.
  */
 
-public class SixRooms extends EnvironmentNetworkAgent {
+public class SixRooms extends EnvironmentForNetworkAgent {
 
     private static final Logger logger = Logger.getLogger(SixRooms.class.getName());
 

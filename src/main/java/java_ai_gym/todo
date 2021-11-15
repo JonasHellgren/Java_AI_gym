@@ -1,11 +1,17 @@
 beskriva dqn
 ytterligare basklass enviroment, nu nn beroende  x
 ytterligare enviroment pong  x
-clean up pong
-fler tester pong
-regelbaserad agent pong
+clean up pong  x
+fler tester pong x
+regelbaserad agent pong x
+PongAgentRandomSearch
+basklass AgentSearch
 
+PongAgentDPSearch
+hur använda klass i annat projekt/modul
 
 
 när tid:
 EnvironmentParametersAbstract, sub för tabular
+textBallStates
+textRacketStates

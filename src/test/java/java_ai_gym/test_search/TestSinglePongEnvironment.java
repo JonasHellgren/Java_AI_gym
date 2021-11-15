@@ -7,6 +7,7 @@ import java_ai_gym.models_pong.SinglePong;
 import lombok.SneakyThrows;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -33,9 +34,10 @@ public class TestSinglePongEnvironment {
 
     @SneakyThrows
     @Test
+    @Ignore("Takes time")
     public void testSetup() {
         env.render(state,0.0,0);
-        TimeUnit.MILLISECONDS.sleep(5000);
+        TimeUnit.MILLISECONDS.sleep(1000);
     }
 
     @Test
@@ -64,7 +66,56 @@ public class TestSinglePongEnvironment {
         Assert.assertEquals(state.getContinuousVariable("yPosBall")+state.getContinuousVariable("ySpdBall"),stepReturn.state.getContinuousVariable("yPosBall"),0.01d);
     }
 
+    @Test
+    public void testGameOver() {
 
+        state.setVariable("xPosBall", 0);
+        state.setVariable("yPosBall", 0d);
+        state.setVariable("xSpdBall", 0d);
+        state.setVariable("ySpdBall", -env.parameters.SPEED_BALL);
+        state.setVariable("xPosRacket", env.parameters.MAX_X_POSITION);
+        state.setVariable("xSpdRacket", 0d);
+        StepReturn stepReturn=env.step(moves.get("still"),state);
+        System.out.println(stepReturn);
+        Assert.assertTrue(stepReturn.termState);
+
+      }
+
+    @Test
+    public void testNotGameOver() {
+
+        state.setVariable("yPosBall", env.parameters.MAX_Y_POSITION_BALL);
+        StepReturn stepReturn=env.step(moves.get("still"),state);
+        System.out.println(stepReturn);
+        Assert.assertFalse(stepReturn.termState);
+
+    }
+
+    @SneakyThrows
+    @Test
+    //@Ignore("Takes time")
+    public void testAnimate() {
+
+        StepReturn  stepReturn;
+        for (int i = 0; i <10000 ; i++) {
+
+            if (state.getContinuousVariable("xPosRacket")<state.getContinuousVariable("xPosBall")) {
+                stepReturn=env.step(moves.get("right"),state);
+            } else if (state.getContinuousVariable("xPosRacket")>state.getContinuousVariable("xPosBall")) {
+                stepReturn=env.step(moves.get("left"),state);
+            } else
+            {
+                stepReturn=env.step(moves.get("still"),state);
+            }
+
+            state.copyState(stepReturn.state);
+            System.out.println(stepReturn);
+            env.render(state,0.0,0);
+            TimeUnit.MILLISECONDS.sleep(10);
+        }
+
+
+    }
 
 
 }

@@ -5,15 +5,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class Racket {
+public class RacketPhysics {
 
-    private static final Logger logger = Logger.getLogger(Racket.class.getName());
+    private static final Logger logger = Logger.getLogger(RacketPhysics.class.getName());
 
     protected double xPos, xSpd;
     SinglePong env;
     List<Double> speedSet;
 
-    public Racket(double xPos, SinglePong env) {
+    public RacketPhysics(double xPos, SinglePong env) {
         this.xPos = xPos;
         this.xSpd = 0d;
         this.env = env;
@@ -34,11 +34,12 @@ public class Racket {
     }
 
     public Rectangle getBounds() {
+        SinglePong.EnvironmentParameters p = env.parameters;
         return new Rectangle(
-                env.animationPanel.xScaler.calcOut(xPos),
-                env.animationPanel.yScaler.calcOut(env.parameters.Y_POSITION_RACKET),
-                env.animationPanel.RACKET_WIDTH,
-                env.animationPanel.RACKET_HEIGHT);
+                env.animationPanel.xScaler.calcOut(xPos)- env.animationPanel.RACKET_WIDTH_PIXELS / 2,
+                env.animationPanel.yScaler.calcOut(env.parameters.Y_POSITION_RACKET)+env.animationPanel.RACKET_HEIGHT_PIXELS / 2,
+                env.animationPanel.RACKET_WIDTH_PIXELS,
+                env.animationPanel.RACKET_HEIGHT_PIXELS);
     }
 
 }

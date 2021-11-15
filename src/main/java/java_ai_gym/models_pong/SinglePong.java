@@ -2,18 +2,19 @@ package java_ai_gym.models_pong;
 
 import java_ai_gym.helpers.MathUtils;
 import java_ai_gym.models_common.EnvironmentParametersAbstract;
-import java_ai_gym.models_common.EnvironmentSearchAgent;
+import java_ai_gym.models_common.EnvironmentForSearchAgent;
 import java_ai_gym.models_common.State;
 import java_ai_gym.models_common.StepReturn;
 import java_ai_gym.swing.FrameEnvironment;
 import java_ai_gym.swing.Position2D;
 import java_ai_gym.swing.ScaleLinear;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.Arrays;
 import java.util.logging.Logger;
 
-public class SinglePong extends EnvironmentSearchAgent {
+public class SinglePong extends EnvironmentForSearchAgent {
 
     private static final Logger logger = Logger.getLogger(SinglePong.class.getName());
 
@@ -97,18 +98,31 @@ public class SinglePong extends EnvironmentSearchAgent {
     @Override
     public StepReturn step(int action, State state) {
 
-        State newState = new State(state);
-        StepReturn stepReturn = new StepReturn();
+        State newState = updateState(action, state);
 
+        StepReturn stepReturn = new StepReturn();
+        stepReturn.state = newState;
+        stepReturn.termState = isTerminalState(newState);
+        stepReturn.reward = (stepReturn.termState)?
+                parameters.TERMINAL_REWARD:
+                parameters.NON_TERMINAL_REWARD;
+
+        state.totalNofSteps++;
+        return stepReturn;
+    }
+
+    @NotNull
+    private State updateState(int action, State state) {
+        State newState = new State(state);
         double xPosBall= state.getContinuousVariable("xPosBall");
         double yPosBall= state.getContinuousVariable("yPosBall");
         double xSpdBall= state.getContinuousVariable("xSpdBall");
         double ySpdBall= state.getContinuousVariable("ySpdBall");
-        double xPosRacket=state.getContinuousVariable("xPosRacket");
+        double xPosRacket= state.getContinuousVariable("xPosRacket");
 
-        Racket racket=new Racket(xPosRacket,this);
+        RacketPhysics racket =new RacketPhysics(xPosRacket,this);
         racket.updateStates(action);
-        Ball ball=new Ball(xPosBall,yPosBall,xSpdBall,ySpdBall,this);
+        BallPhysics ball =new BallPhysics(xPosBall,yPosBall,xSpdBall,ySpdBall,this);
         ball.updateStates(racket);
 
         newState.setVariable("xPosBall", ball.xPos);
@@ -118,15 +132,7 @@ public class SinglePong extends EnvironmentSearchAgent {
         newState.setVariable("xPosRacket", racket.xPos);
         newState.setVariable("xSpdRacket", racket.xSpd);
         newState.setVariable("nofSteps", state.getDiscreteVariable("nofSteps")+1);
-
-        stepReturn.state = newState;
-        stepReturn.termState = isTerminalState(newState);
-        stepReturn.reward = (stepReturn.termState)?
-                parameters.TERMINAL_REWARD:
-                parameters.NON_TERMINAL_REWARD;
-
-        state.totalNofSteps++;
-        return stepReturn;
+        return newState;
     }
 
     @Override
@@ -174,8 +180,8 @@ public class SinglePong extends EnvironmentSearchAgent {
         ScaleLinear yScaler=new ScaleLinear(parameters.MIN_Y_POSITION_BALL,parameters.MAX_Y_POSITION_BALL, gfxSettings.FRAME_MARGIN,
                 gfxSettings.FRAME_HEIGHT - gfxSettings.FRAME_MARGIN,true, gfxSettings.FRAME_MARGIN);
 
-        Position2D ballPositionInit=new Position2D(parameters.MIN_X_POSITION/2,parameters.MIN_Y_POSITION_BALL/2);
-        Position2D racketXPosInit=new Position2D(parameters.MIN_X_POSITION/2,parameters.Y_POSITION_RACKET);
+        Position2D ballPositionInit=new Position2D(parameters.MIN_X_POSITION,parameters.MIN_Y_POSITION_BALL/2);
+        Position2D racketXPosInit=new Position2D(parameters.MIN_X_POSITION,parameters.Y_POSITION_RACKET);
         animationPanel =new PanelPongAnimation(xScaler, yScaler, ballPositionInit,  racketXPosInit);
         animationPanel.setLayout(null);  //to enable tailor made position
         //addLabelsToAnimationPanel();

@@ -8,7 +8,7 @@ import java.util.IntSummaryStatistics;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public abstract class EnvironmentNetworkAgent extends Environment {
+public abstract class EnvironmentForNetworkAgent extends Environment {
 
 
     public PolicyTestReturn testPolicy(AgentNeuralNetwork agent,EnvironmentParametersAbstract parameters, int nofTest) {

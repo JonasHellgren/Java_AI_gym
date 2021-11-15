@@ -47,7 +47,7 @@ import java.util.logging.Logger;
 
  */
 
-public class CartPole extends EnvironmentNetworkAgent {
+public class CartPole extends EnvironmentForNetworkAgent {
 
     private static final Logger logger = Logger.getLogger(CartPole.class.getName());
 
