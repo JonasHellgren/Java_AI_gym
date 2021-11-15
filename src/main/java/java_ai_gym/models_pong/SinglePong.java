@@ -1,5 +1,6 @@
 package java_ai_gym.models_pong;
 
+import java_ai_gym.helpers.MathUtils;
 import java_ai_gym.models_common.EnvironmentParametersAbstract;
 import java_ai_gym.models_common.EnvironmentSearchAgent;
 import java_ai_gym.models_common.State;
@@ -33,7 +34,6 @@ public class SinglePong extends EnvironmentSearchAgent {
 
         public final double Y_POSITION_RACKET = 0;
         public final double MAX_SPEED_RACKET = 0.01;
-
 
         public int MAX_NOF_STEPS =200;
         public final int MAX_NOF_STEPS_POLICY_TEST=500;
@@ -152,7 +152,15 @@ public class SinglePong extends EnvironmentSearchAgent {
     }
 
     @Override
-    protected void setRandomStateValuesStart(State state) {
+    public void setRandomStateValuesStart(State state) {
+        state.setVariable("xPosBall", MathUtils.calcRandomFromIntervall(parameters.MIN_X_POSITION,parameters.MAX_X_POSITION));
+        state.setVariable("yPosBall", MathUtils.calcRandomFromIntervall(parameters.MIN_Y_POSITION_BALL,parameters.MAX_Y_POSITION_BALL));
+        state.setVariable("xSpdBall", parameters.SPEED_BALL);
+        state.setVariable("ySpdBall", parameters.SPEED_BALL);
+        state.setVariable("xPosRacket", MathUtils.calcRandomFromIntervall(parameters.MIN_X_POSITION,parameters.MAX_X_POSITION));
+        state.setVariable("xSpdRacket", 0.0);
+        state.setVariable("nofSteps", state.getDiscreteVariable("nofSteps")+1);
+
     }
 
     private void setupFrameAndPanel() {

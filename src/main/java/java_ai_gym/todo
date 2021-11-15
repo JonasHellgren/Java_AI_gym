@@ -1,3 +1,11 @@
 beskriva dqn
-ytterligare basklass enviroment, nu nn beroende
-ytterligare enviroment
+ytterligare basklass enviroment, nu nn beroende  x
+ytterligare enviroment pong  x
+clean up pong
+fler tester pong
+regelbaserad agent pong
+
+
+
+när tid:
+EnvironmentParametersAbstract, sub för tabular
