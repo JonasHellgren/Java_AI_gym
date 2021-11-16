@@ -27,7 +27,7 @@ public class BallPhysics {
         if (yPos > p.MAX_Y_POSITION_BALL)
             ySpd = -p.SPEED_BALL;
         if (collision(racketPhysics)) {
-            logger.info("Ball-racket collision");
+            logger.finest("Ball-racket collision");
             ySpd = p.SPEED_BALL;  }
 
         xPos  = xPos  + xSpd ;

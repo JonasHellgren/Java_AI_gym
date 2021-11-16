@@ -1,10 +1,13 @@
 package java_ai_gym.models_common;
 
+import lombok.Getter;
+
 /** This class is used by the Environment class.
  *  It defines the return of the step method.
  *
 */
 
+@Getter
 public  class StepReturn {
     public State state;
     public Double reward;

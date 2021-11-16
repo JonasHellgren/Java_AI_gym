@@ -13,8 +13,10 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 public class TestSinglePongEnvironment {
+    private static final Logger logger = Logger.getLogger(TestSinglePongEnvironment.class.getName());
 
     SinglePong env=new SinglePong();
     State state = new State(env.getTemplateState());
@@ -97,7 +99,7 @@ public class TestSinglePongEnvironment {
     public void testAnimate() {
 
         StepReturn  stepReturn;
-        for (int i = 0; i <10000 ; i++) {
+        for (int i = 0; i <1000 ; i++) {
 
             if (state.getContinuousVariable("xPosRacket")<state.getContinuousVariable("xPosBall")) {
                 stepReturn=env.step(moves.get("right"),state);
@@ -108,14 +110,17 @@ public class TestSinglePongEnvironment {
                 stepReturn=env.step(moves.get("still"),state);
             }
 
+            if (stepReturn.termState) {
+                logger.warning("Fail state");
+                System.out.println(stepReturn);
+            }
+
             state.copyState(stepReturn.state);
-            System.out.println(stepReturn);
+
             env.render(state,0.0,0);
             TimeUnit.MILLISECONDS.sleep(10);
         }
 
-
     }
-
 
 }

@@ -8,85 +8,127 @@ import java_ai_gym.models_common.StepReturn;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Logger;
 
 public class PongAgentRandomSearch {
 
-    public class SearchResults {
-        double bestReturn;
-        List<Integer> bestActionSequence;
+    private final static Logger logger = Logger.getLogger(PongAgentRandomSearch.class.getName());
 
-        public SearchResults(double bestReturn, List<Integer> bestActionSequence) {
+    public static class SearchResults {
+        public double bestReturn;
+        public List<StepReturn> bestStepReturnSequence;
+        public List<Integer> bestActionSequence;
+        public int nofEpisodes;
+
+        public SearchResults(double bestReturn, List<StepReturn> bestActionSequence) {
             this.bestReturn = bestReturn;
-            this.bestActionSequence = bestActionSequence;
+            this.bestStepReturnSequence = bestActionSequence;
+            this.bestActionSequence = new ArrayList<>();
+            this.nofEpisodes = 0;
         }
+
+        private boolean isResultOk() {
+            for (StepReturn sr : bestStepReturnSequence) {
+                if (sr.termState)
+                    return false;
+            }
+            return true;
+        }
+
+        public int firstAction() {
+            if (bestActionSequence.size() == 0) {
+                logger.warning("No actionSequence defined");
+                return 0;
+            } else {
+                return bestActionSequence.get(0);
+            }
+        }
+
     }
 
     long timeBudget;
     int searchDepth;
     Environment env;
     EnvironmentParametersAbstract envParams;
-
     SearchResults searchResults;
     private final Random random = new Random();
 
-    public PongAgentRandomSearch(long timeBudget, int searchDepth, Environment env, EnvironmentParametersAbstract envParams ) {
+    public PongAgentRandomSearch(long timeBudget, int searchDepth, Environment env, EnvironmentParametersAbstract envParams) {
         this.timeBudget = timeBudget;
         this.searchDepth = searchDepth;
         this.env = env;
         this.envParams = envParams;
 
-        searchResults=new SearchResults(-Double.MAX_VALUE,new ArrayList<>( ));
+        searchResults = new SearchResults(-Double.MAX_VALUE, new ArrayList<>());
     }
 
+
+    public SearchResults getSearchResults() {
+        return searchResults;
+    }
 
     public SearchResults search(final State startState) {
-
         long startTime = System.currentTimeMillis();  //starting time, long <=> minimum value of 0
+        List<StepReturn> stepReturnSequence = new ArrayList<>();
+        List<Integer> actionSequence = new ArrayList<>();
+        State state = new State(startState);
+        StepReturn stepReturn = new StepReturn();
 
-        List<Double> rewardSequence=new ArrayList<>();
-        List<Integer> actionSequence=new ArrayList<>();
-        State state=new State(startState);
-        StepReturn stepReturn= new StepReturn();
+        while (System.currentTimeMillis() < startTime + timeBudget) {
+            //for (int i = 0; i <10 ; i++) {
 
-    //    while (System.currentTimeMillis() < startTime+timeBudget)  {
-
-            rewardSequence.clear();
+            stepReturnSequence.clear();
             actionSequence.clear();
             state.copyState(startState);
-
-
-            int depth=0;
-
-            while (depth<searchDepth && !stepReturn.termState) {
-
-                int action=chooseRandomAction(envParams.discreteActionsSpace);
-                stepReturn=env.step(action,state);
-
-                rewardSequence.add(stepReturn.reward);
+            int depth = 0;
+             do {
+                int action = chooseRandomAction(envParams.discreteActionsSpace);
+                stepReturn = env.step(action, state);
+                stepReturnSequence.add(stepReturn);
                 actionSequence.add(action);
-
-                System.out.println(state);
-
                 state.copyState(stepReturn.state);
                 depth++;
-            }
+            } while (depthNotExceedAndFailStateNotEncountered(stepReturn, depth));
 
-
-        System.out.println(actionSequence);
-
-        System.out.println(rewardSequence);
-
-     //   }
-
-
+            setNewSearchResultsIfBetterCandidateFound(stepReturnSequence, actionSequence);
+            searchResults.nofEpisodes++;
+        }
+        logWarningIfNoFeasibleActionSequenceFound();
         return searchResults;
-
-
     }
 
-    public int chooseRandomAction(List<Integer> actions) {
+    private boolean depthNotExceedAndFailStateNotEncountered(StepReturn stepReturn, int depth) {
+        return depth < searchDepth && !stepReturn.termState;
+    }
+
+    private void logWarningIfNoFeasibleActionSequenceFound() {
+        if (!searchResults.isResultOk()) {
+            logger.warning("No feasible action sequence found");
+        }
+    }
+
+    private void setNewSearchResultsIfBetterCandidateFound(List<StepReturn> stepReturnSequence, List<Integer> actionSequence) {
+        double sumRewards = calcSumRewards(stepReturnSequence);
+        if (sumRewards > searchResults.bestReturn) {
+            searchResults.bestReturn = sumRewards;
+            searchResults.bestStepReturnSequence = new ArrayList<>(stepReturnSequence);
+            searchResults.bestActionSequence = new ArrayList<>(actionSequence);
+            logger.info("nofEpisodes:" + searchResults.nofEpisodes + ". Better sumRewards found:" + sumRewards);
+        }
+    }
+
+    private int chooseRandomAction(List<Integer> actions) {
         return actions.get(random.nextInt(actions.size()));
     }
+
+    private double calcSumRewards(List<StepReturn> stepReturnSequence) {
+        return stepReturnSequence.stream()
+                .map(StepReturn::getReward)
+                .reduce(0d, Double::sum);
+
+
+    }
+
 
 }
 

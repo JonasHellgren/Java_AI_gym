@@ -27,19 +27,20 @@ public class SinglePong extends EnvironmentForSearchAgent {
     public class EnvironmentParameters extends EnvironmentParametersAbstract {
 
         public final double MIN_X_POSITION = 0;
-        public final double MAX_X_POSITION = 2.0;
+        public final double MAX_X_POSITION = 1.0;
 
         public final double MIN_Y_POSITION_BALL = 0;
-        public final double MAX_Y_POSITION_BALL = 1.0;
+        public final double MAX_Y_POSITION_BALL = 0.5;
         public final double SPEED_BALL = 0.01;
 
-        public final double Y_POSITION_RACKET = 0;
-        public final double MAX_SPEED_RACKET = 0.01;
+        public final double Y_POSITION_RACKET = 0.02;  //shall not be at zero, fail state when ball hit then
+        public final double MAX_SPEED_RACKET = 0.1;
 
         public int MAX_NOF_STEPS =200;
         public final int MAX_NOF_STEPS_POLICY_TEST=500;
-        public  double TERMINAL_REWARD = -1.0;  //1.0
-        public  double NON_TERMINAL_REWARD = 0.0;  //1.0
+        public  double TERMINAL_REWARD = -10.0;  //1.0
+        public  double NON_TERMINAL_REWARD_MOTION = -.01;  //1.0
+        public  double NON_TERMINAL_REWARD_STILL = 0.0;  //1.0
 
         public int NOF_ACTIONS;
         public int MIN_ACTION;
@@ -105,10 +106,16 @@ public class SinglePong extends EnvironmentForSearchAgent {
         stepReturn.termState = isTerminalState(newState);
         stepReturn.reward = (stepReturn.termState)?
                 parameters.TERMINAL_REWARD:
-                parameters.NON_TERMINAL_REWARD;
+                calcRewardNotTerminal(state,stepReturn.state);
 
         state.totalNofSteps++;
         return stepReturn;
+    }
+
+    public double calcRewardNotTerminal(State state,State stepReturnState) {
+        return (MathUtils.isZero((state.getContinuousVariable("xPosRacket") - stepReturnState.getContinuousVariable("xPosRacket"))))?
+                parameters.NON_TERMINAL_REWARD_STILL:
+                parameters.NON_TERMINAL_REWARD_MOTION;
     }
 
     @NotNull

@@ -4,14 +4,27 @@ ytterligare enviroment pong  x
 clean up pong  x
 fler tester pong x
 regelbaserad agent pong x
-PongAgentRandomSearch
+PongAgentRandomSearch  x
+discount factor
+Test för PongAgentRandomSearch där init ball pos sätts logiskt
+rita kantlinje
+basklass för tester
+sökdjup sfa racket speed
 basklass AgentSearch
 
-PongAgentDPSearch
+klass PongAgentDPSearch
+klass VisitedStatesBuffer
+tester VisitedStatesBuffer
+Visualisera vsb
+
+
+
+
 hur använda klass i annat projekt/modul
 
 
 när tid:
+grafik för plan
 EnvironmentParametersAbstract, sub för tabular
 textBallStates
 textRacketStates
