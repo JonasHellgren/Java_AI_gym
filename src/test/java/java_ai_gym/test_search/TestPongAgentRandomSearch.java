@@ -1,37 +1,20 @@
 package java_ai_gym.test_search;
-
-import java_ai_gym.helpers.MathUtils;
-import java_ai_gym.models_common.State;
 import java_ai_gym.models_common.StepReturn;
 import java_ai_gym.models_pong.PongAgentRandomSearch;
-import java_ai_gym.models_pong.SinglePong;
 import lombok.SneakyThrows;
 import org.jcodec.common.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
-public class TestPongAgentRandomSearch {
+public class TestPongAgentRandomSearch extends TestSearchBase {
 
-    SinglePong env=new SinglePong();
-    State state = new State(env.getTemplateState());
-    SinglePong.EnvironmentParameters p;
     final long TIME_BUDGET=500;
     final int SEARCH_DEPTH=10;
-    Map<String,Integer> moves=new HashMap();
 
     @Before
     public void setup() {
-
-        moves.put("left",0);
-        moves.put("still",1);
-        moves.put("right",2);
-
-        p=env.parameters;
+        super.setupMoves();
 
         state.setVariable("xPosBall", p.MAX_X_POSITION/2);
         state.setVariable("yPosBall",  p.SPEED_BALL*SEARCH_DEPTH*0.75);

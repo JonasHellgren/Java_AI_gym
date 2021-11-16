@@ -15,21 +15,12 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-public class TestSinglePongEnvironment {
-    private static final Logger logger = Logger.getLogger(TestSinglePongEnvironment.class.getName());
+public class TestSinglePongEnvironment extends TestSearchBase {
 
-    SinglePong env=new SinglePong();
-    State state = new State(env.getTemplateState());
-
-    Map<String,Integer> moves=new HashMap();
 
     @Before
     public void setup() {
-
-        moves.put("left",0);
-        moves.put("still",1);
-        moves.put("right",2);
-
+        super.setupMoves();
         env.setRandomStateValuesStart(state);
 
     }
