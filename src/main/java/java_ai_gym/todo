@@ -10,11 +10,12 @@ Test för PongAgentRandomSearch där init ball pos sätts logiskt  x
 rita kantlinje  x
 basklass för tester  x
 sökdjup sfa racket speed  x
-basklass AgentSearch
+basklass AgentSearch  x
 
 klass PongAgentDPSearch
 klass VisitedStatesBuffer
 tester VisitedStatesBuffer
+ny sub klass SearchState från State, har id och nofActions
 Visualisera vsb
 
 

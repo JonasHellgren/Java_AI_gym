@@ -11,8 +11,8 @@ public class PongAgentRandomSearch extends AgentSearch {
     List<Integer> actionSequence;
     State state;
 
-    public PongAgentRandomSearch(long timeBudget, int searchDepth, Environment env, EnvironmentParametersAbstract envParams) {
-        super(timeBudget,env,envParams);
+    public PongAgentRandomSearch(SinglePong env,long timeBudget ,int searchDepth) {
+        super(timeBudget,env,env.parameters);
         this.searchDepth = searchDepth;
         stepReturnSequence = new ArrayList<>();
         actionSequence = new ArrayList<>();

@@ -37,7 +37,7 @@ public class TestPongAgentRandomSearch extends TestSearchBase {
     @Test
     public void RacketInMiddleBallDownShallGiveNoMove() {
 
-        AgentSearch agent=new PongAgentRandomSearch(TIME_BUDGET,SEARCH_DEPTH,env,env.parameters);
+        AgentSearch agent=new PongAgentRandomSearch(env,TIME_BUDGET,SEARCH_DEPTH);
         AgentSearch.SearchResults sr=agent.search(state);
 
         //somePrints(sr);
@@ -51,7 +51,7 @@ public class TestPongAgentRandomSearch extends TestSearchBase {
 
         state.setVariable("xPosRacket", p.MAX_X_POSITION);
 
-        AgentSearch agent=new PongAgentRandomSearch(TIME_BUDGET,SEARCH_DEPTH,env,env.parameters);
+        AgentSearch agent=new PongAgentRandomSearch(env,TIME_BUDGET,SEARCH_DEPTH);
         AgentSearch.SearchResults sr=agent.search(state);
 
         //somePrints(sr);
@@ -75,7 +75,7 @@ public class TestPongAgentRandomSearch extends TestSearchBase {
         StepReturn stepReturn;
         for (int i = 0; i <10000 ; i++) {
 
-            AgentSearch agent=new PongAgentRandomSearch(TIME_BUDGET,SEARCH_DEPTH,env,env.parameters);
+            AgentSearch agent=new PongAgentRandomSearch(env,TIME_BUDGET,SEARCH_DEPTH);
             AgentSearch.SearchResults sr=agent.search(state);
             stepReturn=env.step(sr.firstAction(),state);
 

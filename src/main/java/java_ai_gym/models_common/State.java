@@ -1,5 +1,7 @@
 package java_ai_gym.models_common;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 
@@ -16,10 +18,13 @@ import java.util.logging.Logger;
  * The variable naming is flexible thanks to hash maps.
  */
 
+@Getter
+@Setter
 public class State {
 
     private final static Logger logger = Logger.getLogger(State.class.getName());
 
+    String id;
     public int totalNofSteps=0;
     Map<String, Integer> discreteVariables = new HashMap<>();
     Map<String, Double> continuousVariables = new HashMap<>();
