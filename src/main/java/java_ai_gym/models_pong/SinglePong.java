@@ -34,7 +34,7 @@ public class SinglePong extends EnvironmentForSearchAgent {
         public final double SPEED_BALL = 0.01;
 
         public final double Y_POSITION_RACKET = 0.02;  //shall not be at zero, fail state when ball hit then
-        public final double MAX_SPEED_RACKET = 0.1;
+        public  double MAX_SPEED_RACKET = 0.05;
 
         public int MAX_NOF_STEPS =200;
         public final int MAX_NOF_STEPS_POLICY_TEST=500;

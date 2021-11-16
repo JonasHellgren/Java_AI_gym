@@ -8,8 +8,8 @@ PongAgentRandomSearch  x
 discount factor - skippar för random  x
 Test för PongAgentRandomSearch där init ball pos sätts logiskt  x
 rita kantlinje  x
-basklass för tester
-sökdjup sfa racket speed
+basklass för tester  x
+sökdjup sfa racket speed  x
 basklass AgentSearch
 
 klass PongAgentDPSearch

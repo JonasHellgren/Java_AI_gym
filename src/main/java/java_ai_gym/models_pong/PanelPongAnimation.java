@@ -80,9 +80,6 @@ public class PanelPongAnimation extends JPanel {
         Position2D upperRight=new Position2D(xScaler.d1,yScaler.d1);
         Position2D lowerRight=new Position2D(xScaler.d1,yScaler.d0);
 
-        System.out.println(upperLeft);
-        System.out.println(lowerRight);
-
         drawBorderLine(g2d, lowerLeft, upperLeft);
         drawBorderLine(g2d, upperLeft, upperRight);
         drawBorderLine(g2d, upperRight, lowerRight);

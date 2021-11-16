@@ -1,4 +1,5 @@
 package java_ai_gym.test_search;
+import java_ai_gym.models_common.AgentSearch;
 import java_ai_gym.models_common.StepReturn;
 import java_ai_gym.models_pong.PongAgentRandomSearch;
 import lombok.SneakyThrows;
@@ -9,12 +10,18 @@ import org.junit.Test;
 
 public class TestPongAgentRandomSearch extends TestSearchBase {
 
-    final long TIME_BUDGET=500;
-    final int SEARCH_DEPTH=10;
+    final long TIME_BUDGET=50;
+    int SEARCH_DEPTH;
 
     @Before
     public void setup() {
         super.setupMoves();
+
+        p.MAX_SPEED_RACKET=.1;
+        SEARCH_DEPTH= (int) (p.MAX_X_POSITION/p.MAX_SPEED_RACKET);
+
+        logger.info("Search depth = "+SEARCH_DEPTH);
+
 
         state.setVariable("xPosBall", p.MAX_X_POSITION/2);
         state.setVariable("yPosBall",  p.SPEED_BALL*SEARCH_DEPTH*0.75);
@@ -30,12 +37,10 @@ public class TestPongAgentRandomSearch extends TestSearchBase {
     @Test
     public void RacketInMiddleBallDownShallGiveNoMove() {
 
-        PongAgentRandomSearch agent=new PongAgentRandomSearch(TIME_BUDGET,SEARCH_DEPTH,env,env.parameters);
-        PongAgentRandomSearch.SearchResults sr=agent.search(state);
+        AgentSearch agent=new PongAgentRandomSearch(TIME_BUDGET,SEARCH_DEPTH,env,env.parameters);
+        AgentSearch.SearchResults sr=agent.search(state);
 
-        System.out.println("nofEpisodes:"+sr.nofEpisodes);
-        System.out.println(sr.bestStepReturnSequence);
-        System.out.println("firstAction:"+sr.firstAction());
+        //somePrints(sr);
         Assert.assertEquals(moves.get("still"),sr.firstAction());
     }
 
@@ -46,13 +51,17 @@ public class TestPongAgentRandomSearch extends TestSearchBase {
 
         state.setVariable("xPosRacket", p.MAX_X_POSITION);
 
-        PongAgentRandomSearch agent=new PongAgentRandomSearch(TIME_BUDGET,SEARCH_DEPTH,env,env.parameters);
-        PongAgentRandomSearch.SearchResults sr=agent.search(state);
+        AgentSearch agent=new PongAgentRandomSearch(TIME_BUDGET,SEARCH_DEPTH,env,env.parameters);
+        AgentSearch.SearchResults sr=agent.search(state);
 
-        System.out.println("nofEpisodes:"+sr.nofEpisodes);
-        System.out.println(sr.bestStepReturnSequence);
-        System.out.println("firstAction:"+sr.firstAction());
+        //somePrints(sr);
         Assert.assertEquals(moves.get("left"),sr.firstAction());
+    }
+
+    private void somePrints(PongAgentRandomSearch.SearchResults sr) {
+        System.out.println("nofEpisodes:"+ sr.nofEpisodes);
+        System.out.println(sr.bestStepReturnSequence);
+        System.out.println("firstAction:"+ sr.firstAction());
     }
 
 
@@ -66,14 +75,13 @@ public class TestPongAgentRandomSearch extends TestSearchBase {
         StepReturn stepReturn;
         for (int i = 0; i <10000 ; i++) {
 
-            PongAgentRandomSearch agent=new PongAgentRandomSearch(50,10,env,env.parameters);
-            PongAgentRandomSearch.SearchResults sr=agent.search(state);
+            AgentSearch agent=new PongAgentRandomSearch(TIME_BUDGET,SEARCH_DEPTH,env,env.parameters);
+            AgentSearch.SearchResults sr=agent.search(state);
             stepReturn=env.step(sr.firstAction(),state);
 
             state.copyState(stepReturn.state);
-            System.out.println(stepReturn);
-            env.render(state,0.0,0);
-            //TimeUnit.MILLISECONDS.sleep(10);
+            env.render(state,sr.bestReturn,sr.firstAction());
+
         }
 
     }

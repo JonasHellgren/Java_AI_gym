@@ -21,6 +21,7 @@ public class TestSinglePongEnvironment extends TestSearchBase {
     @Before
     public void setup() {
         super.setupMoves();
+        p.MAX_SPEED_RACKET=.01;
         env.setRandomStateValuesStart(state);
 
     }
