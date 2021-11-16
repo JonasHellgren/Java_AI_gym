@@ -5,8 +5,8 @@ clean up pong  x
 fler tester pong x
 regelbaserad agent pong x
 PongAgentRandomSearch  x
-discount factor
-Test för PongAgentRandomSearch där init ball pos sätts logiskt
+discount factor - skippar för random  x
+Test för PongAgentRandomSearch där init ball pos sätts logiskt  x
 rita kantlinje
 basklass för tester
 sökdjup sfa racket speed

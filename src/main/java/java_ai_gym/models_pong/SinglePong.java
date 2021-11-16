@@ -187,9 +187,7 @@ public class SinglePong extends EnvironmentForSearchAgent {
         ScaleLinear yScaler=new ScaleLinear(parameters.MIN_Y_POSITION_BALL,parameters.MAX_Y_POSITION_BALL, gfxSettings.FRAME_MARGIN,
                 gfxSettings.FRAME_HEIGHT - gfxSettings.FRAME_MARGIN,true, gfxSettings.FRAME_MARGIN);
 
-        Position2D ballPositionInit=new Position2D(parameters.MIN_X_POSITION,parameters.MIN_Y_POSITION_BALL/2);
-        Position2D racketXPosInit=new Position2D(parameters.MIN_X_POSITION,parameters.Y_POSITION_RACKET);
-        animationPanel =new PanelPongAnimation(xScaler, yScaler, ballPositionInit,  racketXPosInit);
+        animationPanel =new PanelPongAnimation(xScaler, yScaler);
         animationPanel.setLayout(null);  //to enable tailor made position
         //addLabelsToAnimationPanel();
         animationFrame.add(animationPanel);

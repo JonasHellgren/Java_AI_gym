@@ -72,7 +72,7 @@ public class PongAgentRandomSearch {
         List<StepReturn> stepReturnSequence = new ArrayList<>();
         List<Integer> actionSequence = new ArrayList<>();
         State state = new State(startState);
-        StepReturn stepReturn = new StepReturn();
+        StepReturn stepReturn;
 
         while (System.currentTimeMillis() < startTime + timeBudget) {
             //for (int i = 0; i <10 ; i++) {
@@ -125,8 +125,6 @@ public class PongAgentRandomSearch {
         return stepReturnSequence.stream()
                 .map(StepReturn::getReward)
                 .reduce(0d, Double::sum);
-
-
     }
 
 
