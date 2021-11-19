@@ -66,7 +66,7 @@ public abstract class AgentSearch {
                 .reduce(0d, Double::sum);
     }
 
-    protected int chooseRandomAction(List<Integer> actions) {
+    public int chooseRandomAction(List<Integer> actions) {
         return actions.get(random.nextInt(actions.size()));
     }
 

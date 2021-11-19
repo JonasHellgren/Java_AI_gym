@@ -79,6 +79,7 @@ public class TestPongAgentRandomSearch extends TestSearchBase {
             AgentSearch.SearchResults sr=agent.search(state);
             stepReturn=env.step(sr.firstAction(),state);
 
+
             state.copyState(stepReturn.state);
             env.render(state,sr.bestReturn,sr.firstAction());
 

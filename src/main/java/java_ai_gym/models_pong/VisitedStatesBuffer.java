@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 public class VisitedStatesBuffer {
 
     protected final static Logger logger = Logger.getLogger(VisitedStatesBuffer.class.getName());
-    public final String START_STATE_ID = "start";
+
 
     public static class StateExperience {
         int action;
@@ -32,7 +32,7 @@ public class VisitedStatesBuffer {
         }
     }
 
-    Map<String, State> stateBuffer;   //<id,stat>
+    Map<String, StateForSearch> stateBuffer;   //<id,stat>
     Map<String, List<StateExperience>> expBuffer;   //<id,list of experiences >
     protected final Random random;
 
@@ -42,10 +42,20 @@ public class VisitedStatesBuffer {
         random = new Random();
     }
 
-    public VisitedStatesBuffer(State startState) {
+    public VisitedStatesBuffer(StateForSearch startState) {
         this();
-        addState(START_STATE_ID, (StateForSearch) startState);
-        expBuffer.put(START_STATE_ID, new ArrayList<>());
+        StateForSearch startStateClone=new StateForSearch(startState);
+        addState(startStateClone.START_STATE_ID,  startStateClone);
+        expBuffer.put(startStateClone.START_STATE_ID, new ArrayList<>());
+    }
+
+    public void clear() {
+        stateBuffer.clear();
+        expBuffer.clear();
+    }
+
+    public StateForSearch getState(String id) {
+        return stateBuffer.get(id);
     }
 
     public String selectRandomStateId() {
@@ -67,18 +77,10 @@ public class VisitedStatesBuffer {
         stateBuffer.put(id, state);
     }
 
-    public void clear() {
-        stateBuffer.clear();
-        expBuffer.clear();
-    }
-
-    public StateForSearch getState(String id) {
-        return (StateForSearch) stateBuffer.get(id);
-    }
 
     public void addNewStateAndExperienceFromStep(String idFromState, int action, StepReturn stepReturn) {
         String newId = idFromState + "." + action;
-
+        System.out.println("newId ="+newId);
         addState(newId, (StateForSearch) stepReturn.state);
         StateExperience stateExperience = new StateExperience(action, stepReturn.reward, stepReturn.termState, newId);
         addExperience(idFromState, stateExperience);
@@ -121,6 +123,8 @@ public class VisitedStatesBuffer {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
+        sb.append("Visited states buffer");
+        sb.append(System.getProperty("line.separator"));
         for (String stateId : stateBuffer.keySet()) {
             StateForSearch state=  getState(stateId);
             sb.append(state.searchSpecificPropertiesAsString());
