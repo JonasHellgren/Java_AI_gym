@@ -17,7 +17,7 @@ public class TestVisitedStatesBuffer extends TestSearchBase {
         p.MAX_SPEED_RACKET=.01;
         env.setRandomStateValuesStart(state);
         vsb = new VisitedStatesBuffer();
-        state.setId(vsb.START_STATE_ID);
+        state.id=vsb.START_STATE_ID;
     }
 
     @Test
@@ -40,9 +40,9 @@ public class TestVisitedStatesBuffer extends TestSearchBase {
     public void setStartStateWithOneExperience() {
         vsb.addState(vsb.START_STATE_ID,state);
         StepReturn stepReturn=env.step(moves.get("left"),state);
-        String newId=state.getId()+"."+moves.get("left");
+        String newId=state.id+"."+moves.get("left");
         VisitedStatesBuffer.StateExperience se=new VisitedStatesBuffer.StateExperience(moves.get("left"),stepReturn.reward,stepReturn.termState,newId);
-        vsb.addExperience(state.getId(),se);
+        vsb.addExperience(state.id,se);
 
         System.out.println(vsb);
         Assert.assertEquals(vsb.START_STATE_ID,vsb.selectRandomStateId());
@@ -53,8 +53,9 @@ public class TestVisitedStatesBuffer extends TestSearchBase {
 
         int action=moves.get("left");
         StepReturn stepReturn=env.step(action,state);
+        state.nofActions=0;
         vsb = new VisitedStatesBuffer(state);
-        vsb.addNewStateAndExperienceFromStep(state.getId(),action,stepReturn);
+        vsb.addNewStateAndExperienceFromStep(state.id,action,stepReturn);
         System.out.println(vsb);
         Assert.assertEquals(2,vsb.nofStates());
     }

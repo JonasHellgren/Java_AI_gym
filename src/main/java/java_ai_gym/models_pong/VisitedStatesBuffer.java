@@ -1,6 +1,7 @@
 package java_ai_gym.models_pong;
 
 import java_ai_gym.models_common.State;
+import java_ai_gym.models_common.StateForSearch;
 import java_ai_gym.models_common.StepReturn;
 import lombok.ToString;
 
@@ -43,7 +44,7 @@ public class VisitedStatesBuffer {
 
     public VisitedStatesBuffer(State startState) {
         this();
-        addState(START_STATE_ID, startState);
+        addState(START_STATE_ID, (StateForSearch) startState);
         expBuffer.put(START_STATE_ID, new ArrayList<>());
     }
 
@@ -61,7 +62,8 @@ public class VisitedStatesBuffer {
         return stateBuffer.size();
     }
 
-    public void addState(String id, State state) {
+    public void addState(String id, StateForSearch state) {
+        state.id=id;
         stateBuffer.put(id, state);
     }
 
@@ -70,13 +72,14 @@ public class VisitedStatesBuffer {
         expBuffer.clear();
     }
 
-    public void getState(String id) {
-        stateBuffer.get(id);
+    public StateForSearch getState(String id) {
+        return (StateForSearch) stateBuffer.get(id);
     }
 
     public void addNewStateAndExperienceFromStep(String idFromState, int action, StepReturn stepReturn) {
         String newId = idFromState + "." + action;
-        addState(newId, stepReturn.state);
+
+        addState(newId, (StateForSearch) stepReturn.state);
         StateExperience stateExperience = new StateExperience(action, stepReturn.reward, stepReturn.termState, newId);
         addExperience(idFromState, stateExperience);
     }
@@ -119,8 +122,9 @@ public class VisitedStatesBuffer {
         StringBuilder sb = new StringBuilder();
 
         for (String stateId : stateBuffer.keySet()) {
-            sb.append("stateId = " + stateId);
-            sb.append(getExperienceList(stateId));
+            StateForSearch state=  getState(stateId);
+            sb.append(state.searchSpecificPropertiesAsString());
+            sb.append("; experience:"+getExperienceList(stateId));
 
             sb.append(System.getProperty("line.separator"));
         }
