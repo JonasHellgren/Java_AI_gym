@@ -109,8 +109,7 @@ public abstract class State {
             );
 
 
-        return '{'+String.join(", ", discreteVariableKeyValuePairs)+
-                System.getProperty("line.separator")+
+        return " {"+String.join(", ", discreteVariableKeyValuePairs)+
                 String.join(",", continuousVariableKeyValuePairs)+'}';
     }
 }

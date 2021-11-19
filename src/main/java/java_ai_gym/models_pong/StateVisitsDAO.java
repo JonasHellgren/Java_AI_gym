@@ -5,7 +5,7 @@ import java_ai_gym.models_common.StateForSearch;
 import java.util.*;
 import java.util.logging.Logger;
 
-public class StateVisitsDAO implements  DAO {
+public class StateVisitsDAO implements  DAO<StateForSearch> {
 
     protected final static Logger logger = Logger.getLogger(StateVisitsDAO.class.getName());
 
@@ -24,13 +24,22 @@ public class StateVisitsDAO implements  DAO {
         return stateBuffer.get(id);
     }
 
+    public List<StateForSearch>  getAll () {
+
+        List<StateForSearch> stateList= new ArrayList<>();
+        for (String id:keySet()) {
+            stateList.add(get(id));
+        }
+        return stateList;
+    }
+
     public int size() {
         return stateBuffer.size();
     }
 
-    public void add(String id, StateForSearch state) {
-        state.id=id;
-        stateBuffer.put(id, state);
+    public void add(String id, StateForSearch item) {
+        item.id=id;
+        stateBuffer.put(id, item);
     }
 
     public Set<String> keySet() {

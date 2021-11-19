@@ -46,8 +46,9 @@ public class StateForSearch extends State {
         StringBuilder sb=new StringBuilder();
 
         sb.append(searchSpecificPropertiesAsString());
-        sb.append(System.getProperty("line.separator"));
+
         sb.append(super.toString());
+        sb.append(System.getProperty("line.separator"));
         return sb.toString();
     }
 

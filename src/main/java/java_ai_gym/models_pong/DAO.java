@@ -4,10 +4,10 @@ import java_ai_gym.models_common.StateForSearch;
 
 import java.util.Set;
 
-public interface DAO {
+public interface DAO<T> {
 
-    StateForSearch get(String id);
-    void add(String id, StateForSearch state);
+    T get(String id);
+    void add(String id, T item);
     void clear();
     int size();
     Set<String> keySet();

@@ -37,6 +37,10 @@ public class VisitedStatesBuffer {
         return stateVisitsDAO.get(id);
     }
 
+    public StateForSearch selectRandomState() {
+        return getState(stateVisitsDAO.selectRandomStateId());
+    }
+
     public String selectRandomStateId() {
       return stateVisitsDAO.selectRandomStateId();
     }
@@ -49,17 +53,28 @@ public class VisitedStatesBuffer {
         stateVisitsDAO.add(id, state);
     }
 
+    public List<StateForSearch> getAllStatesAtDepth(int depth) {
+
+        List<StateForSearch> statesAtDepth= new ArrayList<>() ;
+
+        for (StateForSearch state:stateVisitsDAO.getAll()) {
+            if (state.depth==depth) {
+                statesAtDepth.add(state);
+            }
+        }
+
+    return statesAtDepth;
+    }
 
     public void addNewStateAndExperienceFromStep(String idFromState, int action, StepReturn stepReturn) {
         String newId = idFromState + "." + action;
-        System.out.println("newId ="+newId);
         addState(newId, (StateForSearch) stepReturn.state);
         StateExperience stateExperience = new StateExperience(action, stepReturn.reward, stepReturn.termState, newId);
         addExperience(idFromState, stateExperience);
     }
 
     public void addExperience(String id, StateExperience exp) {
-        experiencesDAO.addExp(id,exp);
+        experiencesDAO.add(id,exp);
     }
 
     public List<StateExperience> getExperienceList(String id) {
@@ -77,6 +92,13 @@ public class VisitedStatesBuffer {
         return false;
     }
 
+    public StateExperience searchExperienceOfSteppingToState(String id) {
+       return  experiencesDAO.searchExperienceOfSteppingToState(id);
+    }
+
+    public int nofActionsTested(String id) {
+        return experiencesDAO.nofActionsTested(id);
+    }
 
 
     @Override

@@ -11,11 +11,14 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TestVisitedStatesBuffer extends TestSearchBase {
 
     VisitedStatesBuffer vsb;
     StepReturn stepReturn;
-    AgentSearch agent;
+
 
     @Before
     public void setup() {
@@ -25,7 +28,6 @@ public class TestVisitedStatesBuffer extends TestSearchBase {
         state.setIdDepthNofActions(state.START_STATE_ID, 0, 0);
         vsb = new VisitedStatesBuffer();
         stepReturn = new StepReturn(state);
-        agent= new PongAgentDPSearch(env,100,5);
 
     }
 
@@ -73,10 +75,34 @@ public class TestVisitedStatesBuffer extends TestSearchBase {
 
     @Test
     public void addFromTrial() {
-        int depth=0;  int nofActions=0;
-        state.setIdDepthNofActions(state.START_STATE_ID, depth, nofActions);
-        System.out.println("state.id ="+state.id);
-        vsb = new VisitedStatesBuffer(state);
+        defineInitVSB(new StateForSearch(state));
+        int max_depth = doTrial(state);
+
+        System.out.println(vsb);
+
+        Assert.assertEquals(max_depth+1,vsb.nofStates());
+    }
+
+
+
+
+    @Test
+    public void getAllStatesAtDepth() {
+        defineInitVSB(new StateForSearch(state));
+        doTrial(state);
+        doTrial(state);
+
+        List<StateForSearch> statesAtDepth= vsb.getAllStatesAtDepth(3);
+
+        System.out.println(vsb);
+        System.out.println(statesAtDepth);
+
+    }
+
+    private int doTrial(StateForSearch startState) {
+        int depth=0;
+        int nofActions=0;
+        StateForSearch state=new StateForSearch(startState);
 
         int max_depth=5;
         for (int i = 0; i < max_depth; i++) {
@@ -90,10 +116,12 @@ public class TestVisitedStatesBuffer extends TestSearchBase {
             state.copyState(stateNew);
 
         }
+        return max_depth;
+    }
 
-        System.out.println(vsb);
-
-        Assert.assertEquals(max_depth+1,vsb.nofStates());
+    private void defineInitVSB(StateForSearch startState) {
+        state.setIdDepthNofActions(state.START_STATE_ID, 0, NOF_ACTIONS);
+        vsb = new VisitedStatesBuffer(state);
     }
 
 }

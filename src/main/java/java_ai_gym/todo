@@ -16,9 +16,10 @@ klass PongAgentDPSearch  X
 klass VisitedStatesBuffer X
 tester VisitedStatesBuffer X
 ny sub klass SearchState från State, har id, depth och nofActions  x
-stateBuffer och expBuffer som separata object
+stateBuffer och expBuffer som separata object x
 Visualisera vsb
-TestPongAgentDPSearch
+TestPongAgentDPSearch x
+chooseAction, bara icke testade actions
 
 hur använda klass i annat projekt/modul
 
