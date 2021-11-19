@@ -1,10 +1,7 @@
 package java_ai_gym.models_pong;
 
 import java_ai_gym.helpers.MathUtils;
-import java_ai_gym.models_common.EnvironmentParametersAbstract;
-import java_ai_gym.models_common.EnvironmentForSearchAgent;
-import java_ai_gym.models_common.State;
-import java_ai_gym.models_common.StepReturn;
+import java_ai_gym.models_common.*;
 import java_ai_gym.swing.FrameEnvironment;
 import java_ai_gym.swing.Position2D;
 import java_ai_gym.swing.ScaleLinear;
@@ -72,6 +69,7 @@ public class SinglePong extends EnvironmentForSearchAgent {
         parameters.MIN_ACTION = parameters.discreteActionsSpace.stream().min(Integer::compare).orElse(0);
         parameters.NOF_ACTIONS = parameters.discreteActionsSpace.size();
 
+        super.templateState=new StateForSearch();
         createVariablesInState(getTemplateState());
         setupFrameAndPanel();
         animationPanel.repaint();
@@ -87,6 +85,7 @@ public class SinglePong extends EnvironmentForSearchAgent {
 
     @Override
     public void createVariablesInState(State state) {
+
         state.createContinuousVariable("xPosBall", 0.0);
         state.createContinuousVariable("yPosBall", 0.0);
         state.createContinuousVariable("xSpdBall", 0.0);
@@ -101,7 +100,7 @@ public class SinglePong extends EnvironmentForSearchAgent {
 
         State newState = updateState(action, state);
 
-        StepReturn stepReturn = new StepReturn();
+        StepReturn stepReturn = new StepReturn(new StateForSearch());
         stepReturn.state = newState;
         stepReturn.termState = isTerminalState(newState);
         stepReturn.reward = (stepReturn.termState)?
@@ -120,7 +119,7 @@ public class SinglePong extends EnvironmentForSearchAgent {
 
     @NotNull
     private State updateState(int action, State state) {
-        State newState = new State(state);
+        State newState = new StateForSearch(state);
         double xPosBall= state.getContinuousVariable("xPosBall");
         double yPosBall= state.getContinuousVariable("yPosBall");
         double xSpdBall= state.getContinuousVariable("xSpdBall");

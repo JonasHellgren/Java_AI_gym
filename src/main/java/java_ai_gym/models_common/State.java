@@ -20,11 +20,11 @@ import java.util.logging.Logger;
 
 @Getter
 @Setter
-public class State {
+public abstract class State {
 
     private final static Logger logger = Logger.getLogger(State.class.getName());
 
-    String id;
+
     public int totalNofSteps=0;
     Map<String, Integer> discreteVariables = new HashMap<>();
     Map<String, Double> continuousVariables = new HashMap<>();

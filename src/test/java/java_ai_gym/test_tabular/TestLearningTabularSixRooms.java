@@ -2,6 +2,7 @@ package java_ai_gym.test_tabular;
 
 
 import java_ai_gym.models_common.State;
+import java_ai_gym.models_common.StateBasic;
 import java_ai_gym.models_common.StepReturn;
 import java_ai_gym.models_sixrooms.SixRooms;
 import java_ai_gym.models_sixrooms.SixRoomsAgentTabular;
@@ -11,12 +12,11 @@ import java.util.Random;
 
 public class TestLearningTabularSixRooms {
 
-    State sNew = new State();
+    State sNew = new StateBasic();
     SixRooms env = new SixRooms();
     SixRoomsAgentTabular agent = new SixRoomsAgentTabular(env.parameters);
     public final double SMALL = 0.001;
     private final Random random = new Random();
-
 
     @Test
     public void runLearningTextBook() {

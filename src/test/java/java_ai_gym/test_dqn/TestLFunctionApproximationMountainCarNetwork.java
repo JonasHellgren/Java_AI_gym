@@ -3,6 +3,7 @@ package java_ai_gym.test_dqn;
 
 import java_ai_gym.models_common.Experience;
 import java_ai_gym.models_common.State;
+import java_ai_gym.models_common.StateBasic;
 import java_ai_gym.models_common.StepReturn;
 import java_ai_gym.models_mountaincar.MountainCar;
 import java_ai_gym.models_mountaincar.MountainCarAgentNeuralNetwork;
@@ -45,7 +46,7 @@ public class TestLFunctionApproximationMountainCarNetwork {
             int aChosen=agent.chooseRandomAction(env.parameters.discreteActionsSpace);
             StepReturn stepReturn = env.step(aChosen, agent.state);
             stepReturn.reward=(double) -100*aChosen;  //mocking reward
-            Experience experience = new Experience(new State(agent.state), aChosen, stepReturn,agent.BE_ERROR_INIT);
+            Experience experience = new Experience(new StateBasic(agent.state), aChosen, stepReturn,agent.BE_ERROR_INIT);
             agent.replayBuffer.addExperience(experience);
         }
 
@@ -88,7 +89,7 @@ public class TestLFunctionApproximationMountainCarNetwork {
                                 agent.state.getContinuousVariable("position"),
                                 agent.state.getContinuousVariable("velocity"),
                                 a);  //mocking reward
-                        Experience experience = new Experience(new State(agent.state), a, stepReturn,agent.BE_ERROR_INIT);
+                        Experience experience = new Experience(new StateBasic(agent.state), a, stepReturn,agent.BE_ERROR_INIT);
                         agent.replayBuffer.addExperience(experience);
             }
         }

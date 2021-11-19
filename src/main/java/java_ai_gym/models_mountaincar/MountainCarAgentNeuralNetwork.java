@@ -41,7 +41,7 @@ public class MountainCarAgentNeuralNetwork extends AgentNeuralNetwork {
 
     public MountainCarAgentNeuralNetwork(MountainCar.EnvironmentParameters envParams, State templateState) {
         this.envParams = envParams;
-        state = new State(templateState);
+        state = new StateBasic(templateState);
         createReplayBuffer();
         createInputNormalizers(envParams);
         createNetworks(envParams);

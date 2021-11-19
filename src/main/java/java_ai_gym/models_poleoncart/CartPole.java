@@ -115,6 +115,7 @@ public class CartPole extends EnvironmentForNetworkAgent {
         parameters.NOF_ACTIONS = parameters.discreteActionsSpace.size();
         policyTestSettings.NOF_EPISODES_BETWEEN_POLICY_TEST=25;
 
+        super.templateState=new StateBasic();
         createVariablesInState(getTemplateState());
         setupFrameAndPanel();
         //animationPanel.repaint();
@@ -187,8 +188,8 @@ public class CartPole extends EnvironmentForNetworkAgent {
         if (!parameters.discreteActionsSpace.contains(action))
             logger.warning("Not valid action");
 
-        State newState = new State(state);
-        StepReturn stepReturn = new StepReturn();
+        State newState = new StateBasic(state);
+        StepReturn stepReturn = new StepReturn(new StateBasic());
 
         double force=(action==0)?-parameters.FORCE_MAG:parameters.FORCE_MAG;
 

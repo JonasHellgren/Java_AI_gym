@@ -75,6 +75,8 @@ public class SixRooms extends EnvironmentForNetworkAgent {
         parameters.minAction = parameters.discreteActionsSpace.stream().min(Integer::compare).orElse(0);
         parameters.nofStates = parameters.discreteStateSpace.size();
         parameters.nofActions = parameters.discreteActionsSpace.size();
+
+        super.templateState=new StateBasic();
         createVariablesInState(getTemplateState());
     }
 
@@ -86,8 +88,8 @@ public class SixRooms extends EnvironmentForNetworkAgent {
 
     @Override
     public StepReturn step(int action, State state) {
-        State newState = new State(state);
-        StepReturn stepReturn = new StepReturn();
+        State newState = new StateBasic(state);
+        StepReturn stepReturn = new StepReturn(new StateBasic());
         int newRoomNr=getNewRoomNr(state,action);
         newState.setVariable("roomNumber", newRoomNr);
         stepReturn.state = newState;
@@ -146,7 +148,7 @@ public class SixRooms extends EnvironmentForNetworkAgent {
 
     public void PrintQsa(Learnable agent) {
         System.out.println("Qsa -----------------------------");
-        State s = new State(agent.getState());
+        State s = new StateBasic(agent.getState());
         for (int roomNr : parameters.discreteStateSpace) {
             for (int action : parameters.discreteActionsSpace) {
                 s.setVariable("roomNumber", roomNr);
@@ -159,7 +161,7 @@ public class SixRooms extends EnvironmentForNetworkAgent {
 
     public void PrintQsaBestAction(Learnable agent) {
         System.out.println("Qsa(s,best action) ----------------------------- ");
-        State s = new State(agent.getState());
+        State s = new StateBasic(agent.getState());
         for (int roomNr : parameters.discreteStateSpace) {
             s.setVariable("roomNumber", roomNr);
             System.out.printf("roomNr:"+roomNr+", Q: %.1f"+", bestA:"+agent.chooseBestAction(s)+"  ", agent.findMaxQ(s));
@@ -171,7 +173,7 @@ public class SixRooms extends EnvironmentForNetworkAgent {
         // we consider every single state as a starting state
         // until we find the terminal state: we walk according to best action
         final int MAX_NO_STEPS=10;
-        State s = new State(agent.getState());
+        State s = new StateBasic(agent.getState());
         System.out.println("Policy for every state -----------------------------");
         for(int starRoomNr=0; starRoomNr<parameters.nofStates; starRoomNr++) {
             StepReturn stepReturn;

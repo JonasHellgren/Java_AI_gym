@@ -92,12 +92,12 @@ public abstract class EnvironmentForNetworkAgent extends Environment {
         // a single episode: the agent finds a path from state s to the exit state
 
         StepReturn stepReturn;
-        State sNew = new State();
+        State sNew = new StateBasic();
         double fEpisodes=agent.calcFractionEpisodes(iEpisode);
         do {
             int aChosen=agent.chooseAction(fEpisodes,envParams.discreteActionsSpace);
             stepReturn = env.step(aChosen, agent.state);
-            Experience experience = new Experience(new State(agent.state), aChosen, stepReturn, agent.BE_ERROR_INIT);
+            Experience experience = new Experience(new StateBasic(agent.state), aChosen, stepReturn, agent.BE_ERROR_INIT);
             agent.replayBuffer.addExperience(experience);
 
             if (agent.replayBuffer.isFull(agent) & agent.isItTimeToFit() ) {

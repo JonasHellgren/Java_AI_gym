@@ -4,6 +4,7 @@ import java_ai_gym.models_common.StepReturn;
 import java_ai_gym.models_pong.VisitedStatesBuffer;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class TestVisitedStatesBuffer extends TestSearchBase {
@@ -30,10 +31,12 @@ public class TestVisitedStatesBuffer extends TestSearchBase {
     public void setStartState() {
         vsb.addState(vsb.START_STATE_ID,state);
         System.out.println(vsb.selectRandomStateId());
+        System.out.println(state);
         Assert.assertEquals(vsb.START_STATE_ID,vsb.selectRandomStateId());
     }
 
     @Test
+    @Ignore("Maybe remove")
     public void setStartStateWithOneExperience() {
         vsb.addState(vsb.START_STATE_ID,state);
         StepReturn stepReturn=env.step(moves.get("left"),state);
@@ -41,13 +44,12 @@ public class TestVisitedStatesBuffer extends TestSearchBase {
         VisitedStatesBuffer.StateExperience se=new VisitedStatesBuffer.StateExperience(moves.get("left"),stepReturn.reward,stepReturn.termState,newId);
         vsb.addExperience(state.getId(),se);
 
-        System.out.println(vsb.selectRandomStateId());
-        System.out.println(vsb.getExperienceList(state.getId()));
+        System.out.println(vsb);
         Assert.assertEquals(vsb.START_STATE_ID,vsb.selectRandomStateId());
     }
 
     @Test
-    public void addExperienceToStartState() {
+    public void addNewStateAndExperienceFromStep() {
 
         int action=moves.get("left");
         StepReturn stepReturn=env.step(action,state);
@@ -56,6 +58,7 @@ public class TestVisitedStatesBuffer extends TestSearchBase {
         System.out.println(vsb);
         Assert.assertEquals(2,vsb.nofStates());
     }
+
 
 
 

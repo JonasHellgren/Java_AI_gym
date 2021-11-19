@@ -1,7 +1,6 @@
 package java_ai_gym.models_common;
 
-import java_ai_gym.models_mountaincar.MountainCar;
-import java_ai_gym.models_mountaincar.MountainCarAgentNeuralNetwork;
+
 import java_ai_gym.swing.FrameEnvironment;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
@@ -41,7 +40,7 @@ public abstract class  Environment {
         public double avgBellmannErr;
     }
 
-    private State templateState=new State();
+    protected State templateState;
     protected FrameEnvironment animationFrame;
     protected FrameEnvironment plotFrame;
     public GraphicsSettings gfxSettings =new GraphicsSettings();

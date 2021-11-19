@@ -19,8 +19,16 @@ public  class StepReturn {
         this.termState = termState;
     }
 
+    /*
     public StepReturn() {
         this.state = new State();
+        this.reward = 0.0;
+        this.termState = false;
+    }  */
+
+
+    public StepReturn(State state) {
+        this.state = state;
         this.reward = 0.0;
         this.termState = false;
     }

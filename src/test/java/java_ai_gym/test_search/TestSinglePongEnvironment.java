@@ -2,7 +2,6 @@ package java_ai_gym.test_search;
 
 import java_ai_gym.models_common.State;
 import java_ai_gym.models_common.StepReturn;
-import java_ai_gym.models_mountaincar.MountainCar;
 import java_ai_gym.models_pong.SinglePong;
 import lombok.SneakyThrows;
 import org.junit.Assert;

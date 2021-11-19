@@ -3,6 +3,7 @@ package java_ai_gym.test_dqn;
 import java_ai_gym.models_common.Environment;
 import java_ai_gym.models_common.Experience;
 import java_ai_gym.models_common.State;
+import java_ai_gym.models_common.StateBasic;
 import java_ai_gym.models_mountaincar.MountainCar;
 import java_ai_gym.models_mountaincar.MountainCarAgentNeuralNetwork;
 import java_ai_gym.swing.Position2D;
@@ -19,7 +20,7 @@ import java.util.logging.Logger;
 public class TestLearningMountainCarNetwork {
 
     private static final Logger logger = Logger.getLogger(TestLearningMountainCarNetwork.class.getName());
-    State sNew = new State();
+    State sNew = new StateBasic();
     MountainCar env = new MountainCar();
     MountainCarAgentNeuralNetwork agent = new MountainCarAgentNeuralNetwork(env.parameters,env.getTemplateState());
     private static final int NOF_EPISODES_BETWEEN_PRINTOUTS = 10;

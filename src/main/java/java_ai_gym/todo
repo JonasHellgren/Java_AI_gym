@@ -12,14 +12,11 @@ basklass för tester  x
 sökdjup sfa racket speed  x
 basklass AgentSearch  x
 
-klass PongAgentDPSearch
-klass VisitedStatesBuffer
-tester VisitedStatesBuffer
-ny sub klass SearchState från State, har id och nofActions
+klass PongAgentDPSearch  X
+klass VisitedStatesBuffer X
+tester VisitedStatesBuffer X
+ny sub klass SearchState från State, har id, depth och nofActions  x
 Visualisera vsb
-
-
-
 
 hur använda klass i annat projekt/modul
 

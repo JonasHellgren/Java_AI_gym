@@ -2,6 +2,7 @@ package java_ai_gym.models_sixrooms;
 
 import java_ai_gym.models_common.AgentTabular;
 import java_ai_gym.models_common.State;
+import java_ai_gym.models_common.StateBasic;
 
 import java.util.logging.Logger;
 
@@ -12,7 +13,7 @@ public class SixRoomsAgentTabular extends AgentTabular {
 
     public SixRoomsAgentTabular(SixRooms.EnvironmentParameters envParams) {
         this.envParams = envParams;
-        state = new State();
+        state = new StateBasic();
         for (String varName : envParams.discreteStateVariableNames)
             state.createDiscreteVariable(varName, envParams.INIT_DEFAULT_ROOM_NUMBER);
 
@@ -29,7 +30,7 @@ public class SixRoomsAgentTabular extends AgentTabular {
 
     protected void createInitMemory(SixRooms.EnvironmentParameters envParams) {
         Qsa = new double[envParams.nofStates][envParams.nofActions];
-        State s = new State(state);
+        State s = new StateBasic(state);
         for (int state : envParams.discreteStateSpace) {
             for (int action : envParams.discreteActionsSpace) {
                 s.setVariable("roomNumber", state);

@@ -27,7 +27,7 @@ public class SixRoomsAgentNeuralNetwork extends AgentNeuralNetwork {
 
     public SixRoomsAgentNeuralNetwork(SixRooms.EnvironmentParameters envParams) {
         this.envParams = envParams;
-        state = new State();
+        state = new StateBasic();
         for (String varName : envParams.discreteStateVariableNames)
             state.createDiscreteVariable(varName, envParams.INIT_DEFAULT_ROOM_NUMBER);
 

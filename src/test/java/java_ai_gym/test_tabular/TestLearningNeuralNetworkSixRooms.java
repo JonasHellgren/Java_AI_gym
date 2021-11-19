@@ -1,7 +1,8 @@
-package java_ai_gym.test_dqn;
+package java_ai_gym.test_tabular;
 
 
 import java_ai_gym.models_common.State;
+import java_ai_gym.models_common.StateBasic;
 import java_ai_gym.models_sixrooms.SixRooms;
 import java_ai_gym.models_sixrooms.SixRoomsAgentNeuralNetwork;
 import org.jcodec.common.Assert;
@@ -12,7 +13,7 @@ import java.util.logging.Logger;
 
 public class TestLearningNeuralNetworkSixRooms {
     private static final Logger logger = Logger.getLogger(TestLearningNeuralNetworkSixRooms.class.getName());
-    State sNew = new State();
+    State sNew = new StateBasic();
     SixRooms env = new SixRooms();
     SixRoomsAgentNeuralNetwork agent = new SixRoomsAgentNeuralNetwork(env.parameters);
     private final Random random = new Random();

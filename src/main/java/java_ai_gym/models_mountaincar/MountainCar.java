@@ -98,6 +98,7 @@ public class MountainCar extends EnvironmentForNetworkAgent {
         parameters.MIN_ACTION = parameters.discreteActionsSpace.stream().min(Integer::compare).orElse(0);
         parameters.NOF_ACTIONS = parameters.discreteActionsSpace.size();
 
+        super.templateState=new StateBasic();
         createVariablesInState(getTemplateState());
         LineData roadData=createRoadData();
         setupFrameAndPanel(roadData);
@@ -205,8 +206,8 @@ public class MountainCar extends EnvironmentForNetworkAgent {
     @Override
     public StepReturn step(int action, State state) {
 
-        State newState = new State(state);
-        StepReturn stepReturn = new StepReturn();
+        State newState = new StateBasic(state);
+        StepReturn stepReturn = new StepReturn(new StateBasic());
         //newState.copyState(state);
         double position=state.getContinuousVariable("position");
         double velocity=state.getContinuousVariable("velocity");
@@ -292,7 +293,7 @@ public class MountainCar extends EnvironmentForNetworkAgent {
     }
 
     public double height(double position) {
-        State state = new State();
+        State state = new StateBasic();
         state.createContinuousVariable("position",position);
         return height(state);
     }

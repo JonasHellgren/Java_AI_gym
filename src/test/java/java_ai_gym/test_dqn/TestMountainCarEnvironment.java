@@ -1,6 +1,7 @@
 package java_ai_gym.test_dqn;
 
 import java_ai_gym.models_common.State;
+import java_ai_gym.models_common.StateBasic;
 import java_ai_gym.models_common.StepReturn;
 import java_ai_gym.models_mountaincar.MountainCar;
 import org.junit.Test;
@@ -11,7 +12,7 @@ public class TestMountainCarEnvironment {
 
 
     MountainCar env=new MountainCar();
-    State state = new State(env.getTemplateState());
+    State state = new StateBasic(env.getTemplateState());
 
     @Test
     public void setRuleBasedAction() throws InterruptedException {

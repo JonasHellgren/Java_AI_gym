@@ -40,7 +40,7 @@ public class CartPoleAgentNeuralNetwork extends AgentNeuralNetwork {
 
     public CartPoleAgentNeuralNetwork(CartPole.EnvironmentParameters envParams, State templateState) {
         this.envParams = envParams;
-        state = new State(templateState);
+        state = new StateBasic(templateState);
         createReplayBuffer();
         createInputNormalizers(envParams);
         createNetworks(envParams);

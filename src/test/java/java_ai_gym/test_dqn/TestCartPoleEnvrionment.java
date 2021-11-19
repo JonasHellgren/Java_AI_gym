@@ -1,6 +1,7 @@
 package java_ai_gym.test_dqn;
 
 import java_ai_gym.models_common.State;
+import java_ai_gym.models_common.StateBasic;
 import java_ai_gym.models_common.StepReturn;
 import java_ai_gym.models_poleoncart.CartPole;
 import org.jcodec.common.Assert;
@@ -13,7 +14,7 @@ public class TestCartPoleEnvrionment {
 
 
     CartPole env=new CartPole();
-    State state = new State(env.getTemplateState());
+    State state = new StateBasic(env.getTemplateState());
     final Random random = new Random();
 
     @Test

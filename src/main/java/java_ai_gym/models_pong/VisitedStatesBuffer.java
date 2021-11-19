@@ -12,7 +12,6 @@ public class VisitedStatesBuffer {
     protected final static Logger logger = Logger.getLogger(VisitedStatesBuffer.class.getName());
     public final String START_STATE_ID = "start";
 
-    @ToString
     public static class StateExperience {
         int action;
         double reward;
@@ -31,7 +30,6 @@ public class VisitedStatesBuffer {
             return "(a=" + action + ", r=" + reward + ", ts=" + termState + ", idNew=" + idNewState + ")";
         }
     }
-
 
     Map<String, State> stateBuffer;   //<id,stat>
     Map<String, List<StateExperience>> expBuffer;   //<id,list of experiences >

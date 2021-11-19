@@ -3,6 +3,7 @@ package java_ai_gym.test_dqn;
 import java_ai_gym.models_common.Environment;
 import java_ai_gym.models_common.Experience;
 import java_ai_gym.models_common.State;
+import java_ai_gym.models_common.StateBasic;
 import java_ai_gym.models_poleoncart.CartPole;
 import java_ai_gym.models_poleoncart.CartPoleAgentNeuralNetwork;
 import org.junit.Assert;
@@ -16,7 +17,7 @@ import java.util.logging.Logger;
 public class TestLearningCartPoleNetwork {
 
     private static final Logger logger = Logger.getLogger(TestLearningCartPoleNetwork.class.getName());
-    State sNew = new State();
+    State sNew = new StateBasic();
     CartPole env = new CartPole();
     CartPoleAgentNeuralNetwork agent = new CartPoleAgentNeuralNetwork(env.parameters,env.getTemplateState());
     private static final int NOF_EPISODES_BETWEEN_PRINTOUTS = 10;
