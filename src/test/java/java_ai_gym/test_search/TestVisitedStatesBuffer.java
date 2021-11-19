@@ -4,6 +4,7 @@ import java_ai_gym.models_common.AgentSearch;
 import java_ai_gym.models_common.StateForSearch;
 import java_ai_gym.models_common.StepReturn;
 import java_ai_gym.models_pong.PongAgentDPSearch;
+import java_ai_gym.models_pong.StateExperience;
 import java_ai_gym.models_pong.VisitedStatesBuffer;
 import org.junit.Assert;
 import org.junit.Before;
@@ -49,7 +50,7 @@ public class TestVisitedStatesBuffer extends TestSearchBase {
         vsb.addState(state.START_STATE_ID,state);
         stepReturn=env.step(moves.get("left"),state);
         String newId=state.id+"."+moves.get("left");
-        VisitedStatesBuffer.StateExperience se=new VisitedStatesBuffer.StateExperience(moves.get("left"),stepReturn.reward,stepReturn.termState,newId);
+        StateExperience se=new StateExperience(moves.get("left"),stepReturn.reward,stepReturn.termState,newId);
         vsb.addExperience(state.id,se);
 
         System.out.println(vsb);
