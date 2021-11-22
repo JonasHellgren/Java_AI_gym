@@ -1,6 +1,10 @@
 package java_ai_gym.helpers;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.text.NumberFormat;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class MathUtils {
 
@@ -28,5 +32,12 @@ public class MathUtils {
         return nf.format(value);
     }
 
+    @NotNull
+    public static List<Integer> getDifferenceBetweenLists(List<Integer> listA, List<Integer> listB) {
+        List<Integer> availableActions= listA.stream()
+                .filter(element -> !listB.contains(element))
+                .collect(Collectors.toList());
+        return availableActions;  //listA-listB
+    }
 
 }

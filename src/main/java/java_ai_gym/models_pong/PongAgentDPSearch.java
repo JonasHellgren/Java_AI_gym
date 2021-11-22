@@ -1,7 +1,12 @@
 package java_ai_gym.models_pong;
 
+import java_ai_gym.helpers.MathUtils;
 import java_ai_gym.models_common.*;
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 public class PongAgentDPSearch extends AgentSearch {
@@ -34,10 +39,6 @@ public class PongAgentDPSearch extends AgentSearch {
         int searchDepth = searchDepthStep;
         int explorationFactor = 0;
 
-
-
-
-
         return null;
     }
 
@@ -53,11 +54,15 @@ public class PongAgentDPSearch extends AgentSearch {
         if (vsb.nofActionsTested(selectState.id) == 0) {
             action = ACTION_DEFAULT;
         } else {
-            //todo, bara icke testade actions
-            action = chooseRandomAction(envParams.discreteActionsSpace);
+            List<Integer> grossActions=envParams.discreteActionsSpace;
+            List<Integer> testedActions= vsb.testedActions(selectState.id);
+            List<Integer> nonTestedActions = MathUtils.getDifferenceBetweenLists(grossActions, testedActions);
+            action = chooseRandomAction(nonTestedActions);
         }
         return action;
     }
+
+
 
     public StateForSearch selectState() {
         StateForSearch selectedState;

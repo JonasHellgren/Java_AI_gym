@@ -78,6 +78,12 @@ public class ExperiencesDAO implements DAO<StateExperience> {
     }
 
     public int nofActionsTested(String id) {
+        List<Integer> actionSet=  testedActions(id);
+
+        return actionSet.size();
+    }
+
+    public List<Integer> testedActions(String id) {
         List<StateExperience> expList = getExperienceList(id);
         Set<Integer> actionSet=new HashSet<>();
 
@@ -85,12 +91,16 @@ public class ExperiencesDAO implements DAO<StateExperience> {
             actionSet.add(exp.action);
         }
 
-
         if (actionSet.size() != expList.size()) {
             logger.warning("Duplicate actions in state: "+id);
         }
 
-        return actionSet.size();
+        if (actionSet.size() == 0) {
+            logger.fine("No actions in state: "+id);
+            return new ArrayList<>();
+        }
+
+        return new ArrayList<>(actionSet);
     }
 
 }

@@ -25,14 +25,14 @@ public class TestPongAgentDPSearch extends TestSearchBase {
     }
 
     @Test
-    public void CreateVSBSize20() {
+    public void CreateVSBSize10() {
         agent.setUpVsb(state);
         Assert.assertEquals(1, agent.getVsb().nofStates());
         System.out.println(agent.getVsb());
         int nofActions = p.discreteActionsSpace.size();
 
 
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 10; i++) {
             StateForSearch selectedState = agent.selectState();
             int action = agent.chooseAction(selectedState);
             StepReturn stepReturn = env.step(action, selectedState);
@@ -40,6 +40,8 @@ public class TestPongAgentDPSearch extends TestSearchBase {
             stateNew.setDepthNofActions(selectedState.depth + 1, nofActions);
             agent.getVsb().addNewStateAndExperienceFromStep(selectedState.id, action, stepReturn);
         }
+
+        System.out.println("nofStates = "+agent.getVsb().nofStates());
 
         System.out.println(agent.getVsb());
 

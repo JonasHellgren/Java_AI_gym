@@ -100,6 +100,10 @@ public class VisitedStatesBuffer {
         return experiencesDAO.nofActionsTested(id);
     }
 
+    public List<Integer> testedActions(String id) {
+        return experiencesDAO.testedActions(id);
+    }
+
 
     @Override
     public String toString() {
