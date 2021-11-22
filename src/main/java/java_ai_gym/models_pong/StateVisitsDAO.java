@@ -16,10 +16,12 @@ public class StateVisitsDAO implements  DAO<StateForSearch> {
         stateBuffer = new HashMap<>();
     }
 
+    @Override
     public void clear() {
         stateBuffer.clear();
     }
 
+@Override
     public StateForSearch get(String id) {
         return stateBuffer.get(id);
     }
@@ -33,15 +35,18 @@ public class StateVisitsDAO implements  DAO<StateForSearch> {
         return stateList;
     }
 
+    @Override
     public int size() {
         return stateBuffer.size();
     }
 
+    @Override
     public void add(String id, StateForSearch item) {
         item.id=id;
         stateBuffer.put(id, item);
     }
 
+    @Override
     public Set<String> keySet() {
         return stateBuffer.keySet();
     }
@@ -61,5 +66,9 @@ public class StateVisitsDAO implements  DAO<StateForSearch> {
     }
 
 
-
+    public void copy(StateVisitsDAO stateVisitsDAO) {
+        for (String id:stateVisitsDAO.keySet()) {
+            this.add(id,stateVisitsDAO.get(id));
+        }
+    }
 }

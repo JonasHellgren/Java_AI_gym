@@ -233,7 +233,7 @@ public class SinglePong extends EnvironmentForSearchAgent {
         panel.setBounds(margin, yPos, panelWeight - margin, panelHeight);
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
         panel.createLabel(panelWeight, panelHeight,title);
-        panel.createTreeWithOnlyRootNode(panelWeight, panelHeight);
+        panel.createTreeWithOnlyRootNode(panelWeight, panelHeight,title);
     }
 
 

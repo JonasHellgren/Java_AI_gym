@@ -17,8 +17,13 @@ klass VisitedStatesBuffer X
 tester VisitedStatesBuffer X
 ny sub klass SearchState från State, har id, depth och nofActions  x
 stateBuffer och expBuffer som separata object x
-Visualisera vsb - SearchTreePanel
-auto expand tree
+Visualisera vsb - S e  archTreePanel  x
+auto expand tree  x
+stilar Jtree?  x
+rotera JTree? verkar ej gå x
+nytt träd för dp genom klippa lösa noder - removeLooseNodesBelowDepth
+
+Visualisera vsb - SearchTreeHistogramPanel
 fixa dubbla mathutils  x
 TestPongAgentDPSearch x
 chooseAction, bara icke testade actions  x

@@ -3,10 +3,12 @@ package java_ai_gym.models_pong;
 import java_ai_gym.helpers.MathUtils;
 import java_ai_gym.models_common.StateForSearch;
 import java_ai_gym.models_common.StepReturn;
+import lombok.Getter;
 
 import java.util.*;
 import java.util.logging.Logger;
 
+@Getter
 public class VisitedStatesBuffer {
 
     protected final static Logger logger = Logger.getLogger(VisitedStatesBuffer.class.getName());
@@ -27,6 +29,12 @@ public class VisitedStatesBuffer {
         StateForSearch startStateClone=new StateForSearch(startState);
         addState(startStateClone.START_STATE_ID,  startStateClone);
         experiencesDAO.addStateWithNoExp(startStateClone.START_STATE_ID);
+    }
+
+    public VisitedStatesBuffer(VisitedStatesBuffer vsb) {
+        this();
+        stateVisitsDAO.copy(vsb.getStateVisitsDAO());
+        experiencesDAO.copy(vsb.getExperiencesDAO());
     }
 
     public void clear() {
@@ -115,6 +123,21 @@ public class VisitedStatesBuffer {
             depthMax=Math.max(depthMax,state.depth);
         }
         return depthMax;
+    }
+
+    public VisitedStatesBuffer removeLooseNodesBelowDepth(int depth) {
+
+        VisitedStatesBuffer vsbTrimmed=new VisitedStatesBuffer(this);
+
+        for (depth=this.getMaxDepth()-1;depth>=0; depth--) {
+            List<StateForSearch> statesAtDepth=this.getAllStatesAtDepth(depth);
+            System.out.println("depth = "+depth);
+            System.out.println(statesAtDepth);
+
+        }
+
+        return  vsbTrimmed;
+
     }
 
 

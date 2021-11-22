@@ -1,7 +1,5 @@
 package java_ai_gym.models_pong;
 
-import java_ai_gym.models_common.StateForSearch;
-
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -17,14 +15,11 @@ public class ExperiencesDAO implements DAO<StateExperience> {
 
     @Override
     public StateExperience get(String id) {
-        //return expBuffer.get(id);
+        //return (StateExperience) expBuffer.get(id);
+        logger.warning("Not defined method");
         return null;
     }
 
-    /*
-    @Override
-    public void add(String id, StateForSearch item) {
-    }  */
 
     public List<StateExperience> getExperienceList(String id) {
         if (!expBuffer.containsKey(id)) {
@@ -101,6 +96,14 @@ public class ExperiencesDAO implements DAO<StateExperience> {
         }
 
         return new ArrayList<>(actionSet);
+    }
+
+    public void copy(ExperiencesDAO experiencesDAO) {
+        for (String id:experiencesDAO.keySet()) {
+            for (StateExperience exp:experiencesDAO.getExperienceList(id)) {
+                this.add(id,exp);
+            }
+        }
     }
 
 }

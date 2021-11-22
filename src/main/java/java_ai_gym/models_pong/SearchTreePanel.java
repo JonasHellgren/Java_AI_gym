@@ -1,6 +1,9 @@
 package java_ai_gym.models_pong;
 
+import lombok.SneakyThrows;
+
 import javax.swing.*;
+import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 import java.util.List;
@@ -19,8 +22,10 @@ public class SearchTreePanel extends JPanel {
     }
 
 
-    public void createTreeWithOnlyRootNode(int panelW, int panelH) {
-        this.root = new DefaultMutableTreeNode("VSB");
+    @SneakyThrows
+    public void createTreeWithOnlyRootNode(int panelW, int panelH,String rootName) {
+        UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+        this.root = new DefaultMutableTreeNode(rootName);
         this.tree = new JTree(root);
 
         /*
@@ -60,9 +65,22 @@ public class SearchTreePanel extends JPanel {
         add(this.label);
     }
 
+    @SneakyThrows
     public void createTreeFromVisitedStatesBuffer(VisitedStatesBuffer vsb) {
         this.vsb = vsb;
+        System.out.println("this.root = "+this.root);
         addChildNodesRecursive(this.root, "start");
+        this.label.setText("Max depth = "+vsb.getMaxDepth());
+
+        //https://stackoverflow.com/questions/5042937/jtree-line-style-and-nimbus
+        tree.putClientProperty("JTree.lineStyle", "Angled");
+
+    }
+
+    public void expandTree() {
+        for (int i = 0; i < tree.getRowCount(); i++) {
+            tree.expandRow(i);
+        }
     }
 
 

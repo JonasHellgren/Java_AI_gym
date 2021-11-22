@@ -6,6 +6,7 @@ import java_ai_gym.models_pong.VisitedStatesBuffer;
 import lombok.SneakyThrows;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
@@ -29,11 +30,44 @@ public class TestPongAgentDPSearch extends TestSearchBase {
 
     @SneakyThrows
     @Test
+    @Ignore
     public void CreateVSBSize10() {
 
         final int NOF_STEPS=10;
-        agent.setUpVsb(state);
+        createVSB(NOF_STEPS);
 
+        System.out.println(agent.getVsb());
+        env.upperPLotPanel.createTreeFromVisitedStatesBuffer(agent.getVsb());
+        env.upperPLotPanel.expandTree();
+        Assert.assertEquals(NOF_STEPS +1, agent.getVsb().nofStates());
+        TimeUnit.MILLISECONDS.sleep(25000);
+
+    }
+
+    @SneakyThrows
+    @Test
+    public void CreateVSBSize10AndCutLooseNodes() {
+
+        final int NOF_STEPS=10;
+        createVSB(NOF_STEPS);
+
+        System.out.println(agent.getVsb());
+        env.upperPLotPanel.createTreeFromVisitedStatesBuffer(agent.getVsb());
+        env.upperPLotPanel.expandTree();
+
+        VisitedStatesBuffer trimmedVSB= agent.getVsb().removeLooseNodesBelowDepth(3);
+        System.out.println(trimmedVSB);
+        env.middlePLotPanel.createTreeFromVisitedStatesBuffer(trimmedVSB);
+        env.middlePLotPanel.expandTree();
+
+        Assert.assertTrue(trimmedVSB.nofStates() <= agent.getVsb().nofStates());
+
+        TimeUnit.MILLISECONDS.sleep(25000);
+
+    }
+
+    private void createVSB(int NOF_STEPS) {
+        agent.setUpVsb(state);
         Assert.assertEquals(1, agent.getVsb().nofStates());
         System.out.println(agent.getVsb());
         int nofActions = p.discreteActionsSpace.size();
@@ -46,17 +80,6 @@ public class TestPongAgentDPSearch extends TestSearchBase {
             stateNew.setDepthNofActions(selectedState.depth + 1, nofActions);
             agent.getVsb().addNewStateAndExperienceFromStep(selectedState.id, action, stepReturn);
         }
-        Assert.assertEquals(NOF_STEPS+1, agent.getVsb().nofStates());
-
-        System.out.println(agent.getVsb());
-
-        env.upperPLotPanel.createTreeFromVisitedStatesBuffer(agent.getVsb());
-
-        env.render(state,0,0);
-
-        TimeUnit.MILLISECONDS.sleep(25000);
-
-
 
     }
 
