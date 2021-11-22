@@ -17,7 +17,8 @@ klass VisitedStatesBuffer X
 tester VisitedStatesBuffer X
 ny sub klass SearchState från State, har id, depth och nofActions  x
 stateBuffer och expBuffer som separata object x
-Visualisera vsb
+Visualisera vsb - SearchTreePanel
+auto expand tree
 fixa dubbla mathutils  x
 TestPongAgentDPSearch x
 chooseAction, bara icke testade actions  x

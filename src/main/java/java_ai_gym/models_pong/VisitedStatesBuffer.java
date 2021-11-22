@@ -1,5 +1,6 @@
 package java_ai_gym.models_pong;
 
+import java_ai_gym.helpers.MathUtils;
 import java_ai_gym.models_common.StateForSearch;
 import java_ai_gym.models_common.StepReturn;
 
@@ -54,9 +55,7 @@ public class VisitedStatesBuffer {
     }
 
     public List<StateForSearch> getAllStatesAtDepth(int depth) {
-
         List<StateForSearch> statesAtDepth= new ArrayList<>() ;
-
         for (StateForSearch state:stateVisitsDAO.getAll()) {
             if (state.depth==depth) {
                 statesAtDepth.add(state);
@@ -102,6 +101,20 @@ public class VisitedStatesBuffer {
 
     public List<Integer> testedActions(String id) {
         return experiencesDAO.testedActions(id);
+    }
+
+    public int getMaxDepth() {
+
+        if (stateVisitsDAO.size()==0) {
+            logger.warning("Depth not defined for zero size buffer");
+            return 0;
+        }
+
+        int depthMax=0;
+        for (StateForSearch state:stateVisitsDAO.getAll()) {
+            depthMax=Math.max(depthMax,state.depth);
+        }
+        return depthMax;
     }
 
 

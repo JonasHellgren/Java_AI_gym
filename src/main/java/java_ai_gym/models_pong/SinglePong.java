@@ -8,6 +8,7 @@ import java_ai_gym.swing.ScaleLinear;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.Arrays;
 import java.util.logging.Logger;
 
@@ -17,7 +18,16 @@ public class SinglePong extends EnvironmentForSearchAgent {
 
     public SinglePong.EnvironmentParameters parameters = this.new EnvironmentParameters();
 
+    final int plotFrameWidth=gfxSettings.FRAME_WEIGHT*2;
+    final int plotFrameHeight=gfxSettings.FRAME_HEIGHT*4;
+    final int margin=gfxSettings.FRAME_MARGIN;
+    int panelHeight;
+    int panelWeight;
     public PanelPongAnimation animationPanel;
+    public SearchTreePanel upperPLotPanel;
+    public SearchTreePanel middlePLotPanel;
+    public SearchTreePanel lowerPLotPanel;
+
     public JLabel labelBallPosX;
     public JLabel labelBallPosY;
 
@@ -71,7 +81,7 @@ public class SinglePong extends EnvironmentForSearchAgent {
 
         super.templateState=new StateForSearch();
         createVariablesInState(getTemplateState());
-        setupFrameAndPanel();
+        setupFramesAndPanels();
         animationPanel.repaint();
     }
 
@@ -175,11 +185,10 @@ public class SinglePong extends EnvironmentForSearchAgent {
 
     }
 
-    private void setupFrameAndPanel() {
+    private void setupFramesAndPanels() {
+        final int NOF_PLOT_PANELS=3;
+        final int margin=gfxSettings.FRAME_MARGIN*1;
         animationFrame =new FrameEnvironment(gfxSettings.FRAME_WEIGHT, gfxSettings.FRAME_HEIGHT,"SinglePong animation");
-
-
-        plotFrame =new FrameEnvironment(gfxSettings.FRAME_WEIGHT, gfxSettings.FRAME_HEIGHT,"MountainCar plots");
         ScaleLinear xScaler=new ScaleLinear(parameters.MIN_X_POSITION,parameters.MAX_X_POSITION,
                 gfxSettings.FRAME_MARGIN, gfxSettings.FRAME_WEIGHT - gfxSettings.FRAME_MARGIN,
                 false,gfxSettings.FRAME_MARGIN);
@@ -192,16 +201,39 @@ public class SinglePong extends EnvironmentForSearchAgent {
         animationFrame.add(animationPanel);
         animationFrame.setVisible(true);
 
-/*
-        ScaleLinear yScalerVelocity=new ScaleLinear(-parameters.MAX_SPEED,parameters.MAX_SPEED,
-                gfxSettings.FRAME_MARGIN,gfxSettings.FRAME_HEIGHT - gfxSettings.FRAME_MARGIN,true, gfxSettings.FRAME_MARGIN);
+        panelHeight=(int) ( plotFrameHeight-2*margin)/NOF_PLOT_PANELS;
+        panelWeight=(int) ( plotFrameWidth-2*margin);
 
-        plotPanel =new PanelMountainCarPlot(xScaler,yScalerVelocity, circlePositionList, actionList, CIRCLE_RADIUS_IN_DOTS);
-        plotPanel.setLayout(null);
-        addLabelsToPlotPanel();
-        plotFrame.add(plotPanel);
-        */
+        System.out.println("panelHeight ="+panelHeight+", gfxSettings.FRAME_WEIGHT ="+gfxSettings.FRAME_HEIGHT);
+        plotFrame =new FrameEnvironment(plotFrameWidth, plotFrameHeight,"SinglePoooooooooong plots");
+
+        upperPLotPanel =new SearchTreePanel();
+        defineTreePanel(upperPLotPanel, margin,"upperPLotPanel");
+
+        middlePLotPanel =new SearchTreePanel();
+        defineTreePanel(middlePLotPanel, panelHeight+margin,"middlePLotPanel");
+
+
+        lowerPLotPanel =new SearchTreePanel();
+        lowerPLotPanel.setBackground(Color.lightGray);
+        lowerPLotPanel.setBounds(margin,panelHeight*2+margin, panelWeight-margin,panelHeight);
+        lowerPLotPanel.createLabel(panelWeight,panelHeight,"lowerPLotPanel");
+
+        plotFrame.add(upperPLotPanel);
+        plotFrame.add(middlePLotPanel);
+        plotFrame.add(lowerPLotPanel);
+        plotFrame.setLayout(null);   //makes the label to not occupy all frame
+
         plotFrame.setVisible(true);
+
+    }
+
+    private void defineTreePanel(SearchTreePanel panel, int yPos, String title) {
+        panel.setBackground(Color.lightGray);
+        panel.setBounds(margin, yPos, panelWeight - margin, panelHeight);
+        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+        panel.createLabel(panelWeight, panelHeight,title);
+        panel.createTreeWithOnlyRootNode(panelWeight, panelHeight);
     }
 
 

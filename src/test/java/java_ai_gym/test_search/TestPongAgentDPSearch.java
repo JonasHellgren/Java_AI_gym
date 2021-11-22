@@ -3,9 +3,12 @@ package java_ai_gym.test_search;
 import java_ai_gym.models_common.StateForSearch;
 import java_ai_gym.models_common.StepReturn;
 import java_ai_gym.models_pong.VisitedStatesBuffer;
+import lombok.SneakyThrows;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.concurrent.TimeUnit;
 
 public class TestPongAgentDPSearch extends TestSearchBase {
 
@@ -24,6 +27,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
 
     }
 
+    @SneakyThrows
     @Test
     public void CreateVSBSize10() {
 
@@ -45,6 +49,14 @@ public class TestPongAgentDPSearch extends TestSearchBase {
         Assert.assertEquals(NOF_STEPS+1, agent.getVsb().nofStates());
 
         System.out.println(agent.getVsb());
+
+        env.upperPLotPanel.createTreeFromVisitedStatesBuffer(agent.getVsb());
+
+        env.render(state,0,0);
+
+        TimeUnit.MILLISECONDS.sleep(25000);
+
+
 
     }
 
