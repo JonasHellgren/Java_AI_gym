@@ -49,7 +49,7 @@ public abstract class  Environment {
     public abstract void render(State state,double maxQ, int action);
     public abstract void createVariablesInState(State state) ;
 
-    public abstract StepReturn step(int action, State state);  //TODO protected
+    public abstract  StepReturn step(int action, State state);  //TODO protected
     protected abstract boolean isTerminalState(State state);
     protected abstract boolean isFailsState(State state);
     protected abstract boolean isTerminalStatePolicyTest(State state);

@@ -16,9 +16,10 @@ public class StateForSearch extends State {
         nofActions=0;
     }
 
-    public StateForSearch(State state) {
+    public StateForSearch(StateForSearch state) {
         this();
-        copyState(state);
+        this.copyState(state);
+
     }
 
 

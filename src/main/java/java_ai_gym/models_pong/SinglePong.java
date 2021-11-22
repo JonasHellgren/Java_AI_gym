@@ -96,8 +96,8 @@ public class SinglePong extends EnvironmentForSearchAgent {
     }
 
     @Override
-    public StepReturn step(int action, State state) {
-
+    public StepReturn step(int action, State state0)   {
+        StateForSearch state=(StateForSearch) state0;
         State newState = updateState(action, state);
 
         StepReturn stepReturn = new StepReturn(new StateForSearch());
@@ -118,7 +118,7 @@ public class SinglePong extends EnvironmentForSearchAgent {
     }
 
     @NotNull
-    private State updateState(int action, State state) {
+    private State updateState(int action, StateForSearch state) {
         State newState = new StateForSearch(state);
         double xPosBall= state.getContinuousVariable("xPosBall");
         double yPosBall= state.getContinuousVariable("yPosBall");

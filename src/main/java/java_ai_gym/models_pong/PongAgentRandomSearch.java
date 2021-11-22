@@ -19,7 +19,7 @@ public class PongAgentRandomSearch extends AgentSearch {
     }
 
     @Override
-    public SearchResults search(final State startState) {
+    public SearchResults search(final StateForSearch startState) {
         long startTime = System.currentTimeMillis();  //starting time, long <=> minimum value of 0
         state = new StateForSearch(startState);
 

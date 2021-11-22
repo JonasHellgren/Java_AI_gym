@@ -1,6 +1,7 @@
 package java_ai_gym.models_common;
 
 
+import java_ai_gym.helpers.MathUtils;
 import org.deeplearning4j.datasets.iterator.impl.ListDataSetIterator;
 
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
@@ -248,7 +249,7 @@ public abstract class AgentNeuralNetwork implements Learnable {
     private void modifyNetworkOut(Experience exp, INDArray inputNetwork, INDArray outFromNetwork) {
         double qOld = readMemory(inputNetwork, exp.action);
         bellmanErrorStep=calcBellmanErrorStep(exp.stepReturn, qOld);
-        bellmanErrorStep=MathUtils.clip(bellmanErrorStep,-BE_ERROR_MAX,BE_ERROR_MAX);
+        bellmanErrorStep= MathUtils.clip(bellmanErrorStep,-BE_ERROR_MAX,BE_ERROR_MAX);
         double alpha=exp.pExpRep.w*ALPHA;
         double y=qOld*1 + alpha * bellmanErrorStep;
         outFromNetwork.putScalar(0, exp.action,y);

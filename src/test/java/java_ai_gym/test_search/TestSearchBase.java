@@ -16,7 +16,7 @@ public class TestSearchBase {
 
     final int NOF_ACTIONS=3;
     SinglePong env=new SinglePong();
-    StateForSearch state = new StateForSearch(env.getTemplateState());
+    StateForSearch state = new StateForSearch((StateForSearch) env.getTemplateState());
     SinglePong.EnvironmentParameters p=env.parameters;
     Map<String,Integer> moves=new HashMap();
     PongAgentDPSearch agent= new PongAgentDPSearch(env,100,5);

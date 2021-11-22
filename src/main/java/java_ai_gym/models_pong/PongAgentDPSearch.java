@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 @Getter
 public class PongAgentDPSearch extends AgentSearch {
 
-    final int MAX_NOF_SELECTION_TRIES = 100;
+    final int MAX_NOF_SELECTION_TRIES = 10;
     final int ACTION_DEFAULT = 1;
 
     int searchDepthStep;
@@ -30,7 +30,9 @@ public class PongAgentDPSearch extends AgentSearch {
     }
 
     @Override
-    public SearchResults search(State startState) {
+    public SearchResults search(final StateForSearch startState) {
+
+        //StateForSearch startState=(StateForSearch) startState0;
 
         setUpVsb(startState);
         int nofActions = envParams.discreteActionsSpace.size();
@@ -42,7 +44,7 @@ public class PongAgentDPSearch extends AgentSearch {
         return null;
     }
 
-    public void setUpVsb(State startState) {
+    public void setUpVsb(StateForSearch startState) {
         this.startState = new StateForSearch(startState);
         int nofActions = envParams.discreteActionsSpace.size();
         this.startState.setIdDepthNofActions(this.startState.START_STATE_ID, 0, nofActions);

@@ -58,7 +58,7 @@ public abstract class AgentSearch {
         random = new Random();
     }
 
-    public abstract SearchResults search(final State startState);
+    public abstract SearchResults search(final StateForSearch startState);
 
     protected double calcSumRewards(List<StepReturn> stepReturnSequence) {
         return stepReturnSequence.stream()

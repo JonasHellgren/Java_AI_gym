@@ -1,5 +1,5 @@
 package java_ai_gym.models_mountaincar;
-
+import java_ai_gym.helpers.MathUtils;
 import java_ai_gym.models_common.*;
 import java_ai_gym.swing.*;
 
