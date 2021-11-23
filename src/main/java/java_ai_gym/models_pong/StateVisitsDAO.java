@@ -51,6 +51,10 @@ public class StateVisitsDAO implements  DAO<StateForSearch> {
         return stateBuffer.keySet();
     }
 
+    public void remove(String id) {
+        stateBuffer.remove(id);
+    }
+
     public String selectRandomStateId() {
 
         if (stateBuffer.size() == 0) {

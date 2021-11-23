@@ -54,7 +54,7 @@ public class StateForSearch extends State {
     }
 
     public String searchSpecificPropertiesAsString() {
-        return  "id = "+this.id+", depth = "+this.depth+", nofActions = "+this.nofActions;
+        return  "id = "+this.id+", depth = "+this.depth; //+", nofActions = "+this.nofActions;
     }
 
 }

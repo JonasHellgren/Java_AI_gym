@@ -1,5 +1,7 @@
 package java_ai_gym.models_pong;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -58,18 +60,47 @@ public class ExperiencesDAO implements DAO<StateExperience> {
         return expBuffer.keySet();
     }
 
+    public void removeExpItemWithNewStateId(String idNewState) {
+        /*
+        StateExperience exp= searchExperienceOfSteppingToState(id);
+        List<StateExperience> expList= getExperienceList(id);
+        System.out.println("id = "+id+", exp = "+exp);
+        int sizeBefore=expList.size();
+        expList.remove(exp);
+        int sizeAfter=expList.size();  */
+
+        for (String id:expBuffer.keySet()) {
+            List<StateExperience> expList=getExperienceList(id);
+            int sizeBefore=expList.size();
+            StateExperience exp = getStateExperience(idNewState, expList);
+            if (exp != null) {
+                expList.remove(exp);
+                //System.out.println("sizeBefore = "+sizeBefore+", sizeAfter = "+expList.size());
+            }
+        }
+
+
+    }
+
     public StateExperience searchExperienceOfSteppingToState(String idOfInterest) {
 
         for (String id:expBuffer.keySet()) {
             List<StateExperience> expList= getExperienceList(id);
-            for (StateExperience exp:expList) {
-                if (exp.idNewState.equals(idOfInterest)) {
-                    return exp;
-                }
-            }
+            StateExperience exp = getStateExperience(idOfInterest, expList);
+            if (exp != null) return exp;
         }
 
         return new StateExperience(0, 0, false,"");
+    }
+
+    @Nullable
+    private StateExperience getStateExperience(String idOfInterest, List<StateExperience> expList) {
+        for (StateExperience exp: expList) {
+            if (exp.idNewState.equals(idOfInterest)) {
+                return exp;
+            }
+        }
+        return null;
     }
 
     public int nofActionsTested(String id) {

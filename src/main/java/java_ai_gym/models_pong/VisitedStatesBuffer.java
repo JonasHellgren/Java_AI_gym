@@ -125,19 +125,65 @@ public class VisitedStatesBuffer {
         return depthMax;
     }
 
-    public VisitedStatesBuffer removeLooseNodesBelowDepth(int depth) {
+    public VisitedStatesBuffer removeLooseNodesBelowDepth(int depthMax) {
 
         VisitedStatesBuffer vsbTrimmed=new VisitedStatesBuffer(this);
+        int removedNodes=0;
 
-        for (depth=this.getMaxDepth()-1;depth>=0; depth--) {
-            List<StateForSearch> statesAtDepth=this.getAllStatesAtDepth(depth);
-            System.out.println("depth = "+depth);
-            System.out.println(statesAtDepth);
+        boolean nodeRemoved;
+        do {
+            nodeRemoved = false;
+            for (int depth = depthMax - 1; depth >= 0; depth--) {
+                List<StateForSearch> statesAtDepth = vsbTrimmed.getAllStatesAtDepth(depth);
+                //  System.out.println("depth = "+depth);
+                for (StateForSearch state : statesAtDepth) {
+                    // System.out.println("id = "+state.id+", exp length = "+getExperienceList(state.id).size());
+                    if (vsbTrimmed.getExperienceList(state.id).size() == 0) {
+                    //    logger.info("Found node to trim = " + state.id);
+                        nodeRemoved = true;
+                        removedNodes++;
+                        String idToRemove = state.id;
+                        vsbTrimmed.getStateVisitsDAO().remove(idToRemove);
+                        vsbTrimmed.getExperiencesDAO().removeExpItemWithNewStateId(idToRemove);
+                    }
+                }
+            }
+         }  while (nodeRemoved);
+        //} while (anyLooseNodeBelowDepth(vsbTrimmed,vsbTrimmed.getMaxDepth()));
 
+        if (anyLooseNodeBelowDepth(vsbTrimmed,depthMax)) {
+            logger.warning("removeLooseNodesBelowDepth failed, still loose node(s).");
         }
 
-        return  vsbTrimmed;
+        logger.info("Nof removed nodes are = "+ removedNodes);
 
+        return  vsbTrimmed;
+    }
+
+    public boolean anyLooseNodeBelowDepth(VisitedStatesBuffer vsb, int depthMax) {
+
+        /*
+        List<StateForSearch> allStates = vsb.getStateVisitsDAO().getAll();
+        List<StateForSearch> statesAtDepth = vsb.getAllStatesAtDepth(depth);
+        List<StateForSearch> statesBelowDepth=MathUtils.getDifferenceBetweenLists2(allStates,statesAtDepth);
+
+        for (StateForSearch state : statesBelowDepth) {
+            if (vsb.getExperienceList(state.id).size() == 0) {
+                logger.warning("Following node is loose and below depth "+state);
+                return true;
+            }
+        }  */
+
+        for (int depth = depthMax - 1; depth >= 0; depth--) {
+            List<StateForSearch> statesAtDepth = vsb.getAllStatesAtDepth(depth);
+            for (StateForSearch state : statesAtDepth) {
+                if (vsb.getExperienceList(state.id).size() == 0) {
+                    logger.warning("Following node is loose and below depth " + state);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 

@@ -21,7 +21,11 @@ Visualisera vsb - S e  archTreePanel  x
 auto expand tree  x
 stilar Jtree?  x
 rotera JTree? verkar ej gå x
-nytt träd för dp genom klippa lösa noder - removeLooseNodesBelowDepth
+nytt träd för dp genom klippa lösa noder - removeLooseNodesBelowDepth  x
+fixat bug i anyLooseNodeBelowDepth
+låte createVSB hantera depthMax
+nyt ut vsbTrimmed.getExperienceList(state.id).size() == 0
+
 
 Visualisera vsb - SearchTreeHistogramPanel
 fixa dubbla mathutils  x

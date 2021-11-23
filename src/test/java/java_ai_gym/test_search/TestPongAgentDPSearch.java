@@ -48,21 +48,28 @@ public class TestPongAgentDPSearch extends TestSearchBase {
     @Test
     public void CreateVSBSize10AndCutLooseNodes() {
 
-        final int NOF_STEPS=10;
+
+        final int NOF_STEPS=100;
         createVSB(NOF_STEPS);
+        final int MAX_DEPTH=5; //agent.getVsb().getMaxDepth();
 
         System.out.println(agent.getVsb());
         env.upperPLotPanel.createTreeFromVisitedStatesBuffer(agent.getVsb());
+        System.out.println("original VSB depth = "+agent.getVsb().getMaxDepth()+", original VSB nof nodes = "+agent.getVsb().getStateVisitsDAO().size());
         env.upperPLotPanel.expandTree();
 
-        VisitedStatesBuffer trimmedVSB= agent.getVsb().removeLooseNodesBelowDepth(3);
+        VisitedStatesBuffer trimmedVSB= agent.getVsb().removeLooseNodesBelowDepth(MAX_DEPTH);   //agent.getVsb().getMaxDepth()
         System.out.println(trimmedVSB);
+        System.out.println("trimmedVSB depth = "+trimmedVSB.getMaxDepth()+", trimmed VSB nof nodes = "+trimmedVSB.getStateVisitsDAO().size());
         env.middlePLotPanel.createTreeFromVisitedStatesBuffer(trimmedVSB);
         env.middlePLotPanel.expandTree();
 
+        if (trimmedVSB.anyLooseNodeBelowDepth(trimmedVSB,MAX_DEPTH)) {
+            TimeUnit.MILLISECONDS.sleep(15000);
+        }
         Assert.assertTrue(trimmedVSB.nofStates() <= agent.getVsb().nofStates());
-
-        TimeUnit.MILLISECONDS.sleep(25000);
+        Assert.assertFalse(trimmedVSB.anyLooseNodeBelowDepth(trimmedVSB,MAX_DEPTH));
+        TimeUnit.MILLISECONDS.sleep(10000);
 
     }
 

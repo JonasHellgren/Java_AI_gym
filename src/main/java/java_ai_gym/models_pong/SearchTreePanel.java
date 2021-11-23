@@ -7,8 +7,11 @@ import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class SearchTreePanel extends JPanel {
+
+    protected final static Logger logger = Logger.getLogger(SearchTreePanel.class.getName());
 
     DefaultMutableTreeNode root;
     JTree tree;
@@ -68,9 +71,9 @@ public class SearchTreePanel extends JPanel {
     @SneakyThrows
     public void createTreeFromVisitedStatesBuffer(VisitedStatesBuffer vsb) {
         this.vsb = vsb;
-        System.out.println("this.root = "+this.root);
+        System.out.println("vsb in createTreeFromVisitedStatesBuffer = "+vsb);
         addChildNodesRecursive(this.root, "start");
-        this.label.setText("Max depth = "+vsb.getMaxDepth());
+        this.label.setText("Max depth = "+vsb.getMaxDepth()+", nof nodes = "+vsb.getStateVisitsDAO().size());
 
         //https://stackoverflow.com/questions/5042937/jtree-line-style-and-nimbus
         tree.putClientProperty("JTree.lineStyle", "Angled");
@@ -86,6 +89,7 @@ public class SearchTreePanel extends JPanel {
 
     public void addChildNodesRecursive(DefaultMutableTreeNode parent, String parentId) {
         List<StateExperience> experiences = vsb.getExperienceList(parentId);
+
         for (StateExperience exp : experiences) {
             DefaultMutableTreeNode child = new DefaultMutableTreeNode(exp.idNewState);
             parent.add(child);

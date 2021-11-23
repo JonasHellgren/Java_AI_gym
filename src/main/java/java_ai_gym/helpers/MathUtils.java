@@ -40,4 +40,13 @@ public class MathUtils {
         return availableActions;  //listA-listB
     }
 
+    @NotNull
+    public static <T> List<T> getDifferenceBetweenLists2(List<T> listA, List<T> listB) {
+        List<T> availableActions= listA.stream()
+                .filter(element -> !listB.contains(element))
+                .collect(Collectors.toList());
+        return availableActions;  //listA-listB
+    }
+
+
 }
