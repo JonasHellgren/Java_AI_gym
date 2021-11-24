@@ -40,6 +40,3 @@ EnvironmentParametersAbstract, sub för tabular
 textBallStates
 textRacketStates
 
-    public boolean isNoActionTriedInStateWithId(String id) {
-        return (getExperienceList(id).size() == 0);
-    }

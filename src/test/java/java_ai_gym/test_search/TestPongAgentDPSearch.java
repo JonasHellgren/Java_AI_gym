@@ -48,15 +48,15 @@ public class TestPongAgentDPSearch extends TestSearchBase {
     @SneakyThrows
     @Test
     public void CreateSingleVSBSize10AndCutLooseNodes() {
-        final int NOF_STEPS = 100;
-        final int MAX_DEPTH = 5; //agent.getVsb().getMaxDepth();
+        final int NOF_STEPS = 10;
+        final int MAX_DEPTH = 3; //agent.getVsb().getMaxDepth();
 
         createVSB(NOF_STEPS);
         logger.info("VSB size = " + agent.getVsb().size());
         VisitedStatesBuffer trimmedVSB = agent.getVsb().removeLooseNodesBelowDepth(MAX_DEPTH);   //agent.getVsb().getMaxDepth()
         printVSBs(agent.getVsb(), trimmedVSB);
         copyVSBsToFrame(agent.getVsb(), trimmedVSB);
-        TimeUnit.MILLISECONDS.sleep(15000);
+        TimeUnit.MILLISECONDS.sleep(5000);
 
         Assert.assertTrue(trimmedVSB.nofStates() <= agent.getVsb().nofStates());
         Assert.assertFalse(trimmedVSB.anyLooseNodeBelowDepth(trimmedVSB, MAX_DEPTH));
@@ -66,7 +66,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
 
     @SneakyThrows
     @Test
-    public void CreateManyVSBSize10AndCutLooseNodes() {
+    public void CreateManyVSBSize100AndCutLooseNodes() {
         final int NOF_STEPS = 100;
         final int MAX_DEPTH = 5; //agent.getVsb().getMaxDepth();
 

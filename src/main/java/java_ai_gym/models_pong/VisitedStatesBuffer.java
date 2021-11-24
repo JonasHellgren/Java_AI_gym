@@ -135,11 +135,8 @@ public class VisitedStatesBuffer {
             nodeRemoved = false;
             for (int depth = depthMax - 1; depth >= 0; depth--) {
                 List<StateForSearch> statesAtDepth = vsbTrimmed.getAllStatesAtDepth(depth);
-                //  System.out.println("depth = "+depth);
                 for (StateForSearch state : statesAtDepth) {
-                    // System.out.println("id = "+state.id+", exp length = "+getExperienceList(state.id).size());
-                    if (vsbTrimmed.getExperienceList(state.id).size() == 0) {
-                    //    logger.info("Found node to trim = " + state.id);
+                    if (vsbTrimmed.isNoActionTriedInStateWithId(state.id)) {
                         nodeRemoved = true;
                         removedNodes++;
                         String idToRemove = state.id;
@@ -149,7 +146,6 @@ public class VisitedStatesBuffer {
                 }
             }
          }  while (nodeRemoved);
-        //} while (anyLooseNodeBelowDepth(vsbTrimmed,vsbTrimmed.getMaxDepth()));
 
         if (anyLooseNodeBelowDepth(vsbTrimmed,depthMax)) {
             logger.warning("removeLooseNodesBelowDepth failed, still loose node(s).");
@@ -161,23 +157,10 @@ public class VisitedStatesBuffer {
     }
 
     public boolean anyLooseNodeBelowDepth(VisitedStatesBuffer vsb, int depthMax) {
-
-        /*
-        List<StateForSearch> allStates = vsb.getStateVisitsDAO().getAll();
-        List<StateForSearch> statesAtDepth = vsb.getAllStatesAtDepth(depth);
-        List<StateForSearch> statesBelowDepth=MathUtils.getDifferenceBetweenLists2(allStates,statesAtDepth);
-
-        for (StateForSearch state : statesBelowDepth) {
-            if (vsb.getExperienceList(state.id).size() == 0) {
-                logger.warning("Following node is loose and below depth "+state);
-                return true;
-            }
-        }  */
-
         for (int depth = depthMax - 1; depth >= 0; depth--) {
             List<StateForSearch> statesAtDepth = vsb.getAllStatesAtDepth(depth);
             for (StateForSearch state : statesAtDepth) {
-                if (vsb.getExperienceList(state.id).size() == 0) {
+                if (isNoActionTriedInStateWithId(state.id)) {
                     logger.warning("Following node is loose and below depth " + state);
                     return true;
                 }
@@ -188,6 +171,10 @@ public class VisitedStatesBuffer {
 
     public int size() {
         return stateVisitsDAO.size();
+    }
+
+    public boolean isNoActionTriedInStateWithId(String id) {
+        return (getExperienceList(id).size() == 0);
     }
 
 
