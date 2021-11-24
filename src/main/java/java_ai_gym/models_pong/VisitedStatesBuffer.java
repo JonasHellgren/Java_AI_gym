@@ -186,6 +186,10 @@ public class VisitedStatesBuffer {
         return false;
     }
 
+    public int size() {
+        return stateVisitsDAO.size();
+    }
+
 
     @Override
     public String toString() {
