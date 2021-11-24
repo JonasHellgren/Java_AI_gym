@@ -15,11 +15,13 @@ public class TestSearchBase {
     static final Logger logger = Logger.getLogger(TestSearchBase.class.getName());
 
     final int NOF_ACTIONS=3;
+    final int TIME_BUDGET_MS=100;
+    final int SEARCH_DEPTH_STEP=5;
     SinglePong env=new SinglePong();
     StateForSearch state = new StateForSearch((StateForSearch) env.getTemplateState());
     SinglePong.EnvironmentParameters p=env.parameters;
     Map<String,Integer> moves=new HashMap();
-    PongAgentDPSearch agent= new PongAgentDPSearch(env,100,5);
+    PongAgentDPSearch agent= new PongAgentDPSearch(env,TIME_BUDGET_MS,SEARCH_DEPTH_STEP);
 
     public void setupMoves() {
 

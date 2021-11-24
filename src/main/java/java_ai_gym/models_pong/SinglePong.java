@@ -6,6 +6,8 @@ import java_ai_gym.swing.FrameEnvironment;
 import java_ai_gym.swing.Position2D;
 import java_ai_gym.swing.ScaleLinear;
 import org.jetbrains.annotations.NotNull;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,14 +21,11 @@ public class SinglePong extends EnvironmentForSearchAgent {
     public SinglePong.EnvironmentParameters parameters = this.new EnvironmentParameters();
 
     final int plotFrameWidth=gfxSettings.FRAME_WEIGHT*2;
-    final int plotFrameHeight=gfxSettings.FRAME_HEIGHT*4;
-    final int margin=gfxSettings.FRAME_MARGIN;
-    int panelHeight;
-    int panelWeight;
+    final int plotFrameHeight=gfxSettings.FRAME_HEIGHT*3;
     public PanelPongAnimation animationPanel;
     public SearchTreePanel upperPLotPanel;
     public SearchTreePanel middlePLotPanel;
-    public SearchTreePanel lowerPLotPanel;
+    public ChartPanel lowerPLotPanel;
 
     public JLabel labelBallPosX;
     public JLabel labelBallPosY;
@@ -197,44 +196,37 @@ public class SinglePong extends EnvironmentForSearchAgent {
 
         animationPanel =new PanelPongAnimation(xScaler, yScaler);
         animationPanel.setLayout(null);  //to enable tailor made position
-        //addLabelsToAnimationPanel();
         animationFrame.add(animationPanel);
         animationFrame.setVisible(true);
 
-        panelHeight=(int) ( plotFrameHeight-2*margin)/NOF_PLOT_PANELS;
-        panelWeight=(int) ( plotFrameWidth-2*margin);
-
-        System.out.println("panelHeight ="+panelHeight+", gfxSettings.FRAME_WEIGHT ="+gfxSettings.FRAME_HEIGHT);
-        plotFrame =new FrameEnvironment(plotFrameWidth, plotFrameHeight,"SinglePoooooooooong plots");
+        plotFrame =new FrameEnvironment(plotFrameWidth, plotFrameHeight,"SinglePong plots");
 
         upperPLotPanel =new SearchTreePanel();
-        defineTreePanel(upperPLotPanel, margin,"upperPLotPanel");
+        defineTreePanel(upperPLotPanel, "upperPLotPanel");
 
         middlePLotPanel =new SearchTreePanel();
-        defineTreePanel(middlePLotPanel, panelHeight+margin,"middlePLotPanel");
+        defineTreePanel(middlePLotPanel, "middlePLotPanel");
 
-
-        lowerPLotPanel =new SearchTreePanel();
-        lowerPLotPanel.setBackground(Color.lightGray);
-        lowerPLotPanel.setBounds(margin,panelHeight*2+margin, panelWeight-margin,panelHeight);
-        lowerPLotPanel.createLabel(panelWeight,panelHeight,"lowerPLotPanel");
+        SearchTreeHistogramPanelCreator searchTreeHistogramPanelCreator =
+                new SearchTreeHistogramPanelCreator();
+        lowerPLotPanel = searchTreeHistogramPanelCreator.createChart();
 
         plotFrame.add(upperPLotPanel);
         plotFrame.add(middlePLotPanel);
         plotFrame.add(lowerPLotPanel);
-        plotFrame.setLayout(null);   //makes the label to not occupy all frame
 
+        plotFrame.setLayout(new GridLayout(3,1));
         plotFrame.setVisible(true);
 
     }
 
-    private void defineTreePanel(SearchTreePanel panel, int yPos, String title) {
+    private void defineTreePanel(SearchTreePanel panel,String title) {
         panel.setBackground(Color.lightGray);
-        panel.setBounds(margin, yPos, panelWeight - margin, panelHeight);
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
-        panel.createLabel(panelWeight, panelHeight,title);
-        panel.createTreeWithOnlyRootNode(panelWeight, panelHeight,title);
+        panel.createLabel(title);
+        panel.createTreeWithOnlyRootNode(plotFrameWidth, plotFrameHeight,title);
     }
+
 
 
 }

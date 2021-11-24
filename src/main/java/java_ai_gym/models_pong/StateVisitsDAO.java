@@ -55,6 +55,10 @@ public class StateVisitsDAO implements  DAO<StateForSearch> {
         stateBuffer.remove(id);
     }
 
+    public boolean contains(String id) {
+        return stateBuffer.containsKey(id);
+    }
+
     public String selectRandomStateId() {
 
         if (stateBuffer.size() == 0) {

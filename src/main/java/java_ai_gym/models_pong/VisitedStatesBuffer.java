@@ -59,7 +59,11 @@ public class VisitedStatesBuffer {
     }
 
     public void addState(String id, StateForSearch state) {
-        stateVisitsDAO.add(id, state);
+        if (stateVisitsDAO.contains(id)) {
+            logger.warning("addState: Trying to add already existing state id");
+        } else {
+            stateVisitsDAO.add(id, state);
+        }
     }
 
     public List<StateForSearch> getAllStatesAtDepth(int depth) {
@@ -75,9 +79,13 @@ public class VisitedStatesBuffer {
 
     public void addNewStateAndExperienceFromStep(String idFromState, int action, StepReturn stepReturn) {
         String newId = idFromState + "." + action;
-        addState(newId, (StateForSearch) stepReturn.state);
-        StateExperience stateExperience = new StateExperience(action, stepReturn.reward, stepReturn.termState, newId);
-        addExperience(idFromState, stateExperience);
+        if (stateVisitsDAO.contains(newId)) {
+            logger.warning("addNewStateAndExperienceFromStep: Trying to add already existing experience");
+        } else {
+            addState(newId, (StateForSearch) stepReturn.state);
+            StateExperience stateExperience = new StateExperience(action, stepReturn.reward, stepReturn.termState, newId);
+            addExperience(idFromState, stateExperience);
+        }
     }
 
     public void addExperience(String id, StateExperience exp) {
@@ -125,15 +133,19 @@ public class VisitedStatesBuffer {
         return depthMax;
     }
 
-    public VisitedStatesBuffer removeLooseNodesBelowDepth(int depthMax) {
+    public VisitedStatesBuffer removeLooseNodesBelowDepth(int searchDepth) {
+
+        if (getMaxDepth()<searchDepth) {
+            logger.warning("removeLooseNodesBelowDepth failed, cant remove below non existing depth: searchDepth= "+searchDepth+", maxDepth = "+getMaxDepth());
+            return new VisitedStatesBuffer(this);
+        }
 
         VisitedStatesBuffer vsbTrimmed=new VisitedStatesBuffer(this);
         int removedNodes=0;
-
         boolean nodeRemoved;
         do {
             nodeRemoved = false;
-            for (int depth = depthMax - 1; depth >= 0; depth--) {
+            for (int depth = searchDepth - 1; depth >= 0; depth--) {
                 List<StateForSearch> statesAtDepth = vsbTrimmed.getAllStatesAtDepth(depth);
                 for (StateForSearch state : statesAtDepth) {
                     if (vsbTrimmed.isNoActionTriedInStateWithId(state.id)) {
@@ -147,7 +159,7 @@ public class VisitedStatesBuffer {
             }
          }  while (nodeRemoved);
 
-        if (anyLooseNodeBelowDepth(vsbTrimmed,depthMax)) {
+        if (anyLooseNodeBelowDepth(vsbTrimmed,searchDepth)) {
             logger.warning("removeLooseNodesBelowDepth failed, still loose node(s).");
         }
 

@@ -20,8 +20,6 @@ public class SearchTreePanel extends JPanel {
 
     public SearchTreePanel() {
         this.tree = tree;
-
-
     }
 
 
@@ -58,10 +56,10 @@ public class SearchTreePanel extends JPanel {
 
     }
 
-    public void createLabel(int panelW, int panelH, String text) {
+    public void createLabel(String text) {
 
         this.label = new JLabel();
-        this.label.setBounds(panelW / 2, 20, 100, 20);
+        this.label.setBounds(100, 20, 100, 20);
         this.label.setForeground(Color.CYAN);
         this.label.setVisible(true);
         this.label.setText(text);

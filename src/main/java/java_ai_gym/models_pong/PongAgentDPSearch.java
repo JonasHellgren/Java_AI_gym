@@ -3,18 +3,21 @@ package java_ai_gym.models_pong;
 import java_ai_gym.helpers.MathUtils;
 import java_ai_gym.models_common.*;
 import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
+@Setter
 public class PongAgentDPSearch extends AgentSearch {
 
-    final int MAX_NOF_SELECTION_TRIES = 10;
+    final int MAX_NOF_SELECTION_TRIES = 100;
     final int ACTION_DEFAULT = 1;
 
     int searchDepthStep;
+    int maxDepth;
     VisitedStatesBuffer vsb;
     //StateForSearch state;
     StateForSearch startState;
@@ -24,6 +27,7 @@ public class PongAgentDPSearch extends AgentSearch {
                              int searchDepthStep) {
         super(timeBudget, env, env.parameters);
         this.searchDepthStep = searchDepthStep;
+        this.maxDepth = searchDepthStep;
         //this.state = new StateForSearch(env.getTemplateState());
 
 
@@ -59,12 +63,15 @@ public class PongAgentDPSearch extends AgentSearch {
             List<Integer> grossActions=envParams.discreteActionsSpace;
             List<Integer> testedActions= vsb.testedActions(selectState.id);
             List<Integer> nonTestedActions = MathUtils.getDifferenceBetweenLists(grossActions, testedActions);
-            action = chooseRandomAction(nonTestedActions);
+            if (nonTestedActions.isEmpty()) {
+                action = ACTION_DEFAULT;
+                logger.warning("nonTestedActions is empty");
+            } else {
+                action = chooseRandomAction(nonTestedActions);
+            }
         }
         return action;
     }
-
-
 
     public StateForSearch selectState() {
         StateForSearch selectedState;
@@ -77,14 +84,14 @@ public class PongAgentDPSearch extends AgentSearch {
                 break;
             }
             i++;
-        } while (isTerminalStateOrAllActionsTested(selectedState));
-
-        return selectedState;
+        } while (isTerminalStateOrAllActionsTestedOrIsAtMaxDepth(selectedState));
+      return selectedState;
     }
 
-    public boolean isTerminalStateOrAllActionsTested(StateForSearch state) {
+    public boolean isTerminalStateOrAllActionsTestedOrIsAtMaxDepth(StateForSearch state) {
         StateExperience exp = vsb.searchExperienceOfSteppingToState(state.id);
         int nofActionsTested = vsb.nofActionsTested(state.id);
-        return (exp.termState || (nofActionsTested == state.nofActions));
+        boolean isAtMaxDepth=state.depth==maxDepth;
+        return (exp.termState || (nofActionsTested == state.nofActions) || isAtMaxDepth);
     }
 }
