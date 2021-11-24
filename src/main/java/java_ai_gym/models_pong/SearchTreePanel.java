@@ -19,7 +19,7 @@ public class SearchTreePanel extends JPanel {
     VisitedStatesBuffer vsb;
 
     public SearchTreePanel() {
-        this.tree = tree;
+     //   this.tree = tree;
     }
 
 

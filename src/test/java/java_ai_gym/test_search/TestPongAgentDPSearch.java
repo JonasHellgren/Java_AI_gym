@@ -98,6 +98,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
         env.upperPLotPanel.expandTree();
         env.middlePLotPanel.createTreeFromVisitedStatesBuffer(trimmedVSB);
         env.middlePLotPanel.expandTree();
+        env.createHistogramFromVisitedStatesBuffer(vsb,agent.getEvaluatedSearchDepths());
     }
 
     private void printVSBs(VisitedStatesBuffer vsb, VisitedStatesBuffer trimmedVSB) {
@@ -110,7 +111,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
     private void createVSB(int nofSteps, int maxDepth) {
 
         agent.setUpVsb(state);
-        agent.setMaxDepth(maxDepth);
+        agent.setSearchDepth(maxDepth);
         Assert.assertEquals(1, agent.getVsb().nofStates());
         System.out.println(agent.getVsb());
         int nofActions = p.discreteActionsSpace.size();
@@ -123,6 +124,8 @@ public class TestPongAgentDPSearch extends TestSearchBase {
             stateNew.setDepthNofActions(selectedState.depth + 1, nofActions);
             agent.getVsb().addNewStateAndExperienceFromStep(selectedState.id, action, stepReturn);
         }
+
+        agent.addSearchDepth(maxDepth);
 
     }
 

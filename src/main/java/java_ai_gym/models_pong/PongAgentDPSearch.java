@@ -4,10 +4,9 @@ import java_ai_gym.helpers.MathUtils;
 import java_ai_gym.models_common.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -17,7 +16,8 @@ public class PongAgentDPSearch extends AgentSearch {
     final int ACTION_DEFAULT = 1;
 
     int searchDepthStep;
-    int maxDepth;
+    int searchDepth;
+    List<Integer> evaluatedSearchDepths;
     VisitedStatesBuffer vsb;
     //StateForSearch state;
     StateForSearch startState;
@@ -27,11 +27,13 @@ public class PongAgentDPSearch extends AgentSearch {
                              int searchDepthStep) {
         super(timeBudget, env, env.parameters);
         this.searchDepthStep = searchDepthStep;
-        this.maxDepth = searchDepthStep;
+        this.searchDepth = searchDepthStep;
+        this.evaluatedSearchDepths=new ArrayList<>();
         //this.state = new StateForSearch(env.getTemplateState());
 
 
     }
+
 
     @Override
     public SearchResults search(final StateForSearch startState) {
@@ -46,6 +48,10 @@ public class PongAgentDPSearch extends AgentSearch {
         int explorationFactor = 0;
 
         return null;
+    }
+
+    public void addSearchDepth(int searchDepth) {
+        evaluatedSearchDepths.add(searchDepth);
     }
 
     public void setUpVsb(StateForSearch startState) {
@@ -91,7 +97,7 @@ public class PongAgentDPSearch extends AgentSearch {
     public boolean isTerminalStateOrAllActionsTestedOrIsAtMaxDepth(StateForSearch state) {
         StateExperience exp = vsb.searchExperienceOfSteppingToState(state.id);
         int nofActionsTested = vsb.nofActionsTested(state.id);
-        boolean isAtMaxDepth=state.depth==maxDepth;
+        boolean isAtMaxDepth=state.depth== searchDepth;
         return (exp.termState || (nofActionsTested == state.nofActions) || isAtMaxDepth);
     }
 }

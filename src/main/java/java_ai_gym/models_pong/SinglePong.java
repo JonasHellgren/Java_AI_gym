@@ -12,6 +12,7 @@ import org.jfree.chart.JFreeChart;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Logger;
 
 public class SinglePong extends EnvironmentForSearchAgent {
@@ -26,6 +27,7 @@ public class SinglePong extends EnvironmentForSearchAgent {
     public SearchTreePanel upperPLotPanel;
     public SearchTreePanel middlePLotPanel;
     public ChartPanel lowerPLotPanel;
+    SearchTreeHistogramPanelCreator searchTreeHistogramPanelCreator;
 
     public JLabel labelBallPosX;
     public JLabel labelBallPosY;
@@ -207,8 +209,7 @@ public class SinglePong extends EnvironmentForSearchAgent {
         middlePLotPanel =new SearchTreePanel();
         defineTreePanel(middlePLotPanel, "middlePLotPanel");
 
-        SearchTreeHistogramPanelCreator searchTreeHistogramPanelCreator =
-                new SearchTreeHistogramPanelCreator();
+        searchTreeHistogramPanelCreator=   new SearchTreeHistogramPanelCreator();
         lowerPLotPanel = searchTreeHistogramPanelCreator.createChart();
 
         plotFrame.add(upperPLotPanel);
@@ -227,6 +228,13 @@ public class SinglePong extends EnvironmentForSearchAgent {
         panel.createTreeWithOnlyRootNode(plotFrameWidth, plotFrameHeight,title);
     }
 
+    public  void createHistogramFromVisitedStatesBuffer(VisitedStatesBuffer vsb, List<Integer> evaluatedSearchDepths) {
+        //lowerPLotPanel = searchTreeHistogramPanelCreator.createChart();
+        lowerPLotPanel = searchTreeHistogramPanelCreator.createHistogramFromVisitedStatesBuffer(vsb,evaluatedSearchDepths);
+        //plotFrame.add(lowerPLotPanel);
+
+        System.out.println("createHistogramFromVisitedStatesBuffer");
+    }
 
 
 }
