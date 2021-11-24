@@ -39,8 +39,8 @@ public class TestPongAgentDPSearch extends TestSearchBase {
         createVSB(NOF_STEPS,MAX_DEPTH);
 
         System.out.println(agent.getVsb());
-        env.upperPLotPanel.createTreeFromVisitedStatesBuffer(agent.getVsb());
-        env.upperPLotPanel.expandTree();
+        env.upperTreePanel.createTreeFromVisitedStatesBuffer(agent.getVsb());
+        env.upperTreePanel.expandTree();
         Assert.assertEquals(NOF_STEPS + 1, agent.getVsb().nofStates());
         TimeUnit.MILLISECONDS.sleep(25000);
 
@@ -55,7 +55,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
         createVSB(NOF_STEPS,MAX_DEPTH);
         logger.info("VSB size = " + agent.getVsb().size());
         VisitedStatesBuffer trimmedVSB = agent.getVsb().removeLooseNodesBelowDepth(MAX_DEPTH);   //agent.getVsb().getMaxDepth()
-        printVSBs(agent.getVsb(), trimmedVSB);
+       // printVSBs(agent.getVsb(), trimmedVSB);
         copyVSBsToFrame(agent.getVsb(), trimmedVSB);
         TimeUnit.MILLISECONDS.sleep(15000);
 
@@ -94,11 +94,12 @@ public class TestPongAgentDPSearch extends TestSearchBase {
     }
 
     private void copyVSBsToFrame(VisitedStatesBuffer vsb, VisitedStatesBuffer trimmedVSB) {
-        env.upperPLotPanel.createTreeFromVisitedStatesBuffer(vsb);
-        env.upperPLotPanel.expandTree();
-        env.middlePLotPanel.createTreeFromVisitedStatesBuffer(trimmedVSB);
-        env.middlePLotPanel.expandTree();
+        env.upperTreePanel.createTreeFromVisitedStatesBuffer(vsb);
+        env.upperTreePanel.expandTree();
+        env.lowerTreePanel.createTreeFromVisitedStatesBuffer(trimmedVSB);
+        env.lowerTreePanel.expandTree();
         env.createHistogramFromVisitedStatesBuffer(vsb,agent.getEvaluatedSearchDepths());
+        env.createHistogramFromVisitedStatesBufferFromStatesPerDepth(vsb,agent.getEvaluatedSearchDepths());
     }
 
     private void printVSBs(VisitedStatesBuffer vsb, VisitedStatesBuffer trimmedVSB) {

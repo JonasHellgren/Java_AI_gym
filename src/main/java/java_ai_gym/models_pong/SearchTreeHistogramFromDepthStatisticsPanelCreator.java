@@ -13,9 +13,9 @@ import javax.swing.*;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class SearchTreeHistogramPanelCreator {
+public class SearchTreeHistogramFromDepthStatisticsPanelCreator {
 
-    protected final static Logger logger = Logger.getLogger(SearchTreeHistogramPanelCreator.class.getName());
+    protected final static Logger logger = Logger.getLogger(SearchTreeHistogramFromDepthStatisticsPanelCreator.class.getName());
 
     @ToString
     public class DepthStatistics {
@@ -34,10 +34,9 @@ public class SearchTreeHistogramPanelCreator {
     JFreeChart chart;
     DepthStatistics depthStatistics;
 
-    public SearchTreeHistogramPanelCreator() {
+    public SearchTreeHistogramFromDepthStatisticsPanelCreator() {
 
     }
-
 
     public ChartPanel createChart() {
         createDummyDataset();
@@ -47,9 +46,9 @@ public class SearchTreeHistogramPanelCreator {
     @NotNull
     private ChartPanel createChartPanel() {
         chart = ChartFactory.createBarChart(
-                "Bar Chart Example", //Chart Title
-                "Year", // Category axis
-                "Population in Million", // Value axis
+                "Bar Chart", //Chart Title
+                "Depth", // Category axis
+                "Number of", // Value axis
                 dataset,
                 PlotOrientation.VERTICAL,
                 true, true, false
@@ -58,7 +57,7 @@ public class SearchTreeHistogramPanelCreator {
         return panel;
     }
 
-    private void createDummyDataset() {
+    private void createDummyDataset() {  //TODO remove
         // Population in 2005
         dataset.addValue(10, "USA", "2005");
         dataset.addValue(15, "India", "2005");
@@ -79,13 +78,13 @@ public class SearchTreeHistogramPanelCreator {
 
     }
 
-    public  ChartPanel createHistogramFromVisitedStatesBuffer(VisitedStatesBuffer vsb, List<Integer> evaluatedSearchDepths) {
+    public  ChartPanel createHistogramFromVisitedStatesBufferDepthStatistics(VisitedStatesBuffer vsb, List<Integer> evaluatedSearchDepths) {
         this.vsb=vsb;
-        createDataset(evaluatedSearchDepths);
+        createDatasetForDepthStatistics(evaluatedSearchDepths);
         return createChartPanel();
     }
 
-    private void createDataset(List<Integer> evaluatedSearchDepths) {
+    private void createDatasetForDepthStatistics(List<Integer> evaluatedSearchDepths) {
         dataset.clear();
         int prevDepth=0;
         for (int searchDepth:evaluatedSearchDepths) {

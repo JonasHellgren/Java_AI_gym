@@ -7,7 +7,6 @@ import java_ai_gym.swing.Position2D;
 import java_ai_gym.swing.ScaleLinear;
 import org.jetbrains.annotations.NotNull;
 import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,10 +23,13 @@ public class SinglePong extends EnvironmentForSearchAgent {
     final int plotFrameWidth=gfxSettings.FRAME_WEIGHT*2;
     final int plotFrameHeight=gfxSettings.FRAME_HEIGHT*3;
     public PanelPongAnimation animationPanel;
-    public SearchTreePanel upperPLotPanel;
-    public SearchTreePanel middlePLotPanel;
-    public ChartPanel lowerPLotPanel;
-    SearchTreeHistogramPanelCreator searchTreeHistogramPanelCreator;
+
+    public SearchTreePanel upperTreePanel;
+    public SearchTreePanel lowerTreePanel;
+    public ChartPanel upperChartPanel;
+    public ChartPanel lowerChartPanel;
+    SearchTreeHistogramFromDepthStatisticsPanelCreator upperTreeHistogramPanelCreator;
+    SearchTreeHistogramFromStatesPerDepthPanelCreator lowerTreeHistogramPanelCreator;
 
     public JLabel labelBallPosX;
     public JLabel labelBallPosY;
@@ -203,20 +205,23 @@ public class SinglePong extends EnvironmentForSearchAgent {
 
         plotFrame =new FrameEnvironment(plotFrameWidth, plotFrameHeight,"SinglePong plots");
 
-        upperPLotPanel =new SearchTreePanel();
-        defineTreePanel(upperPLotPanel, "upperPLotPanel");
+        upperTreePanel =new SearchTreePanel();
+        defineTreePanel(upperTreePanel, "upperPLotPanel");
 
-        middlePLotPanel =new SearchTreePanel();
-        defineTreePanel(middlePLotPanel, "middlePLotPanel");
+        lowerTreePanel =new SearchTreePanel();
+        defineTreePanel(lowerTreePanel, "middlePLotPanel");
 
-        searchTreeHistogramPanelCreator=   new SearchTreeHistogramPanelCreator();
-        lowerPLotPanel = searchTreeHistogramPanelCreator.createChart();
+        upperTreeHistogramPanelCreator =   new SearchTreeHistogramFromDepthStatisticsPanelCreator();
+        upperChartPanel = upperTreeHistogramPanelCreator.createChart();
+        lowerTreeHistogramPanelCreator=   new SearchTreeHistogramFromStatesPerDepthPanelCreator();
+        lowerChartPanel = lowerTreeHistogramPanelCreator.createChartPanel();
 
-        plotFrame.add(upperPLotPanel);
-        plotFrame.add(middlePLotPanel);
-        plotFrame.add(lowerPLotPanel);
+        plotFrame.add(upperTreePanel);
+        plotFrame.add(lowerTreePanel);
+        plotFrame.add(upperChartPanel);
+        plotFrame.add(lowerChartPanel);
 
-        plotFrame.setLayout(new GridLayout(3,1));
+        plotFrame.setLayout(new GridLayout(2,2));
         plotFrame.setVisible(true);
 
     }
@@ -229,12 +234,13 @@ public class SinglePong extends EnvironmentForSearchAgent {
     }
 
     public  void createHistogramFromVisitedStatesBuffer(VisitedStatesBuffer vsb, List<Integer> evaluatedSearchDepths) {
-        //lowerPLotPanel = searchTreeHistogramPanelCreator.createChart();
-        lowerPLotPanel = searchTreeHistogramPanelCreator.createHistogramFromVisitedStatesBuffer(vsb,evaluatedSearchDepths);
-        //plotFrame.add(lowerPLotPanel);
-
+        upperChartPanel = upperTreeHistogramPanelCreator.createHistogramFromVisitedStatesBufferDepthStatistics(vsb,evaluatedSearchDepths);
         System.out.println("createHistogramFromVisitedStatesBuffer");
     }
 
+    public  void createHistogramFromVisitedStatesBufferFromStatesPerDepth(VisitedStatesBuffer vsb, List<Integer> evaluatedSearchDepths) {
+        upperChartPanel = lowerTreeHistogramPanelCreator.createHistogramFromStatesPerDepthPanelCreator(vsb);
+        System.out.println("createHistogramFromVisitedStatesBufferFromStatesPerDepth");
+    }
 
 }

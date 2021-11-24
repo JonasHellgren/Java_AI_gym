@@ -31,6 +31,7 @@ nyt ut vsbTrimmed.getExperienceList(state.id).size() == 0  x
 låta createVSB hantera depthMax  x
 Visualisera vsb - SearchTreeHistogramPanel  x
 printa/visa antal noder per depth
+visar inte trimmas i plot
 search method
 hur använda DP klass i annat projekt/modul
 

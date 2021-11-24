@@ -69,7 +69,6 @@ public class SearchTreePanel extends JPanel {
     @SneakyThrows
     public void createTreeFromVisitedStatesBuffer(VisitedStatesBuffer vsb) {
         this.vsb = vsb;
-        System.out.println("vsb in createTreeFromVisitedStatesBuffer = "+vsb);
         addChildNodesRecursive(this.root, "start");
         this.label.setText("Max depth = "+vsb.getMaxDepth()+", nof nodes = "+vsb.getStateVisitsDAO().size());
 
