@@ -27,12 +27,15 @@ fixa dubbla mathutils  x
 TestPongAgentDPSearch x
 chooseAction, bara icke testade actions  x
 
-nyt ut vsbTrimmed.getExperienceList(state.id).size() == 0  x
+byt ut vsbTrimmed.getExperienceList(state.id).size() == 0  x
 låta createVSB hantera depthMax  x
 Visualisera vsb - SearchTreeHistogramPanel  x
 printa/visa antal noder per depth
-visar inte trimmas i plot
+visar inte trimmas i plot  x
+många panels med varsin chart  x
+HistogramPanel klass
 search method
+exp factor
 hur använda DP klass i annat projekt/modul
 
 när tid:
