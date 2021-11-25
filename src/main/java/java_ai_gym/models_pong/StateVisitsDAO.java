@@ -1,5 +1,6 @@
 package java_ai_gym.models_pong;
 
+import java_ai_gym.helpers.MathUtils;
 import java_ai_gym.models_common.StateForSearch;
 
 import java.util.*;
@@ -10,10 +11,11 @@ public class StateVisitsDAO implements  DAO<StateForSearch> {
     protected final static Logger logger = Logger.getLogger(StateVisitsDAO.class.getName());
 
     Map<String, StateForSearch> stateBuffer;   //<id,stat>
-
+    List<String> idList;
 
     public StateVisitsDAO() {
         stateBuffer = new HashMap<>();
+        idList = new ArrayList<>();
     }
 
     @Override
@@ -44,6 +46,7 @@ public class StateVisitsDAO implements  DAO<StateForSearch> {
     public void add(String id, StateForSearch item) {
         item.id=id;
         stateBuffer.put(id, item);
+        idList.add(id);
     }
 
     @Override
@@ -59,7 +62,7 @@ public class StateVisitsDAO implements  DAO<StateForSearch> {
         return stateBuffer.containsKey(id);
     }
 
-    public String selectRandomStateId() {
+    public String selectRandomStateIdSLOW() {
 
         if (stateBuffer.size() == 0) {
             logger.warning("Empty buffer");
@@ -71,6 +74,17 @@ public class StateVisitsDAO implements  DAO<StateForSearch> {
 
     static <E> E getRandomSetElement(Set<E> set) {
         return set.stream().skip(new Random().nextInt(set.size())).findFirst().orElse(null);
+    }
+
+    public String selectRandomStateId2() {
+
+        if (stateBuffer.size() == 0) {
+            logger.warning("Empty buffer");
+            return "";
+        } else {
+            //MathUtils.randInt(0,idList.size());
+            return idList.get(MathUtils.randInt(0,idList.size()-1));
+        }
     }
 
 

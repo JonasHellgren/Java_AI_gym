@@ -16,12 +16,14 @@ public class VisitedStatesBuffer {
 
     StateVisitsDAO stateVisitsDAO;
     ExperiencesDAO experiencesDAO1;
+    SetOfTerminalStatesDAO setOfTerminalStatesDAO;
 
     protected final Random random;
 
     public VisitedStatesBuffer() {
         stateVisitsDAO = new StateVisitsDAO();
         experiencesDAO1 = new ExperiencesDAO();
+        setOfTerminalStatesDAO = new SetOfTerminalStatesDAO();
         random = new Random();
     }
 
@@ -48,11 +50,11 @@ public class VisitedStatesBuffer {
     }
 
     public StateForSearch selectRandomState() {
-        return getState(stateVisitsDAO.selectRandomStateId());
+        return getState(stateVisitsDAO.selectRandomStateId2());
     }
 
     public String selectRandomStateId() {
-      return stateVisitsDAO.selectRandomStateId();
+      return stateVisitsDAO.selectRandomStateId2();
     }
 
     public int nofStates() {
@@ -81,11 +83,12 @@ public class VisitedStatesBuffer {
     public void addNewStateAndExperienceFromStep(String idFromState, int action, StepReturn stepReturn) {
         String newId = idFromState + "." + action;
         if (stateVisitsDAO.contains(newId)) {
-         //   logger.warning("addNewStateAndExperienceFromStep: Trying to add already existing experience");
+            logger.warning("addNewStateAndExperienceFromStep: Trying to add already existing experience");
         } else {
             addState(newId, (StateForSearch) stepReturn.state);
             StateExperience stateExperience = new StateExperience(action, stepReturn.reward, stepReturn.termState, newId);
             addExperience(idFromState, stateExperience);
+            setOfTerminalStatesDAO.addIdIfTerminal(newId,stepReturn);
         }
     }
 
@@ -112,6 +115,10 @@ public class VisitedStatesBuffer {
 
     public StateExperience searchExperienceOfSteppingToState(String id) {
        return  experiencesDAO1.searchExperienceOfSteppingToState(id);
+    }
+
+    public boolean isExperienceOfStateTerminal(String id) {
+        return setOfTerminalStatesDAO.isTerminal(id);
     }
 
     public int nofActionsTested(String id) {

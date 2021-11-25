@@ -59,20 +59,20 @@ public class PongAgentDPSearch extends AgentSearch {
         while (timeNotExceeded(startTime) && nofSteps<2500000) {  //TODO remove nofSteps
             long startTime1 = System.nanoTime();  //starting time, long <=> minimum value of 0
             StateForSearch selectedState = this.selectState();
-            System.out.println("selectState time = "+(System.nanoTime()-startTime1)/1000);
+            //System.out.println("selectState time = "+(System.nanoTime()-startTime1)/1000);
 
 
             int action = this.chooseAction(selectedState);
             startTime1 = System.nanoTime();  //starting time, long <=> minimum value of 0
             StepReturn stepReturn = env.step(action, selectedState);
-            System.out.println("step time = "+(System.nanoTime()-startTime1)/1000);
+           // System.out.println("step time = "+(System.nanoTime()-startTime1)/1000);
             StateForSearch stateNew = (StateForSearch) stepReturn.state;
 
             stateNew.setDepthNofActions(selectedState.depth + 1, nofActions);
 
              startTime1 = System.nanoTime();  //starting time, long <=> minimum value of 0
            vsb.addNewStateAndExperienceFromStep(selectedState.id, action, stepReturn);
-            System.out.println("add time = "+(System.nanoTime()-startTime1)/1000);
+           // System.out.println("add time = "+(System.nanoTime()-startTime1)/1000);
 
 /*
             if (nofSteps % K ==0) {
@@ -143,7 +143,7 @@ public class PongAgentDPSearch extends AgentSearch {
     public StateForSearch selectState() {
         StateForSearch selectedState;
         int i = 0;
-       // selectedState = vsb.selectRandomState();
+        //selectedState = vsb.selectRandomState();
 
         do {
             selectedState = vsb.selectRandomState();
@@ -155,16 +155,19 @@ public class PongAgentDPSearch extends AgentSearch {
             i++;
         } while (isTerminalStateOrAllActionsTestedOrIsAtSearchDepth(selectedState));
 
-        /*   */
       return selectedState;
     }
 
     public boolean isTerminalStateOrAllActionsTestedOrIsAtSearchDepth(StateForSearch state) {
-       // StateExperience exp = vsb.searchExperienceOfSteppingToState(state.id);
-      //  int nofActionsTested = vsb.nofActionsTested(state.id);
+
+   //     long startTime1 = System.nanoTime();  //starting time, long <=> minimum value of 0
+   //     StateExperience exp = vsb.searchExperienceOfSteppingToState(state.id);
+        boolean isTerminal=vsb.isExperienceOfStateTerminal(state.id);
+   //     System.out.println("searchExperienceOfSteppingToState time = "+(System.nanoTime()-startTime1)/1000);
+        int nofActionsTested = vsb.nofActionsTested(state.id);
         boolean isAtSearchDepth=(state.depth== searchDepth);
-     //   return (exp.termState || (nofActionsTested == state.nofActions) || isAtSearchDepth);
-       return (false || false || isAtSearchDepth);
+      //  return (exp.termState || (nofActionsTested == state.nofActions) || isAtSearchDepth);
+        return (isTerminal || (nofActionsTested == state.nofActions) || isAtSearchDepth);
     }
 
 
