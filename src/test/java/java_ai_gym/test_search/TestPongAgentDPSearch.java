@@ -99,7 +99,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
         env.lowerTreePanel.createTreeFromVisitedStatesBuffer(trimmedVSB);
         env.lowerTreePanel.expandTree();
         env.createHistogramFromVisitedStatesBuffer(vsb,agent.getEvaluatedSearchDepths());
-        env.createHistogramFromVisitedStatesBufferFromStatesPerDepth(vsb,agent.getEvaluatedSearchDepths());
+       env.createHistogramFromVisitedStatesBufferFromStatesPerDepth(vsb,agent.getEvaluatedSearchDepths());
     }
 
     private void printVSBs(VisitedStatesBuffer vsb, VisitedStatesBuffer trimmedVSB) {

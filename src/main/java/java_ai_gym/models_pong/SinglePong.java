@@ -6,7 +6,7 @@ import java_ai_gym.swing.FrameEnvironment;
 import java_ai_gym.swing.Position2D;
 import java_ai_gym.swing.ScaleLinear;
 import org.jetbrains.annotations.NotNull;
-import org.jfree.chart.ChartPanel;
+import org.jfree.data.category.DefaultCategoryDataset;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,8 +26,9 @@ public class SinglePong extends EnvironmentForSearchAgent {
 
     public SearchTreePanel upperTreePanel;
     public SearchTreePanel lowerTreePanel;
-    public ChartPanel upperChartPanel;
-    public ChartPanel lowerChartPanel;
+    public HistogramPanel upperChartPanel;
+    public HistogramPanel lowerChartPanel;
+    HistogramDataSetGenerator chds;
     SearchTreeHistogramFromDepthStatisticsPanelCreator upperTreeHistogramPanelCreator;
     SearchTreeHistogramFromStatesPerDepthPanelCreator lowerTreeHistogramPanelCreator;
 
@@ -86,6 +87,7 @@ public class SinglePong extends EnvironmentForSearchAgent {
         createVariablesInState(getTemplateState());
         setupFramesAndPanels();
         animationPanel.repaint();
+
     }
 
     @Override
@@ -211,10 +213,20 @@ public class SinglePong extends EnvironmentForSearchAgent {
         lowerTreePanel =new SearchTreePanel();
         defineTreePanel(lowerTreePanel, "middlePLotPanel");
 
-        upperTreeHistogramPanelCreator =   new SearchTreeHistogramFromDepthStatisticsPanelCreator();
-        upperChartPanel = upperTreeHistogramPanelCreator.createChart();
-        lowerTreeHistogramPanelCreator=   new SearchTreeHistogramFromStatesPerDepthPanelCreator();
-        lowerChartPanel = lowerTreeHistogramPanelCreator.createChartPanel();
+        //upperTreeHistogramPanelCreator =   new SearchTreeHistogramFromDepthStatisticsPanelCreator();
+       // upperChartPanel = upperTreeHistogramPanelCreator.createChart();
+        //lowerTreeHistogramPanelCreator=   new SearchTreeHistogramFromStatesPerDepthPanelCreator();
+       // lowerChartPanel = lowerTreeHistogramPanelCreator.createChartPanel();
+
+        chds=new HistogramDataSetGenerator();
+        upperChartPanel = new HistogramPanel();
+        DefaultCategoryDataset dataset1 = upperChartPanel.getDataset();
+        chds.defineDummyDataset(dataset1);
+
+        lowerChartPanel = new HistogramPanel();
+        DefaultCategoryDataset dataset2 = lowerChartPanel.getDataset();
+        chds.defineDummyDataset(dataset2);
+
 
         plotFrame.add(upperTreePanel);
         plotFrame.add(lowerTreePanel);
@@ -233,14 +245,20 @@ public class SinglePong extends EnvironmentForSearchAgent {
         panel.createTreeWithOnlyRootNode(plotFrameWidth, plotFrameHeight,title);
     }
 
+
     public  void createHistogramFromVisitedStatesBuffer(VisitedStatesBuffer vsb, List<Integer> evaluatedSearchDepths) {
-        upperChartPanel = upperTreeHistogramPanelCreator.createHistogramFromVisitedStatesBufferDepthStatistics(vsb,evaluatedSearchDepths);
-        System.out.println("createHistogramFromVisitedStatesBuffer");
+        //upperChartPanel = upperTreeHistogramPanelCreator.createHistogramFromVisitedStatesBufferDepthStatistics(vsb,evaluatedSearchDepths);
+        DefaultCategoryDataset dataset = upperChartPanel.getDataset();
+        chds.updateDatasetForDepthStatistics(dataset,vsb,evaluatedSearchDepths);
     }
 
     public  void createHistogramFromVisitedStatesBufferFromStatesPerDepth(VisitedStatesBuffer vsb, List<Integer> evaluatedSearchDepths) {
-        upperChartPanel = lowerTreeHistogramPanelCreator.createHistogramFromStatesPerDepthPanelCreator(vsb);
-        System.out.println("createHistogramFromVisitedStatesBufferFromStatesPerDepth");
+        //upperChartPanel = lowerTreeHistogramPanelCreator.createHistogramFromStatesPerDepthPanelCreator(vsb);
+        //System.out.println("createHistogramFromVisitedStatesBufferFromStatesPerDepth");
+
+        DefaultCategoryDataset dataset = lowerChartPanel.getDataset();
+        chds.updateDatasetForStatesPerDepth(dataset,vsb);
     }
+
 
 }
