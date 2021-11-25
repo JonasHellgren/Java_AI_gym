@@ -133,7 +133,7 @@ public class VisitedStatesBuffer {
         return depthMax;
     }
 
-    public VisitedStatesBuffer removeLooseNodesBelowDepth(int searchDepth) {
+    public VisitedStatesBuffer createNewVSBWithNoLooseNodesBelowDepth(int searchDepth) {
 
         if (getMaxDepth()<searchDepth) {
             logger.warning("removeLooseNodesBelowDepth failed, cant remove below non existing depth: searchDepth= "+searchDepth+", maxDepth = "+getMaxDepth());
@@ -187,6 +187,25 @@ public class VisitedStatesBuffer {
 
     public boolean isNoActionTriedInStateWithId(String id) {
         return (getExperienceList(id).size() == 0);
+    }
+
+    public double calcExplorationFactor(int searchDepth) {
+
+        int nofActionsTested=0;
+        int nofActionsAvailable=0;
+        for (int depth = searchDepth - 1; depth >= 0; depth--) {
+            List<StateForSearch> statesAtDepth = this.getAllStatesAtDepth(depth);
+            for (StateForSearch state : statesAtDepth) {
+                nofActionsTested=nofActionsTested+this.nofActionsTested(state.id);
+                nofActionsAvailable=nofActionsAvailable+state.nofActions;
+            }
+        }
+
+        if (nofActionsAvailable == 0) {
+            logger.warning("Sum of all actions available is zero, setting exploration factor as 1");
+            return 1.0;
+        }
+        return (double)nofActionsTested/(double)nofActionsAvailable;
     }
 
 

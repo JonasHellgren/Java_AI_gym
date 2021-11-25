@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 
 public class HistogramDataSetGenerator {
 
-    protected final static Logger logger = Logger.getLogger(SearchTreeHistogramFromDepthStatisticsPanelCreator.class.getName());
+    protected final static Logger logger = Logger.getLogger(HistogramDataSetGenerator.class.getName());
 
     @ToString
     public class DepthStatistics {

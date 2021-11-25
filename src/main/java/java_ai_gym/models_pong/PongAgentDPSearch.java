@@ -12,13 +12,17 @@ import java.util.List;
 @Setter
 public class PongAgentDPSearch extends AgentSearch {
 
-    final int MAX_NOF_SELECTION_TRIES = 100;
+    final int MAX_NOF_SELECTION_TRIES = 10;
     final int ACTION_DEFAULT = 1;
+    final int K=100;
+    final double EF_LIMIT=0.2;
 
     int searchDepthStep;
+
     int searchDepth;
     List<Integer> evaluatedSearchDepths;
     VisitedStatesBuffer vsb;
+    VisitedStatesBuffer trimmedVSB;
     //StateForSearch state;
     StateForSearch startState;
 
@@ -44,13 +48,53 @@ public class PongAgentDPSearch extends AgentSearch {
         int nofActions = envParams.discreteActionsSpace.size();
 
         int nofSteps = 0;
-        int searchDepth = searchDepthStep;
-        int explorationFactor = 0;
+        searchDepth = searchDepthStep;
+        double explorationFactor = 0;
+
+        long startTime = System.currentTimeMillis();  //starting time, long <=> minimum value of 0
+
+        while (timeNotExceeded(startTime) && nofSteps<25000) {  //TODO remove nofSteps
+            StateForSearch selectedState = this.selectState();
+            int action = this.chooseAction(selectedState);
+            StepReturn stepReturn = env.step(action, selectedState);
+            StateForSearch stateNew = (StateForSearch) stepReturn.state;
+            stateNew.setDepthNofActions(selectedState.depth + 1, nofActions);
+            vsb.addNewStateAndExperienceFromStep(selectedState.id, action, stepReturn);
+
+            if (nofSteps % K ==0) {
+                explorationFactor=vsb.calcExplorationFactor(searchDepth);
+                logger.fine("explorationFactor = "+explorationFactor);
+            }
+
+            if (vsb.getMaxDepth()>=searchDepth && explorationFactor>=EF_LIMIT)  {
+            //if (explorationFactor>=EF_LIMIT) {
+             /*   if (vsb.getMaxDepth() > searchDepth) {
+                    logger.warning("vsb.getMaxDepth() > searchDept");
+                } */
+
+                logger.info("ExplorationFactor = "+explorationFactor);
+
+                trimmedVSB =  vsb.createNewVSBWithNoLooseNodesBelowDepth(searchDepth);
+                addEvaluatedSearchDepth(searchDepth);
+                explorationFactor=0;
+                searchDepth=searchDepth+searchDepthStep;
+
+                logger.info("searchDept increased to = "+searchDepth+". VSB size = "+vsb.size()+". VSB trimmed size = "+trimmedVSB.size()+", nofSteps = "+nofSteps);
+
+
+            }
+
+
+
+            nofSteps++;
+        }
+
+        logger.info("Search finished, nofSteps = "+nofSteps);
 
         return null;
     }
 
-    public void addSearchDepth(int searchDepth) {
+    public void addEvaluatedSearchDepth(int searchDepth) {
         evaluatedSearchDepths.add(searchDepth);
     }
 
@@ -90,14 +134,17 @@ public class PongAgentDPSearch extends AgentSearch {
                 break;
             }
             i++;
-        } while (isTerminalStateOrAllActionsTestedOrIsAtMaxDepth(selectedState));
+        } while (isTerminalStateOrAllActionsTestedOrIsAtSearchDepth(selectedState));
       return selectedState;
     }
 
-    public boolean isTerminalStateOrAllActionsTestedOrIsAtMaxDepth(StateForSearch state) {
+    public boolean isTerminalStateOrAllActionsTestedOrIsAtSearchDepth(StateForSearch state) {
         StateExperience exp = vsb.searchExperienceOfSteppingToState(state.id);
         int nofActionsTested = vsb.nofActionsTested(state.id);
-        boolean isAtMaxDepth=state.depth== searchDepth;
-        return (exp.termState || (nofActionsTested == state.nofActions) || isAtMaxDepth);
+        boolean isAtSearchDepth=(state.depth== searchDepth);
+        return (exp.termState || (nofActionsTested == state.nofActions) || isAtSearchDepth);
+      //  return (false || (nofActionsTested == state.nofActions) || isAtSearchDepth);
     }
+
+
 }

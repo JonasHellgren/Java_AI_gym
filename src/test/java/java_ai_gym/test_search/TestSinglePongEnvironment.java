@@ -49,6 +49,18 @@ public class TestSinglePongEnvironment extends TestSearchBase {
     }
 
     @Test
+    public void testManySteps() {
+        long startTime = System.currentTimeMillis();  //starting time, long <=> minimum value of 0
+
+        int nofSteps = 0;
+        while (System.currentTimeMillis()-startTime <1000 ) {
+            StepReturn stepReturn=env.step(moves.get("left"),state);
+            nofSteps++;
+        }
+        System.out.println("nofSteps = "+nofSteps);
+        }
+
+    @Test
     public void testBallMove() {
         StepReturn stepReturn=env.step(moves.get("left"),state);
 
@@ -86,7 +98,7 @@ public class TestSinglePongEnvironment extends TestSearchBase {
 
     @SneakyThrows
     @Test
-    //@Ignore("Takes time")
+    @Ignore("Takes time")
     public void testAnimate() {
 
         StepReturn  stepReturn;

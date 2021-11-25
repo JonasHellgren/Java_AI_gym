@@ -15,7 +15,7 @@ public class TestSearchBase {
     static final Logger logger = Logger.getLogger(TestSearchBase.class.getName());
 
     final int NOF_ACTIONS=3;
-    final int TIME_BUDGET_MS=100;
+    final int TIME_BUDGET_MS=1000;
     final int SEARCH_DEPTH_STEP=5;
     SinglePong env=new SinglePong();
     StateForSearch state = new StateForSearch((StateForSearch) env.getTemplateState());

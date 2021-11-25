@@ -33,9 +33,12 @@ Visualisera vsb - SearchTreeHistogramPanel  x
 printa/visa antal noder per depth
 visar inte trimmas i plot  x
 många panels med varsin chart  x
-HistogramPanel klass
-search method
-exp factor
+HistogramPanel klass  x
+utkasst search method
+exp factor x
+2353600 steg på en sek enligt TestSinglePongEnvironment men bara ca 4000 i search
+
+dela upp VisitedStatesBuffer - stor
 hur använda DP klass i annat projekt/modul
 
 när tid:
