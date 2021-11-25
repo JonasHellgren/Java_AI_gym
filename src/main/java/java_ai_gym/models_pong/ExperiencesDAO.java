@@ -9,7 +9,7 @@ public class ExperiencesDAO implements DAO<StateExperience> {
 
     protected final static Logger logger = Logger.getLogger(ExperiencesDAO.class.getName());
 
-    Map<String, List<StateExperience>> expBuffer;   //<id,list of experiences >
+    Map<String, Map<Integer, StateExperience>> expBuffer;   //<id,experiences >
 
     public ExperiencesDAO() {
         expBuffer = new HashMap<>();
@@ -23,10 +23,10 @@ public class ExperiencesDAO implements DAO<StateExperience> {
     }
 
 
-    public List<StateExperience> getExperienceList(String id) {
+    public Map<Integer, StateExperience> getExperienceList(String id) {
         if (!expBuffer.containsKey(id)) {
             logger.fine("No experience of state:" + id);
-            return new ArrayList<>();
+            return new HashMap<>();
         }
         return expBuffer.get(id);
     }
@@ -34,15 +34,14 @@ public class ExperiencesDAO implements DAO<StateExperience> {
     @Override
     public void add(String id, StateExperience exp) {
         if (!expBuffer.containsKey(id)) {
-            expBuffer.put(id, new ArrayList<>());
+            addStateWithNoExp(id);
         }
-        List<StateExperience> expList = expBuffer.get(id);
-        expList.add(exp);
-        expBuffer.put(id, expList);
+        Map<Integer, StateExperience> experiences = expBuffer.get(id);
+        experiences.put(exp.action,exp);
     }
 
     public void addStateWithNoExp(String id)  {
-        expBuffer.put(id, new ArrayList<>());
+        expBuffer.put(id, new HashMap<>());
     }
 
     @Override
@@ -63,19 +62,19 @@ public class ExperiencesDAO implements DAO<StateExperience> {
     public void removeExpItemWithNewStateId(String idNewState) {
         /*
         StateExperience exp= searchExperienceOfSteppingToState(id);
-        List<StateExperience> expList= getExperienceList(id);
+        List<StateExperience> experiences= getExperienceList(id);
         System.out.println("id = "+id+", exp = "+exp);
-        int sizeBefore=expList.size();
-        expList.remove(exp);
-        int sizeAfter=expList.size();  */
+        int sizeBefore=experiences.size();
+        experiences.remove(exp);
+        int sizeAfter=experiences.size();  */
 
         for (String id:expBuffer.keySet()) {
-            List<StateExperience> expList=getExperienceList(id);
-            int sizeBefore=expList.size();
-            StateExperience exp = getStateExperience(idNewState, expList);
+            Map<Integer, StateExperience> experiences=getExperienceList(id);
+          //  int sizeBefore=experiences.size();
+            StateExperience exp = getStateExperience(idNewState, experiences);
             if (exp != null) {
-                expList.remove(exp);
-                //System.out.println("sizeBefore = "+sizeBefore+", sizeAfter = "+expList.size());
+                experiences.remove(exp);
+                //System.out.println("sizeBefore = "+sizeBefore+", sizeAfter = "+experiences.size());
             }
         }
 
@@ -85,8 +84,8 @@ public class ExperiencesDAO implements DAO<StateExperience> {
     public StateExperience searchExperienceOfSteppingToState(String idOfInterest) {
 
         for (String id:expBuffer.keySet()) {
-            List<StateExperience> expList= getExperienceList(id);
-            StateExperience exp = getStateExperience(idOfInterest, expList);
+            Map<Integer, StateExperience> experiences= getExperienceList(id);
+            StateExperience exp = getStateExperience(idOfInterest, experiences);
             if (exp != null) return exp;
         }
 
@@ -94,8 +93,9 @@ public class ExperiencesDAO implements DAO<StateExperience> {
     }
 
     @Nullable
-    private StateExperience getStateExperience(String idOfInterest, List<StateExperience> expList) {
-        for (StateExperience exp: expList) {
+    private StateExperience getStateExperience(String idOfInterest, Map<Integer, StateExperience> experiences) {
+        for (Integer a: experiences.keySet()) {
+            StateExperience exp=experiences.get(a);
             if (exp.idNewState.equals(idOfInterest)) {
                 return exp;
             }
@@ -110,14 +110,15 @@ public class ExperiencesDAO implements DAO<StateExperience> {
     }
 
     public List<Integer> testedActions(String id) {
-        List<StateExperience> expList = getExperienceList(id);
+        Map<Integer, StateExperience> experiences = getExperienceList(id);
         Set<Integer> actionSet=new HashSet<>();
 
-        for (StateExperience exp:expList) {
+        for (Integer a: experiences.keySet()) {
+            StateExperience exp=experiences.get(a);
             actionSet.add(exp.action);
         }
 
-        if (actionSet.size() != expList.size()) {
+        if (actionSet.size() != experiences.size()) {
             logger.warning("Duplicate actions in state: "+id);
         }
 
@@ -131,7 +132,10 @@ public class ExperiencesDAO implements DAO<StateExperience> {
 
     public void copy(ExperiencesDAO experiencesDAO) {
         for (String id:experiencesDAO.keySet()) {
-            for (StateExperience exp:experiencesDAO.getExperienceList(id)) {
+            //for (Map<Integer, StateExperience> exp:experiencesDAO.getExperienceList(id)) {
+            Map<Integer, StateExperience> experiences = getExperienceList(id);
+            for (Integer a: experiences.keySet()) {
+                StateExperience exp=experiences.get(a);
                 this.add(id,exp);
             }
         }

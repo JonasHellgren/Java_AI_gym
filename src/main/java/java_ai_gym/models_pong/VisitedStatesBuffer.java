@@ -7,6 +7,7 @@ import lombok.Getter;
 
 import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @Getter
 public class VisitedStatesBuffer {
@@ -14,13 +15,13 @@ public class VisitedStatesBuffer {
     protected final static Logger logger = Logger.getLogger(VisitedStatesBuffer.class.getName());
 
     StateVisitsDAO stateVisitsDAO;
-    ExperiencesDAO experiencesDAO;
+    ExperiencesDAO experiencesDAO1;
 
     protected final Random random;
 
     public VisitedStatesBuffer() {
         stateVisitsDAO = new StateVisitsDAO();
-        experiencesDAO = new ExperiencesDAO();
+        experiencesDAO1 = new ExperiencesDAO();
         random = new Random();
     }
 
@@ -28,18 +29,18 @@ public class VisitedStatesBuffer {
         this();
         StateForSearch startStateClone=new StateForSearch(startState);
         addState(startStateClone.START_STATE_ID,  startStateClone);
-        experiencesDAO.addStateWithNoExp(startStateClone.START_STATE_ID);
+        experiencesDAO1.addStateWithNoExp(startStateClone.START_STATE_ID);
     }
 
     public VisitedStatesBuffer(VisitedStatesBuffer vsb) {
         this();
         stateVisitsDAO.copy(vsb.getStateVisitsDAO());
-        experiencesDAO.copy(vsb.getExperiencesDAO());
+        experiencesDAO1.copy(vsb.getExperiencesDAO1());
     }
 
     public void clear() {
         stateVisitsDAO.clear();
-        experiencesDAO.clear();
+        experiencesDAO1.clear();
     }
 
     public StateForSearch getState(String id) {
@@ -80,7 +81,7 @@ public class VisitedStatesBuffer {
     public void addNewStateAndExperienceFromStep(String idFromState, int action, StepReturn stepReturn) {
         String newId = idFromState + "." + action;
         if (stateVisitsDAO.contains(newId)) {
-            logger.warning("addNewStateAndExperienceFromStep: Trying to add already existing experience");
+         //   logger.warning("addNewStateAndExperienceFromStep: Trying to add already existing experience");
         } else {
             addState(newId, (StateForSearch) stepReturn.state);
             StateExperience stateExperience = new StateExperience(action, stepReturn.reward, stepReturn.termState, newId);
@@ -89,11 +90,13 @@ public class VisitedStatesBuffer {
     }
 
     public void addExperience(String id, StateExperience exp) {
-        experiencesDAO.add(id,exp);
+        experiencesDAO1.add(id,exp);
     }
 
     public List<StateExperience> getExperienceList(String id) {
-    return experiencesDAO.getExperienceList(id);
+      //  List<StateExperience> list = new ArrayList<>(experiencesDAO1.getExperienceList(id));
+
+        return new ArrayList<>(experiencesDAO1.getExperienceList(id).values());
     }
 
     boolean isActionInStateTerminalAccordingToExperience(String id, int action) {
@@ -108,15 +111,15 @@ public class VisitedStatesBuffer {
     }
 
     public StateExperience searchExperienceOfSteppingToState(String id) {
-       return  experiencesDAO.searchExperienceOfSteppingToState(id);
+       return  experiencesDAO1.searchExperienceOfSteppingToState(id);
     }
 
     public int nofActionsTested(String id) {
-        return experiencesDAO.nofActionsTested(id);
+        return experiencesDAO1.nofActionsTested(id);
     }
 
     public List<Integer> testedActions(String id) {
-        return experiencesDAO.testedActions(id);
+        return experiencesDAO1.testedActions(id);
     }
 
     public int getMaxDepth() {
@@ -153,7 +156,7 @@ public class VisitedStatesBuffer {
                         removedNodes++;
                         String idToRemove = state.id;
                         vsbTrimmed.getStateVisitsDAO().remove(idToRemove);
-                        vsbTrimmed.getExperiencesDAO().removeExpItemWithNewStateId(idToRemove);
+                        vsbTrimmed.getExperiencesDAO1().removeExpItemWithNewStateId(idToRemove);
                     }
                 }
             }

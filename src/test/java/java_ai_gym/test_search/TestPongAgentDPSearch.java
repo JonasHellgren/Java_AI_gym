@@ -104,7 +104,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
 
         agent.search(state);
         //printVSBs(agent.getVsb(), agent.getTrimmedVSB());
-        copyVSBsToFrame(agent.getVsb(), agent.getTrimmedVSB());
+       // copyVSBsToFrame(agent.getVsb(), agent.getTrimmedVSB());
         TimeUnit.MILLISECONDS.sleep(1000);
 
         Assert.assertTrue(agent.getTrimmedVSB().nofStates() <= agent.getVsb().nofStates());
