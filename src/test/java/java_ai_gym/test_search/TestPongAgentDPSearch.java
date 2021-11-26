@@ -141,7 +141,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
 
     private void createVSB(int nofSteps, int maxDepth) {
 
-        agent.setUpVsb(state);
+        agent.initInstanceVariables(state);
         agent.setSearchDepth(maxDepth);
         Assert.assertEquals(1, agent.getVsb().nofStates());
         System.out.println(agent.getVsb());

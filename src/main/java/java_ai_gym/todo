@@ -42,8 +42,10 @@ snabba upp searchExperienceOfSteppingToState  x
 fila på search
 createNewVSBWithNoLooseNodesBelowDepth krånglar x
 snabba upp performDynamicProgramming
-prob välja state över depthSearchPrev
+prob välja state över depthSearchPrev  x
+clean up PongAgentDPSearch x
 
+PongAgentDPSearch - sätta EF_LIMIT och K i konstrucotr
 dela upp VisitedStatesBuffer - stor
 hur använda DP klass i annat projekt/modul
 

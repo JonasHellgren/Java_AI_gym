@@ -44,7 +44,7 @@ public abstract class AgentSearch {
         }
     }
 
-    protected long timeBudget;
+    protected long timeBudget; //long <=> minimum value of 0
     protected long startTime;
     protected Environment env;
     protected EnvironmentParametersAbstract envParams;
@@ -53,6 +53,7 @@ public abstract class AgentSearch {
 
     public AgentSearch(long timeBudget, Environment env, EnvironmentParametersAbstract envParams) {
         this.timeBudget = timeBudget;
+        this.startTime = System.currentTimeMillis();
         this.env = env;
         this.envParams = envParams;
         this.searchResults = new SearchResults(-Double.MAX_VALUE, envParams.discreteActionsSpace);
