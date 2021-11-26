@@ -134,8 +134,7 @@ public class ExperiencesDAO implements DAO<StateExperience> {
 
     public void copy(ExperiencesDAO experiencesDAO) {
         for (String id:experiencesDAO.keySet()) {
-            //for (Map<Integer, StateExperience> exp:experiencesDAO.getExperienceList(id)) {
-            Map<Integer, StateExperience> experiences = getExperienceList(id);
+            Map<Integer, StateExperience> experiences = experiencesDAO.getExperienceList(id);
             for (Integer a: experiences.keySet()) {
                 StateExperience exp=experiences.get(a);
                 this.add(id,exp);

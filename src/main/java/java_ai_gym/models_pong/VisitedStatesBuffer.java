@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 public class VisitedStatesBuffer {
 
     protected final static Logger logger = Logger.getLogger(VisitedStatesBuffer.class.getName());
-    final double PROB_SELECTING_STATE_FOR_EXPLORATION_FACTOR_CALCULATON=0.2;
+    final double PROB_SELECTING_STATE_FOR_EXPLORATION_FACTOR_CALCULATON=1.0;
 
     StateVisitsDAO stateVisitsDAO;
     ExperiencesDAO experiencesDAO1;
@@ -154,7 +154,6 @@ public class VisitedStatesBuffer {
             logger.warning("removeLooseNodesBelowDepth failed, cant remove below non existing depth: searchDepth= " + searchDepth + ", maxDepth = " + getDepthMax());
             return new VisitedStatesBuffer(this);
         }
-
         VisitedStatesBuffer vsbTrimmed = new VisitedStatesBuffer(this);
         int removedNodes = 0;
         boolean nodeRemoved;

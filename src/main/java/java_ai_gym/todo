@@ -40,6 +40,7 @@ exp factor x
 snabba upp addNewStateAndExperienceFromStep - addExperience  x
 snabba upp searchExperienceOfSteppingToState  x
 fila på search
+createNewVSBWithNoLooseNodesBelowDepth krånglar x
 
 dela upp VisitedStatesBuffer - stor
 hur använda DP klass i annat projekt/modul

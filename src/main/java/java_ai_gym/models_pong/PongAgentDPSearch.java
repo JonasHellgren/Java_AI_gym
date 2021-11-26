@@ -14,8 +14,8 @@ public class PongAgentDPSearch extends AgentSearch {
 
     final int MAX_NOF_SELECTION_TRIES = 1000;
     final int ACTION_DEFAULT = 1;
-    int K=100;
-    final double EF_LIMIT=0.5;
+    double K=2.0;
+    final double EF_LIMIT=0.1;
 
     int searchDepthStep;
 
@@ -53,15 +53,16 @@ public class PongAgentDPSearch extends AgentSearch {
         vsbForSpecificDepthStep=new VisitedStatesBuffer();
         int nofActions = envParams.discreteActionsSpace.size();
 
-        int nofSteps = 0;
         searchDepth = searchDepthStep;
         searchDepthPrev=0;
+        int nofSteps = 0;
         double explorationFactor = 0;
+        int nofStatesVsbSpecificPrev=1;
 
         long startTime = System.currentTimeMillis();  //starting time, long <=> minimum value of 0
 
         //searchDepth=100;  //TODO remove
-        while (timeNotExceeded(startTime) && nofSteps<100000) {  //TODO remove nofSteps
+        while (timeNotExceeded(startTime) && nofSteps<200000) {  //TODO remove nofSteps
             startTimerForSpeedTest();
             StateForSearch selectedState = this.selectState();
             showElapsedTimeSpeedTest("selectState",false);
@@ -80,14 +81,16 @@ public class PongAgentDPSearch extends AgentSearch {
 
             if (stateNew.depth>=searchDepthPrev) {
             vsbForSpecificDepthStep.addNewStateAndExperienceFromStep(selectedState.id, action, stepReturn);
+
             }
 
-            K=(vsbForSpecificDepthStep.size()<1000)?100:10000;
 
-            if (nofSteps % K ==0) {
+          //  if (nofSteps % K ==0) {
+            if ((double)vsbForSpecificDepthStep.size()/(double)nofStatesVsbSpecificPrev >K)  {
                 System.out.println("statesPerDepth vsb = "+vsb.calcStatesPerDepth(searchDepth));
                 System.out.println("statesPerDepth vsbForSpecificDepthStep= "+vsbForSpecificDepthStep.calcStatesPerDepth(searchDepth));
 
+                 nofStatesVsbSpecificPrev=vsbForSpecificDepthStep.size();
                 startTimerForSpeedTest();
                 explorationFactor=vsbForSpecificDepthStep.calcExplorationFactor(searchDepth);
                 showElapsedTimeSpeedTest("calcExplorationFactor",true);
@@ -106,6 +109,10 @@ public class PongAgentDPSearch extends AgentSearch {
                 logger.fine("ExplorationFactor = "+ explorationFactor);
                 explorationFactor =0;
                 logger.info("searchDept increased to = "+searchDepth+". VSB size = "+vsb.size()+", nofSteps = "+ nofSteps);
+                System.out.println("statesPerDepth vsb = "+vsb.calcStatesPerDepth(searchDepth));
+                System.out.println("statesPerDepth vsbForSpecificDepthStep= "+vsbForSpecificDepthStep.calcStatesPerDepth(searchDepth));
+                System.out.println("searchDepthPrev = "+searchDepthPrev);
+
                 startTimerForSpeedTest();
                 performDynamicProgramming();
                 showElapsedTimeSpeedTest("performDynamicProgramming",true);
@@ -131,6 +138,7 @@ public class PongAgentDPSearch extends AgentSearch {
     }
 
     private void performDynamicProgramming() {
+
         trimmedVSB =  vsb.createNewVSBWithNoLooseNodesBelowDepth(searchDepthPrev);
         logger.info(". VSB trimmed size = "+trimmedVSB.size());
     }
