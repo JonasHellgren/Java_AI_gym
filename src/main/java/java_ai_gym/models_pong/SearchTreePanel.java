@@ -3,7 +3,6 @@ package java_ai_gym.models_pong;
 import lombok.SneakyThrows;
 
 import javax.swing.*;
-import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 import java.util.List;
@@ -70,7 +69,7 @@ public class SearchTreePanel extends JPanel {
     public void createTreeFromVisitedStatesBuffer(VisitedStatesBuffer vsb) {
         this.vsb = vsb;
         addChildNodesRecursive(this.root, "start");
-        this.label.setText("Max depth = "+vsb.getMaxDepth()+", nof nodes = "+vsb.getStateVisitsDAO().size());
+        this.label.setText("Max depth = "+vsb.getDepthMax()+", nof nodes = "+vsb.getStateVisitsDAO().size());
 
         //https://stackoverflow.com/questions/5042937/jtree-line-style-and-nimbus
         tree.putClientProperty("JTree.lineStyle", "Angled");

@@ -7,16 +7,17 @@ import lombok.Getter;
 
 import java.util.*;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 @Getter
 public class VisitedStatesBuffer {
 
     protected final static Logger logger = Logger.getLogger(VisitedStatesBuffer.class.getName());
+    final double PROB_SELECTING_STATE_FOR_EXPLORATION_FACTOR_CALCULATON=0.2;
 
     StateVisitsDAO stateVisitsDAO;
     ExperiencesDAO experiencesDAO1;
     SetOfTerminalStatesDAO setOfTerminalStatesDAO;
+    int depthMax;
 
     protected final Random random;
 
@@ -25,12 +26,13 @@ public class VisitedStatesBuffer {
         experiencesDAO1 = new ExperiencesDAO();
         setOfTerminalStatesDAO = new SetOfTerminalStatesDAO();
         random = new Random();
+        depthMax = 0;
     }
 
     public VisitedStatesBuffer(StateForSearch startState) {
         this();
-        StateForSearch startStateClone=new StateForSearch(startState);
-        addState(startStateClone.START_STATE_ID,  startStateClone);
+        StateForSearch startStateClone = new StateForSearch(startState);
+        addState(startStateClone.START_STATE_ID, startStateClone);
         experiencesDAO1.addStateWithNoExp(startStateClone.START_STATE_ID);
     }
 
@@ -43,6 +45,7 @@ public class VisitedStatesBuffer {
     public void clear() {
         stateVisitsDAO.clear();
         experiencesDAO1.clear();
+        setOfTerminalStatesDAO.clear();
     }
 
     public StateForSearch getState(String id) {
@@ -54,7 +57,7 @@ public class VisitedStatesBuffer {
     }
 
     public String selectRandomStateId() {
-      return stateVisitsDAO.selectRandomStateId2();
+        return stateVisitsDAO.selectRandomStateId2();
     }
 
     public int nofStates() {
@@ -70,14 +73,14 @@ public class VisitedStatesBuffer {
     }
 
     public List<StateForSearch> getAllStatesAtDepth(int depth) {
-        List<StateForSearch> statesAtDepth= new ArrayList<>() ;
-        for (StateForSearch state:stateVisitsDAO.getAll()) {
-            if (state.depth==depth) {
+        List<StateForSearch> statesAtDepth = new ArrayList<>();
+        for (StateForSearch state : stateVisitsDAO.getAll()) {
+            if (state.depth == depth) {
                 statesAtDepth.add(state);
             }
         }
 
-    return statesAtDepth;
+        return statesAtDepth;
     }
 
     public void addNewStateAndExperienceFromStep(String idFromState, int action, StepReturn stepReturn) {
@@ -88,16 +91,17 @@ public class VisitedStatesBuffer {
             addState(newId, (StateForSearch) stepReturn.state);
             StateExperience stateExperience = new StateExperience(action, stepReturn.reward, stepReturn.termState, newId);
             addExperience(idFromState, stateExperience);
-            setOfTerminalStatesDAO.addIdIfTerminal(newId,stepReturn);
+            setOfTerminalStatesDAO.addIdIfTerminal(newId, stepReturn);
+            depthMax = Math.max(depthMax, ((StateForSearch) stepReturn.state).depth);
         }
     }
 
     public void addExperience(String id, StateExperience exp) {
-        experiencesDAO1.add(id,exp);
+        experiencesDAO1.add(id, exp);
     }
 
     public List<StateExperience> getExperienceList(String id) {
-      //  List<StateExperience> list = new ArrayList<>(experiencesDAO1.getExperienceList(id));
+        //  List<StateExperience> list = new ArrayList<>(experiencesDAO1.getExperienceList(id));
 
         return new ArrayList<>(experiencesDAO1.getExperienceList(id).values());
     }
@@ -106,7 +110,7 @@ public class VisitedStatesBuffer {
         List<StateExperience> expList = getExperienceList(id);
 
         for (StateExperience se : expList) {
-            if (se.action==action) {
+            if (se.action == action) {
                 return se.termState;
             }
         }
@@ -114,7 +118,7 @@ public class VisitedStatesBuffer {
     }
 
     public StateExperience searchExperienceOfSteppingToState(String id) {
-       return  experiencesDAO1.searchExperienceOfSteppingToState(id);
+        return experiencesDAO1.searchExperienceOfSteppingToState(id);
     }
 
     public boolean isExperienceOfStateTerminal(String id) {
@@ -129,29 +133,30 @@ public class VisitedStatesBuffer {
         return experiencesDAO1.testedActions(id);
     }
 
-    public int getMaxDepth() {
+    public int getDepthMax() {
 
-        if (stateVisitsDAO.size()==0) {
+        if (stateVisitsDAO.size() == 0) {
             logger.warning("Depth not defined for zero size buffer");
             return 0;
         }
 
+        /*
         int depthMax=0;
         for (StateForSearch state:stateVisitsDAO.getAll()) {
             depthMax=Math.max(depthMax,state.depth);
-        }
+        }  */
         return depthMax;
     }
 
     public VisitedStatesBuffer createNewVSBWithNoLooseNodesBelowDepth(int searchDepth) {
 
-        if (getMaxDepth()<searchDepth) {
-            logger.warning("removeLooseNodesBelowDepth failed, cant remove below non existing depth: searchDepth= "+searchDepth+", maxDepth = "+getMaxDepth());
+        if (getDepthMax() < searchDepth) {
+            logger.warning("removeLooseNodesBelowDepth failed, cant remove below non existing depth: searchDepth= " + searchDepth + ", maxDepth = " + getDepthMax());
             return new VisitedStatesBuffer(this);
         }
 
-        VisitedStatesBuffer vsbTrimmed=new VisitedStatesBuffer(this);
-        int removedNodes=0;
+        VisitedStatesBuffer vsbTrimmed = new VisitedStatesBuffer(this);
+        int removedNodes = 0;
         boolean nodeRemoved;
         do {
             nodeRemoved = false;
@@ -167,15 +172,15 @@ public class VisitedStatesBuffer {
                     }
                 }
             }
-         }  while (nodeRemoved);
+        } while (nodeRemoved);
 
-        if (anyLooseNodeBelowDepth(vsbTrimmed,searchDepth)) {
+        if (anyLooseNodeBelowDepth(vsbTrimmed, searchDepth)) {
             logger.warning("removeLooseNodesBelowDepth failed, still loose node(s).");
         }
 
-        logger.info("Nof removed nodes are = "+ removedNodes);
+        logger.info("Nof removed nodes are = " + removedNodes);
 
-        return  vsbTrimmed;
+        return vsbTrimmed;
     }
 
     public boolean anyLooseNodeBelowDepth(VisitedStatesBuffer vsb, int depthMax) {
@@ -199,15 +204,15 @@ public class VisitedStatesBuffer {
         return (getExperienceList(id).size() == 0);
     }
 
-    public double calcExplorationFactor(int searchDepth) {
+    public double calcExplorationFactor(int searchDepthPrev, int searchDepth) {  //TODO REMOVE
 
-        int nofActionsTested=0;
-        int nofActionsAvailable=0;
-        for (int depth = searchDepth - 1; depth >= 0; depth--) {
+        int nofActionsTested = 0;
+        int nofActionsAvailable = 0;
+        for (int depth = searchDepth - 1; depth >= searchDepthPrev; depth--) {
             List<StateForSearch> statesAtDepth = this.getAllStatesAtDepth(depth);
             for (StateForSearch state : statesAtDepth) {
-                nofActionsTested=nofActionsTested+this.nofActionsTested(state.id);
-                nofActionsAvailable=nofActionsAvailable+state.nofActions;
+                nofActionsTested = nofActionsTested + this.nofActionsTested(state.id);
+                nofActionsAvailable = nofActionsAvailable + state.nofActions;
             }
         }
 
@@ -215,7 +220,39 @@ public class VisitedStatesBuffer {
             logger.warning("Sum of all actions available is zero, setting exploration factor as 1");
             return 1.0;
         }
-        return (double)nofActionsTested/(double)nofActionsAvailable;
+        return (double) nofActionsTested / (double) nofActionsAvailable;
+    }
+
+    public double calcExplorationFactor(int excludedDepth) {
+
+        int nofActionsTested = 0;
+        int nofActionsAvailable = 0;
+        int nodNodesTested=0;
+        for (StateForSearch state : this.stateVisitsDAO.getAll()) {
+            if (   state.depth!=excludedDepth &&
+                    MathUtils.calcRandomFromIntervall(0,1)<PROB_SELECTING_STATE_FOR_EXPLORATION_FACTOR_CALCULATON) {
+                nofActionsTested = nofActionsTested + this.nofActionsTested(state.id);
+                nofActionsAvailable = nofActionsAvailable + state.nofActions;
+                nodNodesTested++;
+            }
+
+        }
+
+        if (nofActionsAvailable == 0) {
+            logger.warning("Sum of all actions available is zero, setting exploration factor as 1");
+            return 0.0;
+        }
+        return (double) nofActionsTested / (double) nofActionsAvailable;
+    }
+
+    public Map<Integer,Integer> calcStatesPerDepth(int searchDepth) {
+        Map<Integer,Integer> statePerDepthList = new HashMap<>();
+
+        for (int depth = 0; depth <= searchDepth; depth++) {
+            List<StateForSearch> statesAtDepth = this.getAllStatesAtDepth(depth);
+            statePerDepthList.put(depth,statesAtDepth.size());
+        }
+        return statePerDepthList;
     }
 
 
@@ -226,9 +263,9 @@ public class VisitedStatesBuffer {
         sb.append("Visited states buffer");
         sb.append(System.getProperty("line.separator"));
         for (String stateId : stateVisitsDAO.keySet()) {
-            StateForSearch state=  getState(stateId);
+            StateForSearch state = getState(stateId);
             sb.append(state.searchSpecificPropertiesAsString());
-            sb.append("; experience:"+getExperienceList(stateId));
+            sb.append("; experience:" + getExperienceList(stateId));
 
             sb.append(System.getProperty("line.separator"));
         }

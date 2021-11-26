@@ -2,7 +2,6 @@ package java_ai_gym.models_pong;
 
 import java_ai_gym.models_common.StateForSearch;
 import lombok.ToString;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
 
@@ -108,7 +107,7 @@ public class HistogramDataSetGenerator {
             logger.warning("VisitedStatesBuffer not defined");
         } else {
 
-            for (int depth = 0; depth <= vsb.getMaxDepth(); depth++) {
+            for (int depth = 0; depth <= vsb.getDepthMax(); depth++) {
                 List<StateForSearch> states = vsb.getAllStatesAtDepth(depth);
                 //dataset.addValue((int) states.size(), "sgsdg", depth);
                 dataset.addValue(states.size(), "Nof states", String.valueOf(depth));

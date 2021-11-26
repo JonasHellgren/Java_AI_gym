@@ -38,8 +38,8 @@ utkasst search method
 exp factor x
 2353600 steg på en sek enligt TestSinglePongEnvironment men bara ca 4000 i search
 snabba upp addNewStateAndExperienceFromStep - addExperience  x
-
-snabba upp searchExperienceOfSteppingToState
+snabba upp searchExperienceOfSteppingToState  x
+fila på search
 
 dela upp VisitedStatesBuffer - stor
 hur använda DP klass i annat projekt/modul

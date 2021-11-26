@@ -118,7 +118,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
         state.setVariable("xPosBall", env.parameters.MAX_X_POSITION/2);
         state.setVariable("yPosBall", env.parameters.MAX_Y_POSITION_BALL/2);
         state.setVariable("xSpdBall", 0d);
-        state.setVariable("ySpdBall", -env.parameters.SPEED_BALL);
+        state.setVariable("ySpdBall", env.parameters.SPEED_BALL);
         state.setVariable("xPosRacket", env.parameters.MAX_X_POSITION/2);
         state.setVariable("xSpdRacket", 0d);
     }
@@ -134,9 +134,9 @@ public class TestPongAgentDPSearch extends TestSearchBase {
 
     private void printVSBs(VisitedStatesBuffer vsb, VisitedStatesBuffer trimmedVSB) {
         System.out.println(vsb);
-        System.out.println("original VSB depth = " + agent.getVsb().getMaxDepth() + ", original VSB nof nodes = " + agent.getVsb().getStateVisitsDAO().size());
+        System.out.println("original VSB depth = " + agent.getVsb().getDepthMax() + ", original VSB nof nodes = " + agent.getVsb().getStateVisitsDAO().size());
         System.out.println(trimmedVSB);
-        System.out.println("trimmedVSB depth = " + trimmedVSB.getMaxDepth() + ", trimmed VSB nof nodes = " + trimmedVSB.getStateVisitsDAO().size());
+        System.out.println("trimmedVSB depth = " + trimmedVSB.getDepthMax() + ", trimmed VSB nof nodes = " + trimmedVSB.getStateVisitsDAO().size());
     }
 
     private void createVSB(int nofSteps, int maxDepth) {

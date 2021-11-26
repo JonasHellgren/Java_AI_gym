@@ -111,16 +111,18 @@ public class ExperiencesDAO implements DAO<StateExperience> {
 
     public List<Integer> testedActions(String id) {
         Map<Integer, StateExperience> experiences = getExperienceList(id);
-        Set<Integer> actionSet=new HashSet<>();
+        Set<Integer> actionSet=experiences.keySet(); //new HashSet<>();
 
+        /*
         for (Integer a: experiences.keySet()) {
             StateExperience exp=experiences.get(a);
             actionSet.add(exp.action);
-        }
+        }  */
 
+        /*
         if (actionSet.size() != experiences.size()) {
             logger.warning("Duplicate actions in state: "+id);
-        }
+        }  */
 
         if (actionSet.size() == 0) {
             logger.fine("No actions in state: "+id);

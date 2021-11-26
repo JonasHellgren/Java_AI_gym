@@ -12,20 +12,23 @@ import java.util.List;
 @Setter
 public class PongAgentDPSearch extends AgentSearch {
 
-    final int MAX_NOF_SELECTION_TRIES = 10;
+    final int MAX_NOF_SELECTION_TRIES = 1000;
     final int ACTION_DEFAULT = 1;
-    final int K=100;
-    final double EF_LIMIT=0.2;
+    int K=100;
+    final double EF_LIMIT=0.5;
 
     int searchDepthStep;
 
-    int previousSearchDepth;
+    int searchDepthPrev;
     int searchDepth;
     List<Integer> evaluatedSearchDepths;
     VisitedStatesBuffer vsb;
     VisitedStatesBuffer trimmedVSB;
+    VisitedStatesBuffer vsbForSpecificDepthStep;
     //StateForSearch state;
     StateForSearch startState;
+
+    long startTimeForSpeedTesting;
 
     public PongAgentDPSearch(SinglePong env,
                              long timeBudget,
@@ -47,48 +50,67 @@ public class PongAgentDPSearch extends AgentSearch {
 
         setUpVsb(startState);
         trimmedVSB=vsb;
+        vsbForSpecificDepthStep=new VisitedStatesBuffer();
         int nofActions = envParams.discreteActionsSpace.size();
 
         int nofSteps = 0;
         searchDepth = searchDepthStep;
+        searchDepthPrev=0;
         double explorationFactor = 0;
 
         long startTime = System.currentTimeMillis();  //starting time, long <=> minimum value of 0
 
-        searchDepth=100;  //TODO remove
-        while (timeNotExceeded(startTime) && nofSteps<2500000) {  //TODO remove nofSteps
-            long startTime1 = System.nanoTime();  //starting time, long <=> minimum value of 0
+        //searchDepth=100;  //TODO remove
+        while (timeNotExceeded(startTime) && nofSteps<100000) {  //TODO remove nofSteps
+            startTimerForSpeedTest();
             StateForSearch selectedState = this.selectState();
-            //System.out.println("selectState time = "+(System.nanoTime()-startTime1)/1000);
+            showElapsedTimeSpeedTest("selectState",false);
 
 
             int action = this.chooseAction(selectedState);
-            startTime1 = System.nanoTime();  //starting time, long <=> minimum value of 0
+            startTimerForSpeedTest();
             StepReturn stepReturn = env.step(action, selectedState);
-           // System.out.println("step time = "+(System.nanoTime()-startTime1)/1000);
+            showElapsedTimeSpeedTest("step",false);
             StateForSearch stateNew = (StateForSearch) stepReturn.state;
-
             stateNew.setDepthNofActions(selectedState.depth + 1, nofActions);
 
-             startTime1 = System.nanoTime();  //starting time, long <=> minimum value of 0
-           vsb.addNewStateAndExperienceFromStep(selectedState.id, action, stepReturn);
-           // System.out.println("add time = "+(System.nanoTime()-startTime1)/1000);
+            startTimerForSpeedTest();
+            vsb.addNewStateAndExperienceFromStep(selectedState.id, action, stepReturn);
+            showElapsedTimeSpeedTest("addNewStateAndExperienceFromStep",false);
 
-/*
+            if (stateNew.depth>=searchDepthPrev) {
+            vsbForSpecificDepthStep.addNewStateAndExperienceFromStep(selectedState.id, action, stepReturn);
+            }
+
+            K=(vsbForSpecificDepthStep.size()<1000)?100:10000;
+
             if (nofSteps % K ==0) {
-                explorationFactor=vsb.calcExplorationFactor(searchDepth);
-                logger.fine("explorationFactor = "+explorationFactor);
+                System.out.println("statesPerDepth vsb = "+vsb.calcStatesPerDepth(searchDepth));
+                System.out.println("statesPerDepth vsbForSpecificDepthStep= "+vsbForSpecificDepthStep.calcStatesPerDepth(searchDepth));
+
+                startTimerForSpeedTest();
+                explorationFactor=vsbForSpecificDepthStep.calcExplorationFactor(searchDepth);
+                showElapsedTimeSpeedTest("calcExplorationFactor",true);
+                logger.info("nofSteps = "+nofSteps+", explorationFactor = "+explorationFactor);
             }
 
             //if (explorationFactor>=EF_LIMIT) {
-            if (vsb.getMaxDepth()>=searchDepth && explorationFactor>=EF_LIMIT)  {
+
+            startTimerForSpeedTest();
+            vsb.getDepthMax();
+            showElapsedTimeSpeedTest("getMaxDepth",false);
+
+            if (vsb.getDepthMax()>=searchDepth && explorationFactor>=EF_LIMIT)  {
                 increaseSearchDepth();
-                logger.info("ExplorationFactor = "+ explorationFactor);
+                vsbForSpecificDepthStep.clear();
+                logger.fine("ExplorationFactor = "+ explorationFactor);
                 explorationFactor =0;
                 logger.info("searchDept increased to = "+searchDepth+". VSB size = "+vsb.size()+", nofSteps = "+ nofSteps);
+                startTimerForSpeedTest();
                 performDynamicProgramming();
+                showElapsedTimeSpeedTest("performDynamicProgramming",true);
             }
-             */
+
             nofSteps++;
         }
 
@@ -97,17 +119,28 @@ public class PongAgentDPSearch extends AgentSearch {
         return null;
     }
 
+
+
+    private void startTimerForSpeedTest() {
+        startTimeForSpeedTesting = System.nanoTime();  //starting time, long <=> minimum value of 0
+    }
+
+    private void showElapsedTimeSpeedTest(String methodName, boolean flag) {
+        if (flag)
+        System.out.println(methodName + " time = "+(System.nanoTime()- startTimeForSpeedTesting)/1000);
+    }
+
     private void performDynamicProgramming() {
-        trimmedVSB =  vsb.createNewVSBWithNoLooseNodesBelowDepth(previousSearchDepth);
+        trimmedVSB =  vsb.createNewVSBWithNoLooseNodesBelowDepth(searchDepthPrev);
         logger.info(". VSB trimmed size = "+trimmedVSB.size());
     }
 
     private void increaseSearchDepth() {
-        if (vsb.getMaxDepth() > searchDepth) {
+        if (vsb.getDepthMax() > searchDepth) {
              logger.warning("vsb.getMaxDepth() > searchDept");
          }
         addEvaluatedSearchDepth(searchDepth);
-        previousSearchDepth=searchDepth;
+        searchDepthPrev =searchDepth;
         searchDepth=searchDepth+searchDepthStep;
     }
 
@@ -149,6 +182,9 @@ public class PongAgentDPSearch extends AgentSearch {
             selectedState = vsb.selectRandomState();
             if (i > MAX_NOF_SELECTION_TRIES) {
                 logger.warning("MAX_NOF_SELECTION_TRIES exceeded");
+                logger.warning("isTerminal = "+vsb.isExperienceOfStateTerminal(selectedState.id)+", nofActionsTested = "+vsb.nofActionsTested(selectedState.id)+", depth = "+selectedState.depth);
+
+               // System.out.println(vsbForSpecificDepthStep);
                 selectedState = this.startState;
                 break;
             }
