@@ -1,6 +1,7 @@
 package java_ai_gym.models_pong;
 
 import java_ai_gym.helpers.MathUtils;
+import java_ai_gym.models_common.AgentSearch;
 import java_ai_gym.models_common.StateForSearch;
 import java_ai_gym.models_common.StepReturn;
 import lombok.Getter;
@@ -148,7 +149,7 @@ public class VisitedStatesBuffer {
         return depthMax;
     }
 
-    public VisitedStatesBuffer createNewVSBWithNoLooseNodesBelowDepth(int searchDepth) {
+    public VisitedStatesBuffer createNewVSBWithNoLooseNodesBelowDepth(int searchDepth, AgentSearch agent) {
 
         if (getDepthMax() < searchDepth) {
             logger.warning("removeLooseNodesBelowDepth failed, cant remove below non existing depth: searchDepth= " + searchDepth + ", maxDepth = " + getDepthMax());
@@ -161,6 +162,10 @@ public class VisitedStatesBuffer {
             nodeRemoved = false;
             for (int depth = searchDepth - 1; depth >= 0; depth--) {
                 List<StateForSearch> statesAtDepth = vsbTrimmed.getAllStatesAtDepth(depth);
+                if (agent.timeExceeded()) {
+                    logger.warning("Time exceeded in createNewVSBWithNoLooseNodesBelowDepth");
+                    break;
+                }
                 for (StateForSearch state : statesAtDepth) {
                     if (vsbTrimmed.isNoActionTriedInStateWithId(state.id)) {
                         nodeRemoved = true;
@@ -171,11 +176,9 @@ public class VisitedStatesBuffer {
                     }
                 }
             }
-        } while (nodeRemoved);
+        } while (nodeRemoved && agent.timeExceeded());
 
-        if (anyLooseNodeBelowDepth(vsbTrimmed, searchDepth)) {
-            logger.warning("removeLooseNodesBelowDepth failed, still loose node(s).");
-        }
+
 
         logger.info("Nof removed nodes are = " + removedNodes);
 

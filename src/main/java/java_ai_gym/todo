@@ -41,6 +41,8 @@ snabba upp addNewStateAndExperienceFromStep - addExperience  x
 snabba upp searchExperienceOfSteppingToState  x
 fila på search
 createNewVSBWithNoLooseNodesBelowDepth krånglar x
+snabba upp performDynamicProgramming
+prob välja state över depthSearchPrev
 
 dela upp VisitedStatesBuffer - stor
 hur använda DP klass i annat projekt/modul

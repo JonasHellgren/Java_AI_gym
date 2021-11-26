@@ -45,6 +45,7 @@ public abstract class AgentSearch {
     }
 
     protected long timeBudget;
+    protected long startTime;
     protected Environment env;
     protected EnvironmentParametersAbstract envParams;
     protected SearchResults searchResults;
@@ -74,8 +75,8 @@ public abstract class AgentSearch {
         return depth < searchDepth && !stepReturn.termState;
     }
 
-    protected boolean timeNotExceeded(long startTime) {
-        return System.currentTimeMillis() < startTime + timeBudget;
+    public boolean timeExceeded() {
+        return System.currentTimeMillis() > startTime + timeBudget;
     }
 
     protected void logWarningIfNoFeasibleActionSequenceFound() {

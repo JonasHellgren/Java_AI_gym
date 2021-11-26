@@ -21,6 +21,7 @@ public class StateVisitsDAO implements  DAO<StateForSearch> {
     @Override
     public void clear() {
         stateBuffer.clear();
+        idList.clear();
     }
 
 @Override
