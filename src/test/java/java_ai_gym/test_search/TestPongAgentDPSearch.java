@@ -104,7 +104,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
         final int MAX_DEPTH = 5; //agent.getVsb().getMaxDepth();
         setBallAndRacketInMiddleBallFallingDown();
 
-        agent.setTimeBudgetMillis(1000);
+        agent.setTimeBudgetMillis(100);
         agent.search(state);
        // agent.getTrimmedVSB().createNewVSBWithNoLooseNodesBelowDepth(searchDepthPrev,);
      //   VisitedStatesBuffer trimmedVSB =  agent.getVsb().createNewVSBWithNoLooseNodesBelowDepth(agent.getVsb().getDepthMax(),agent);

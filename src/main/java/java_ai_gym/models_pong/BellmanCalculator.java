@@ -1,6 +1,7 @@
 package java_ai_gym.models_pong;
 
 
+import java_ai_gym.helpers.CpuTimer;
 import java_ai_gym.models_common.NullState;
 import java_ai_gym.models_common.State;
 import java_ai_gym.models_common.StateForSearch;
@@ -24,13 +25,17 @@ public class BellmanCalculator {
     int maxDepth;
     int minDepth;
     List<StateForSearch> nodesOnOptPath;
+    CpuTimer timeChecker;
+    boolean timeExceed;
 
-    public BellmanCalculator(VisitedStatesBuffer vsb, Strategy strategy, int searchDepth,  double discountFactor) {
+    public BellmanCalculator(VisitedStatesBuffer vsb, Strategy strategy, int searchDepth,  double discountFactor,CpuTimer timeChecker) {
         this.vsb = vsb;
         this.strategy=strategy;
         this.discountFactor = discountFactor;
         this.maxDepth = searchDepth;
         this.minDepth = 0;
+        this.timeChecker=timeChecker;
+        this.timeExceed=false;
 
         logger.info("BellmanCalculator initiated. maxDepth = "+maxDepth);
     }
@@ -42,6 +47,13 @@ public class BellmanCalculator {
     public void setNodeValues() {
 
         for (int depth = maxDepth - 1; depth >= minDepth; depth--) {
+
+            if (timeChecker.isTimeExceeded()) {
+                logger.warning("Time exceeded in setNodeValues !!!!!");
+                this.timeExceed=true;
+                break;
+            }
+
             List<StateForSearch> nodesAtDepth = vsb.getAllStatesAtDepth(depth);
             for (StateForSearch np : nodesAtDepth) {
                 List<Double> costs = findCostCandidatesForNode(np);
@@ -52,13 +64,17 @@ public class BellmanCalculator {
 
     }
 
+    public boolean isTimeExceeded() {
+        return timeExceed;
+    }
+
     private List<Double> findCostCandidatesForNode(StateForSearch np) {
 
         List<Double> costList = new ArrayList<>();
         List<StateExperience> expList = vsb.getExperienceList(np.id);
 
         if (expList.size() == 0) {
-            logger.warning("No experience (edges) for state id:" + np.id);
+            logger.fine("No experience (edges) for state id:" + np.id);
             return costList;
         }
 

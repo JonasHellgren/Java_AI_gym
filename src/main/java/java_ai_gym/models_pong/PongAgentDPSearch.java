@@ -13,10 +13,10 @@ import java.util.List;
 @Setter
 public class PongAgentDPSearch extends AgentSearch {
 
-    final int MAX_NOF_SELECTION_TRIES = 1000;
+    final int MAX_NOF_SELECTION_TRIES = 10000;
     final int ACTION_DEFAULT = 1;
     double K=2.0;
-    final double EF_LIMIT=0.5;
+    final double EF_LIMIT=0.9;
     final double PROB_SELECT_STATE_FROM_NEW_DEPTH_STEP=0.5;
     final double DISCOUNT_FACTOR=0.99;
 
@@ -56,6 +56,12 @@ public class PongAgentDPSearch extends AgentSearch {
         while (!cpuTimer.isTimeExceeded() && nofSteps<15000) {  //TODO remove nofSteps
             StateForSearch selectedState = this.selectState();
             takeStepAndSaveExperience(nofActions, selectedState);
+
+            if (selectedState.depth>searchDepth) {
+                logger.warning("selectedState has to high search depth = "+selectedState.depth+". searchDepth= "+searchDepth);
+                System.out.println("vsb contains = "+vsb.getStateVisitsDAO().contains(selectedState.id));
+                System.out.println("vsbForNewDepthSet contains = "+vsbForNewDepthSet.getStateVisitsDAO().contains(selectedState.id));
+            }
 
             if ((double) vsbForNewDepthSet.size()/(double)nofStatesVsbForNewDepthSetPrev > K)  {
                 nofStatesVsbForNewDepthSetPrev = vsbForNewDepthSet.size();
@@ -143,11 +149,11 @@ public class PongAgentDPSearch extends AgentSearch {
 
            // BellmanCalculator bellmanCalculator=new BellmanCalculator(trimmedVSB, new FindMax(), searchDepthPrev,  DISCOUNT_FACTOR);
 
-            BellmanCalculator bellmanCalculator=new BellmanCalculator(vsb, new FindMax(), searchDepthPrev,  DISCOUNT_FACTOR);
+            BellmanCalculator bellmanCalculator=new BellmanCalculator(vsb, new FindMax(), searchDepthPrev,  DISCOUNT_FACTOR,cpuTimer);
 
             timeChecker.reset();
             bellmanCalculator.setNodeValues();
-            logger.info("setNodeValues (millis) = " +timeChecker.getTimeInMillis());
+            logger.info("setNodeValues (millis) = " +timeChecker.getTimeInMillis()+", isTimeExceeded = "+bellmanCalculator.isTimeExceeded());
 
             List<StateForSearch> optPath= bellmanCalculator.findNodesOnOptimalPath(this.startState);
             System.out.println("optPath = "+optPath);
@@ -197,7 +203,8 @@ public class PongAgentDPSearch extends AgentSearch {
 
         for (int j = 0; j < MAX_NOF_SELECTION_TRIES; j++) {
             if ( MathUtils.calcRandomFromIntervall(0,1)<PROB_SELECT_STATE_FROM_NEW_DEPTH_STEP && vsbForNewDepthSet.size()>0) {
-                selectedState = vsbForNewDepthSet.selectRandomState();
+                logger.fine("MAX_NOF_SELECTION_TRIES exceeded");
+                selectedState = startState;
             } else
             {
                 selectedState = vsb.selectRandomState();
@@ -218,7 +225,7 @@ public class PongAgentDPSearch extends AgentSearch {
             return true;
         }
 
-        if (state.depth== searchDepth) {
+        if (state.depth == searchDepth) {
             return true;
         }
 

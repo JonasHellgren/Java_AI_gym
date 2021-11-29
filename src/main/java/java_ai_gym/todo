@@ -51,6 +51,7 @@ histogram plottar x
 koda DynamicProgramming x
 DP som klarar lösa noder
 BellmanCalculator med timer
+selectedState has to high search depth BUGG
 exlkudera trimmed variabler från PongAgentDPSearch
 test DynamicProgramming
 StateVisitsDAO idList: farligt ej uppdatera etc med stateBuffer
