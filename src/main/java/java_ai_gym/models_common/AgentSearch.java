@@ -1,12 +1,14 @@
 package java_ai_gym.models_common;
 
-import java_ai_gym.models_pong.PongAgentRandomSearch;
+import java_ai_gym.helpers.CpuTimer;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Logger;
 
+@Getter
 public abstract class AgentSearch {
 
     protected final static Logger logger = Logger.getLogger(AgentSearch.class.getName());
@@ -17,6 +19,7 @@ public abstract class AgentSearch {
         public List<Integer> bestActionSequence;
         public int nofEpisodes;
         List<Integer> discreteActionsSpace;
+
 
         public SearchResults(double bestReturn, List<Integer> discreteActionsSpace) {
             this.bestReturn = bestReturn;
@@ -50,6 +53,7 @@ public abstract class AgentSearch {
     protected EnvironmentParametersAbstract envParams;
     protected SearchResults searchResults;
     protected final Random random;
+    protected CpuTimer cpuTimer;
 
     public AgentSearch(long timeBudget, Environment env, EnvironmentParametersAbstract envParams) {
         this.timeBudget = timeBudget;
@@ -58,6 +62,7 @@ public abstract class AgentSearch {
         this.envParams = envParams;
         this.searchResults = new SearchResults(-Double.MAX_VALUE, envParams.discreteActionsSpace);
         random = new Random();
+        cpuTimer=new CpuTimer(0);  //time budget defined in sub class
     }
 
     public abstract SearchResults search(final StateForSearch startState);
@@ -72,18 +77,21 @@ public abstract class AgentSearch {
         return actions.get(random.nextInt(actions.size()));
     }
 
+    public boolean timeExceeded() {
+        return cpuTimer.isTimeExceeded();
+    }
+
     protected boolean depthNotExceedAndFailStateNotEncountered(int depth, int searchDepth, StepReturn stepReturn) {
         return depth < searchDepth && !stepReturn.termState;
     }
 
-    public boolean timeExceeded() {
-        return System.currentTimeMillis() > startTime + timeBudget;
-    }
 
     protected void logWarningIfNoFeasibleActionSequenceFound() {
         if (!searchResults.isResultOk()) {
             logger.warning("No feasible action sequence found");
         }
     }
+
+
 
 }

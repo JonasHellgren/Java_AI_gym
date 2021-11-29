@@ -44,9 +44,10 @@ createNewVSBWithNoLooseNodesBelowDepth krånglar x
 snabba upp performDynamicProgramming
 prob välja state över depthSearchPrev  x
 clean up PongAgentDPSearch x
-visa search result swing
-createNewVSBWithNoLooseNodesBelowDepth buggar
+visa search result swing  x
+createNewVSBWithNoLooseNodesBelowDepth buggar  x
 Timer class
+hitogram plottar
 koda DynamicProgramming
 test DynamicProgramming
 StateVisitsDAO idList: farligt ej uppdatera etc med stateBuffer

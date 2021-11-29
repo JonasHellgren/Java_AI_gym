@@ -23,7 +23,7 @@ public class PongAgentRandomSearch extends AgentSearch {
         startTime = System.currentTimeMillis();  //starting time, long <=> minimum value of 0  //TODO needed?
         state = new StateForSearch(startState);
 
-        while (timeExceeded()) {
+        while (!timeExceeded()) {
             state.copyState(startState);
             runEpisode();
             setNewSearchResultsIfBetterCandidateFound();

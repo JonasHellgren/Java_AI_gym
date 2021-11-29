@@ -1,7 +1,7 @@
 package java_ai_gym.models_pong;
 
+import java_ai_gym.helpers.CpuTimer;
 import java_ai_gym.helpers.MathUtils;
-import java_ai_gym.models_common.AgentSearch;
 import java_ai_gym.models_common.StateForSearch;
 import java_ai_gym.models_common.StepReturn;
 import lombok.Getter;
@@ -19,15 +19,18 @@ public class VisitedStatesBuffer {
     ExperiencesDAO experiencesDAO;
     SetOfTerminalStatesDAO setOfTerminalStatesDAO;
     int depthMax;
-
+    boolean timeExceedWhenTrimming;
+    int removedNodes;
     protected final Random random;
 
     public VisitedStatesBuffer() {
         stateVisitsDAO = new StateVisitsDAO();
         experiencesDAO = new ExperiencesDAO();
         setOfTerminalStatesDAO = new SetOfTerminalStatesDAO();
-        random = new Random();
         depthMax = 0;
+        timeExceedWhenTrimming=false;
+        removedNodes=0;
+        random = new Random();
     }
 
     public VisitedStatesBuffer(StateForSearch startState) {
@@ -151,7 +154,7 @@ public class VisitedStatesBuffer {
         return depthMax;
     }
 
-    public VisitedStatesBuffer createNewVSBWithNoLooseNodesBelowDepth(int searchDepth, AgentSearch agent) {
+    public VisitedStatesBuffer createNewVSBWithNoLooseNodesBelowDepth(int searchDepth, CpuTimer cpuTimer) {
         logger.info("createNewVSBWithNoLooseNodesBelowDepth called"+", searchDepth = "+searchDepth);
 
         if (getDepthMax() < searchDepth) {
@@ -159,14 +162,16 @@ public class VisitedStatesBuffer {
             return new VisitedStatesBuffer(this);
         }
         VisitedStatesBuffer vsbTrimmed = new VisitedStatesBuffer(this);
-        int removedNodes = 0;
+        vsbTrimmed.removedNodes = 0;
+        vsbTrimmed.timeExceedWhenTrimming=false;  //assume will do it in time
         boolean nodeRemoved;
         do {
             nodeRemoved = false;
             for (int depth = searchDepth - 1; depth >= 0; depth--) {
                 List<StateForSearch> statesAtDepth = vsbTrimmed.getAllStatesAtDepth(depth);
-                if (agent.timeExceeded()) {
+                if (cpuTimer.isTimeExceeded()) {
                     logger.warning("Time exceeded in createNewVSBWithNoLooseNodesBelowDepth");
+                    vsbTrimmed.timeExceedWhenTrimming=true;
                     break;
                 }
                 logger.fine("depth = "+depth+", nof states = "+statesAtDepth.size());
@@ -175,19 +180,17 @@ public class VisitedStatesBuffer {
                     if (vsbTrimmed.isNoActionTriedInStateWithId(state.id)) {
                         logger.fine("removing state id = " + state.id + ", size =" + vsbTrimmed.size());
                         nodeRemoved = true;
-                        removedNodes++;
+                        vsbTrimmed.removedNodes++;
                         String idToRemove = state.id;
                         vsbTrimmed.getStateVisitsDAO().remove(idToRemove);
                         vsbTrimmed.getExperiencesDAO().removeExpItemWithNewStateId(idToRemove);
-
                     }
                 }
                 logger.fine("nof states after = "+statesAtDepth.size());
-
             }
-        } while (nodeRemoved && !agent.timeExceeded());
+        } while (nodeRemoved && !cpuTimer.isTimeExceeded());
 
-        logger.info("Nof removed nodes are = " + removedNodes);
+        logger.info("Nof removed nodes are = " + vsbTrimmed.removedNodes);
         return vsbTrimmed;
     }
 

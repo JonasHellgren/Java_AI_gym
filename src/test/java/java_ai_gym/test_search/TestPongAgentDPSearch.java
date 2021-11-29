@@ -55,7 +55,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
 
         createVSB(NOF_STEPS,MAX_DEPTH);
         logger.info("VSB size = " + agent.getVsb().size());
-        VisitedStatesBuffer trimmedVSB = agent.getVsb().createNewVSBWithNoLooseNodesBelowDepth(MAX_DEPTH,agent);   //agent.getVsb().getMaxDepth()
+        VisitedStatesBuffer trimmedVSB = agent.getVsb().createNewVSBWithNoLooseNodesBelowDepth(MAX_DEPTH,agent.getCpuTimer());   //agent.getVsb().getMaxDepth()
         printVSBs(agent.getVsb(), trimmedVSB);
         copyVSBsToFrame(agent.getVsb(), trimmedVSB);
         TimeUnit.MILLISECONDS.sleep(15000);
@@ -77,7 +77,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
             createVSB(NOF_STEPS,MAX_DEPTH);
             logger.info("VSB size = " + agent.getVsb().size());
 
-            VisitedStatesBuffer trimmedVSB = agent.getVsb().createNewVSBWithNoLooseNodesBelowDepth(MAX_DEPTH,agent);   //agent.getVsb().getMaxDepth()
+            VisitedStatesBuffer trimmedVSB = agent.getVsb().createNewVSBWithNoLooseNodesBelowDepth(MAX_DEPTH,agent.getCpuTimer());   //agent.getVsb().getMaxDepth()
             printVSBs(agent.getVsb(), trimmedVSB);
 
             if (trimmedVSB.anyLooseNodeBelowDepth(trimmedVSB, MAX_DEPTH)) {
@@ -102,6 +102,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
         final int MAX_DEPTH = 5; //agent.getVsb().getMaxDepth();
         setBallAndRacketInMiddleBallFallingDown();
 
+        agent.setTimeBudgetMillis(100);
         agent.search(state);
        // agent.getTrimmedVSB().createNewVSBWithNoLooseNodesBelowDepth(searchDepthPrev,);
      //   VisitedStatesBuffer trimmedVSB =  agent.getVsb().createNewVSBWithNoLooseNodesBelowDepth(agent.getVsb().getDepthMax(),agent);
@@ -123,7 +124,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
 
 
     private void copyVSBsToFrame(VisitedStatesBuffer vsb, VisitedStatesBuffer trimmedVSB) {
-        env.upperTreePanel.createTreeFromVisitedStatesBuffer(vsb,agent.getSearchDepthPrev());
+        env.upperTreePanel.createTreeFromVisitedStatesBuffer(vsb,vsb.getDepthMax());
         env.upperTreePanel.expandTree();
 
         env.lowerTreePanel.createTreeFromVisitedStatesBuffer(trimmedVSB,agent.getSearchDepthPrev());

@@ -16,7 +16,7 @@ public class SearchTreePanel extends JPanel {
     JTree tree;
     JLabel label;
     VisitedStatesBuffer vsb;
-    int searchDepthPrev;
+    int searchDepth;
 
     public SearchTreePanel() {
         //   this.tree = tree;
@@ -67,14 +67,14 @@ public class SearchTreePanel extends JPanel {
     }
 
     @SneakyThrows
-    public void createTreeFromVisitedStatesBuffer(VisitedStatesBuffer vsb, int searchDepthPrev) {
+    public void createTreeFromVisitedStatesBuffer(VisitedStatesBuffer vsb, int searchDepth) {
 
-        this.searchDepthPrev = searchDepthPrev;
+        this.searchDepth = searchDepth;
         //  System.out.println("createTreeFromVisitedStatesBuffer = "+vsb);
 
         this.vsb = vsb;
         addChildNodesRecursive(this.root, "start");
-        this.label.setText("Max depth = " + vsb.getDepthMax() + ", searchDepth= " + searchDepthPrev + ", nof nodes = " + vsb.getStateVisitsDAO().size());
+        this.label.setText("Max depth = " + vsb.getDepthMax() + ", searchDepth= " + searchDepth + ", nof nodes = " + vsb.getStateVisitsDAO().size());
 
         //https://stackoverflow.com/questions/5042937/jtree-line-style-and-nimbus
         tree.putClientProperty("JTree.lineStyle", "Angled");
@@ -93,7 +93,7 @@ public class SearchTreePanel extends JPanel {
 
         for (StateExperience exp : experiences) {
             //  System.out.println("parentId = "+parentId+", idNewState = "+exp.idNewState);
-            if (vsb.getStateVisitsDAO().get(exp.idNewState).depth <= searchDepthPrev) {
+            if (vsb.getStateVisitsDAO().get(exp.idNewState).depth <= searchDepth) {
                 DefaultMutableTreeNode child = new DefaultMutableTreeNode(exp.idNewState);
                 parent.add(child);
                 addChildNodesRecursive(child, exp.idNewState);

@@ -1,5 +1,6 @@
 package java_ai_gym.models_pong;
 
+import java_ai_gym.helpers.CpuTimer;
 import java_ai_gym.helpers.MathUtils;
 import java_ai_gym.models_common.*;
 import lombok.Getter;
@@ -16,7 +17,7 @@ public class PongAgentDPSearch extends AgentSearch {
     final int ACTION_DEFAULT = 1;
     double K=2.0;
     final double EF_LIMIT=0.5;
-    final double PROB_SELECT_STATE_FROM_NEW_DEPTH_STEP=0.95;
+    final double PROB_SELECT_STATE_FROM_NEW_DEPTH_STEP=0.5;
 
     int searchDepthStep;
     int searchDepthPrev;
@@ -26,8 +27,8 @@ public class PongAgentDPSearch extends AgentSearch {
     VisitedStatesBuffer trimmedVSB;
     VisitedStatesBuffer vsbForNewDepthSet;
     StateForSearch startState;
-    long startTimeForSpeedTesting;
     int nofStatesVsbForNewDepthSetPrev;
+
 
     public PongAgentDPSearch(SinglePong env,
                              long timeBudget,
@@ -36,6 +37,7 @@ public class PongAgentDPSearch extends AgentSearch {
         this.searchDepthStep = searchDepthStep;
         this.searchDepth = searchDepthStep;
         this.evaluatedSearchDepths=new ArrayList<>();
+        super.cpuTimer=new CpuTimer(timeBudget);
         //this.state = new StateForSearch(env.getTemplateState());
     }
 
@@ -48,7 +50,7 @@ public class PongAgentDPSearch extends AgentSearch {
         int nofSteps = 0;
         double explorationFactor = 0;
 
-        while (!timeExceeded() && nofSteps<222) {  //TODO remove nofSteps
+        while (!cpuTimer.isTimeExceeded() && nofSteps<15000) {  //TODO remove nofSteps
             StateForSearch selectedState = this.selectState();
             takeStepAndSaveExperience(nofActions, selectedState);
 
@@ -63,18 +65,23 @@ public class PongAgentDPSearch extends AgentSearch {
                 vsbForNewDepthSet.clear();
                 explorationFactor =0;
                 showLogs2(nofSteps);
-                startTimerForSpeedTest();
+                cpuTimer.reset();
                 findBestPath();
-                showElapsedTimeSpeedTest("performDynamicProgramming",true);
+                logger.info("findBestPath (millis) = " +cpuTimer.getTimeInMillis());
             }
             nofSteps++;
         }
 
-        findBestPath();  //TODO remove
+        //findBestPath();  //TODO remove
         logger.info("search finished, vsb size = "+vsb.size());
         showLogs1(nofSteps, explorationFactor);
         showLogs2(nofSteps);
         return null;
+    }
+
+    public void setTimeBudgetMillis(long time) {
+        this.timeBudget=time;
+        cpuTimer.setTimeBudgetMillis(time);
     }
 
     private void showLogs1(int nofSteps, double explorationFactor) {
@@ -111,31 +118,33 @@ public class PongAgentDPSearch extends AgentSearch {
         this.startState.setIdDepthNofActions(this.startState.START_STATE_ID, 0, nofActions);
         this.vsb = new VisitedStatesBuffer(this.startState);
         this.startTime = System.currentTimeMillis();  //starting time, long <=> minimum value of 0
-        this.trimmedVSB=vsb;
+        this.trimmedVSB=new VisitedStatesBuffer(this.startState);
         this.vsbForNewDepthSet =new VisitedStatesBuffer();
         this.nofStatesVsbForNewDepthSetPrev=1;
         this.searchDepth = searchDepthStep;
         this.searchDepthPrev=0;
     }
 
-    private void startTimerForSpeedTest() {
-        startTimeForSpeedTesting = System.nanoTime();  //starting time, long <=> minimum value of 0
-    }
 
-    private void showElapsedTimeSpeedTest(String methodName, boolean flag) {
-        if (flag)
-        System.out.println(methodName + " time (millis) = "+(System.nanoTime()- startTimeForSpeedTesting)/1000000);
-    }
+
+
 
     private void findBestPath() {
         logger.info("findBestPath called, searchDepthPrev= "+searchDepthPrev+", trimmedVSB.getDepthMax= "+trimmedVSB.getDepthMax());
-        //todo, avoid passing in this, for timeExceeded access, bidirection dep
-        trimmedVSB =  vsb.createNewVSBWithNoLooseNodesBelowDepth(searchDepthPrev,this);
-        if (trimmedVSB.anyLooseNodeBelowDepth(trimmedVSB, searchDepthPrev)) {
-            logger.warning("in findBestPath, removeLooseNodesBelowDepth failed, still loose node(s).");
+        VisitedStatesBuffer trimResult=   vsb.createNewVSBWithNoLooseNodesBelowDepth(searchDepthPrev,cpuTimer);
+        if (!trimResult.timeExceedWhenTrimming)  {
+            trimmedVSB=trimResult;
+
+            logger.info(". VSB trimmed size = "+trimmedVSB.size());
+
+            if (trimmedVSB.anyLooseNodeBelowDepth(trimmedVSB, searchDepthPrev)) {
+                logger.warning("in findBestPath, removeLooseNodesBelowDepth failed, still loose node(s).");
+            }
+
         }
 
-        logger.info(". VSB trimmed size = "+trimmedVSB.size());
+
+
     }
 
     private void increaseSearchDepth() {
@@ -143,7 +152,7 @@ public class PongAgentDPSearch extends AgentSearch {
              logger.warning("vsb.getMaxDepth() > searchDept");
          }
         addEvaluatedSearchDepth(searchDepth);
-        searchDepthPrev =searchDepth;
+        searchDepthPrev = searchDepth;
         searchDepth=searchDepth+searchDepthStep;
     }
 
