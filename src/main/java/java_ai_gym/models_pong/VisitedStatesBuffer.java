@@ -170,7 +170,7 @@ public class VisitedStatesBuffer {
             for (int depth = searchDepth - 1; depth >= 0; depth--) {
                 List<StateForSearch> statesAtDepth = vsbTrimmed.getAllStatesAtDepth(depth);
                 if (cpuTimer.isTimeExceeded()) {
-                    logger.warning("Time exceeded in createNewVSBWithNoLooseNodesBelowDepth");
+                    logger.warning("Time exceeded in createNewVSBWithNoLooseNodesBelowDepth !!!!!!!!!!!!!!!!!!!!!!!!!");
                     vsbTrimmed.timeExceedWhenTrimming=true;
                     break;
                 }

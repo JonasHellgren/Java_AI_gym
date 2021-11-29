@@ -5,15 +5,18 @@ import org.bytedeco.opencv.presets.opencv_core;
 public class StateForSearch extends State {
 
     public final String START_STATE_ID = "start";
+    public final double INIT_VALUE=0;
     public String id;
     public int depth;
     public int nofActions;
+    public double value;
 
     public StateForSearch() {
         super();
         id=START_STATE_ID;
         depth=0;
         nofActions=0;
+        value=INIT_VALUE;
     }
 
     public StateForSearch(StateForSearch state) {
@@ -39,6 +42,7 @@ public class StateForSearch extends State {
         this.id=state.id;
         this.depth=state.depth;
         this.nofActions=state.nofActions;
+        this.value=state.value;
     }
 
     @Override
@@ -54,7 +58,7 @@ public class StateForSearch extends State {
     }
 
     public String searchSpecificPropertiesAsString() {
-        return  "id = "+this.id+", depth = "+this.depth; //+", nofActions = "+this.nofActions;
+        return  "id = "+this.id+", depth = "+this.depth+", value = "+this.value; //+", nofActions = "+this.nofActions;
     }
 
 }

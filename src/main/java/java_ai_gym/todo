@@ -47,7 +47,7 @@ clean up PongAgentDPSearch x
 visa search result swing  x
 createNewVSBWithNoLooseNodesBelowDepth buggar  x
 Timer class  x
-histogram plottar
+histogram plottar x
 koda DynamicProgramming
 test DynamicProgramming
 StateVisitsDAO idList: farligt ej uppdatera etc med stateBuffer

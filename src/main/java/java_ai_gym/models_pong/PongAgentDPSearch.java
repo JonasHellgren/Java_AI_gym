@@ -18,6 +18,7 @@ public class PongAgentDPSearch extends AgentSearch {
     double K=2.0;
     final double EF_LIMIT=0.5;
     final double PROB_SELECT_STATE_FROM_NEW_DEPTH_STEP=0.5;
+    final double DISCOUNT_FACTOR=1;
 
     int searchDepthStep;
     int searchDepthPrev;
@@ -52,7 +53,7 @@ public class PongAgentDPSearch extends AgentSearch {
         int nofSteps = 0;
         double explorationFactor = 0;
 
-        while (!cpuTimer.isTimeExceeded() && nofSteps<15000) {  //TODO remove nofSteps
+        while (!cpuTimer.isTimeExceeded() && nofSteps<150000) {  //TODO remove nofSteps
             StateForSearch selectedState = this.selectState();
             takeStepAndSaveExperience(nofActions, selectedState);
 
@@ -67,9 +68,9 @@ public class PongAgentDPSearch extends AgentSearch {
                 vsbForNewDepthSet.clear();
                 explorationFactor =0;
                 showLogs2(nofSteps);
-                timeChecker.reset();
+
                 findBestPath();
-                logger.info("findBestPath (millis) = " +timeChecker.getTimeInMillis());
+
             }
             nofSteps++;
         }
@@ -142,6 +143,17 @@ public class PongAgentDPSearch extends AgentSearch {
       //      if (trimmedVSB.anyLooseNodeBelowDepth(trimmedVSB, searchDepthPrev)) {
         //        logger.warning("in findBestPath, removeLooseNodesBelowDepth failed, still loose node(s).");
         //    }
+
+            BellmanCalculator bellmanCalculator=new BellmanCalculator(trimmedVSB, new FindMax(), searchDepthPrev,  DISCOUNT_FACTOR);
+
+            timeChecker.reset();
+            bellmanCalculator.setNodeValues();
+            logger.info("setNodeValues (millis) = " +timeChecker.getTimeInMillis());
+
+            List<StateForSearch> optPath= bellmanCalculator.findNodesOnOptimalPath(this.startState);
+            System.out.println("optPath = "+optPath);
+
+
 
         }
 

@@ -104,14 +104,15 @@ public class TestPongAgentDPSearch extends TestSearchBase {
         final int MAX_DEPTH = 5; //agent.getVsb().getMaxDepth();
         setBallAndRacketInMiddleBallFallingDown();
 
-        agent.setTimeBudgetMillis(100);
+        agent.setTimeBudgetMillis(1000);
         agent.search(state);
        // agent.getTrimmedVSB().createNewVSBWithNoLooseNodesBelowDepth(searchDepthPrev,);
      //   VisitedStatesBuffer trimmedVSB =  agent.getVsb().createNewVSBWithNoLooseNodesBelowDepth(agent.getVsb().getDepthMax(),agent);
       //  agent.setTrimmedVSB(trimmedVSB);
 
-     //  printVSBs(agent.getVsb(), agent.getTrimmedVSB());
         copyVSBsToFrame(agent.getVsb(), agent.getTrimmedVSB());
+      // printVSBs(agent.getVsb(), agent.getTrimmedVSB());
+
 
         System.out.println("anyLooseNodeBelowDepth = "+agent.getTrimmedVSB().anyLooseNodeBelowDepth(agent.getTrimmedVSB(), agent.getTrimmedVSB().getDepthMax())+
                 ", size vsb = "+agent.getVsb().size()+
@@ -143,8 +144,8 @@ public class TestPongAgentDPSearch extends TestSearchBase {
     }
 
     private void printVSBs(VisitedStatesBuffer vsb, VisitedStatesBuffer trimmedVSB) {
-        System.out.println(vsb);
-        System.out.println("original VSB depth = " + agent.getVsb().getDepthMax() + ", original VSB nof nodes = " + agent.getVsb().getStateVisitsDAO().size());
+    //    System.out.println(vsb);
+    //    System.out.println("original VSB depth = " + agent.getVsb().getDepthMax() + ", original VSB nof nodes = " + agent.getVsb().getStateVisitsDAO().size());
         System.out.println(trimmedVSB);
         System.out.println("trimmedVSB depth = " + trimmedVSB.getDepthMax() + ", trimmed VSB nof nodes = " + trimmedVSB.getStateVisitsDAO().size());
     }
