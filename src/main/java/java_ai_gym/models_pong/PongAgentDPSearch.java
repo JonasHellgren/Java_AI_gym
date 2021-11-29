@@ -18,7 +18,7 @@ public class PongAgentDPSearch extends AgentSearch {
     double K=2.0;
     final double EF_LIMIT=0.5;
     final double PROB_SELECT_STATE_FROM_NEW_DEPTH_STEP=0.5;
-    final double DISCOUNT_FACTOR=1;
+    final double DISCOUNT_FACTOR=0.99;
 
     int searchDepthStep;
     int searchDepthPrev;
@@ -53,7 +53,7 @@ public class PongAgentDPSearch extends AgentSearch {
         int nofSteps = 0;
         double explorationFactor = 0;
 
-        while (!cpuTimer.isTimeExceeded() && nofSteps<150000) {  //TODO remove nofSteps
+        while (!cpuTimer.isTimeExceeded() && nofSteps<15000) {  //TODO remove nofSteps
             StateForSearch selectedState = this.selectState();
             takeStepAndSaveExperience(nofActions, selectedState);
 
@@ -129,14 +129,11 @@ public class PongAgentDPSearch extends AgentSearch {
     }
 
 
-
-
-
     private void findBestPath() {
         logger.info("findBestPath called, searchDepthPrev= "+searchDepthPrev+", trimmedVSB.getDepthMax= "+trimmedVSB.getDepthMax());
-        VisitedStatesBuffer trimResult =   vsb.createNewVSBWithNoLooseNodesBelowDepth(searchDepthPrev,cpuTimer);
-        if (!trimResult.timeExceedWhenTrimming)  {
-            trimmedVSB=trimResult;
+      //  VisitedStatesBuffer trimResult =   vsb.createNewVSBWithNoLooseNodesBelowDepth(searchDepthPrev,cpuTimer);
+      //  if (!trimResult.timeExceedWhenTrimming)  {
+     //       trimmedVSB=trimResult;
 
             logger.info(". VSB trimmed size = "+trimmedVSB.size());
 
@@ -144,7 +141,9 @@ public class PongAgentDPSearch extends AgentSearch {
         //        logger.warning("in findBestPath, removeLooseNodesBelowDepth failed, still loose node(s).");
         //    }
 
-            BellmanCalculator bellmanCalculator=new BellmanCalculator(trimmedVSB, new FindMax(), searchDepthPrev,  DISCOUNT_FACTOR);
+           // BellmanCalculator bellmanCalculator=new BellmanCalculator(trimmedVSB, new FindMax(), searchDepthPrev,  DISCOUNT_FACTOR);
+
+            BellmanCalculator bellmanCalculator=new BellmanCalculator(vsb, new FindMax(), searchDepthPrev,  DISCOUNT_FACTOR);
 
             timeChecker.reset();
             bellmanCalculator.setNodeValues();
@@ -155,7 +154,7 @@ public class PongAgentDPSearch extends AgentSearch {
 
 
 
-        }
+       // }
 
 
 

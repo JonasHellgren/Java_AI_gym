@@ -45,8 +45,8 @@ public class BellmanCalculator {
             List<StateForSearch> nodesAtDepth = vsb.getAllStatesAtDepth(depth);
             for (StateForSearch np : nodesAtDepth) {
                 List<Double> costs = findCostCandidatesForNode(np);
-                System.out.println("costs = "+costs);
-                np.value=strategy.findBestInList(costs);
+             //   System.out.println("costs = "+costs);
+                np.value=(costs.size()==0)?strategy.badNumber():strategy.findBestInList(costs);
             }
         }
 

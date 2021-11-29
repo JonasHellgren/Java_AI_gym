@@ -48,7 +48,10 @@ visa search result swing  x
 createNewVSBWithNoLooseNodesBelowDepth buggar  x
 Timer class  x
 histogram plottar x
-koda DynamicProgramming
+koda DynamicProgramming x
+DP som klarar lösa noder
+BellmanCalculator med timer
+exlkudera trimmed variabler från PongAgentDPSearch
 test DynamicProgramming
 StateVisitsDAO idList: farligt ej uppdatera etc med stateBuffer
 
