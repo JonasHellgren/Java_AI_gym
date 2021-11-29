@@ -49,12 +49,18 @@ createNewVSBWithNoLooseNodesBelowDepth buggar  x
 Timer class  x
 histogram plottar x
 koda DynamicProgramming x
-DP som klarar lösa noder
-BellmanCalculator med timer
-selectedState has to high search depth BUGG
-exlkudera trimmed variabler från PongAgentDPSearch
-test DynamicProgramming
-StateVisitsDAO idList: farligt ej uppdatera etc med stateBuffer
+DP som klarar lösa noder  x
+BellmanCalculator med timer  x
+selectedState has to high search depth BUGG, vid hög EF_LIMIT x
+hantera setNodeValues (millis) = 0, isTimeExceeded = true
+exlkudera trimmed variable från PongAgentDPSearch
+PROB_SELECT_FROM_OPTIMALAPTH
+calcExplorationFactor - stämmer inte
+clean up
+- StateVisitsDAO idList: farligt ej uppdatera etc med stateBuffer
+- fler undermetoder
+tester DynamicProgramming - olika start positioner boll/racket
+
 
 PongAgentDPSearch - sätta EF_LIMIT och K i konstrucotr
 dela upp VisitedStatesBuffer - stor

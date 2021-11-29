@@ -13,23 +13,26 @@ import java.util.List;
 @Setter
 public class PongAgentDPSearch extends AgentSearch {
 
-    final int MAX_NOF_SELECTION_TRIES = 10000;
+    final int MAX_NOF_SELECTION_TRIES = 100;
     final int ACTION_DEFAULT = 1;
-    double K=2.0;
-    final double EF_LIMIT=0.9;
+    double K=4.0;
+    final double EF_LIMIT=0.5;
     final double PROB_SELECT_STATE_FROM_NEW_DEPTH_STEP=0.5;
+    final double PROB_SELECT_FROM_OPTIMAL_PATH=0.1;
     final double DISCOUNT_FACTOR=0.99;
 
     int searchDepthStep;
     int searchDepthPrev;
     int searchDepth;
+    StateForSearch startState;
     List<Integer> evaluatedSearchDepths;
     VisitedStatesBuffer vsb;
     VisitedStatesBuffer trimmedVSB;
     VisitedStatesBuffer vsbForNewDepthSet;
-    StateForSearch startState;
+    List<StateForSearch> optimalStateSequence;
     int nofStatesVsbForNewDepthSetPrev;
     CpuTimer timeChecker;
+    boolean isSelectFailed;
 
 
     public PongAgentDPSearch(SinglePong env,
@@ -41,6 +44,8 @@ public class PongAgentDPSearch extends AgentSearch {
         this.evaluatedSearchDepths=new ArrayList<>();
         super.cpuTimer=new CpuTimer(timeBudget);
         this.timeChecker=new CpuTimer(0);
+        this.isSelectFailed=false;
+        this.optimalStateSequence =new ArrayList<>();
         //this.state = new StateForSearch(env.getTemplateState());
     }
 
@@ -53,14 +58,22 @@ public class PongAgentDPSearch extends AgentSearch {
         int nofSteps = 0;
         double explorationFactor = 0;
 
-        while (!cpuTimer.isTimeExceeded() && nofSteps<15000) {  //TODO remove nofSteps
+        while (!cpuTimer.isTimeExceeded() && nofSteps<150000) {  //TODO remove nofSteps
             StateForSearch selectedState = this.selectState();
             takeStepAndSaveExperience(nofActions, selectedState);
+            if (isSelectFailed) {
+                logger.warning("isSelectFailed, searchDepth = "+searchDepth);
+              //  System.out.println(vsbForNewDepthSet);
+            }
 
             if (selectedState.depth>searchDepth) {
                 logger.warning("selectedState has to high search depth = "+selectedState.depth+". searchDepth= "+searchDepth);
                 System.out.println("vsb contains = "+vsb.getStateVisitsDAO().contains(selectedState.id));
                 System.out.println("vsbForNewDepthSet contains = "+vsbForNewDepthSet.getStateVisitsDAO().contains(selectedState.id));
+            }
+
+            if (vsb.getDepthMax()>searchDepth) {
+                logger.warning("vsb.getDepthMax()>searchDepthh = "+vsb.getDepthMax()+". searchDepth= "+searchDepth);
             }
 
             if ((double) vsbForNewDepthSet.size()/(double)nofStatesVsbForNewDepthSetPrev > K)  {
@@ -69,13 +82,13 @@ public class PongAgentDPSearch extends AgentSearch {
                 showLogs1(nofSteps, explorationFactor);
             }
 
-            if (vsb.getDepthMax()>=searchDepth && explorationFactor>=EF_LIMIT)  {
+            if (vsb.getDepthMax()>=searchDepth && (explorationFactor>=EF_LIMIT || isSelectFailed))  {
                 increaseSearchDepth();
                 vsbForNewDepthSet.clear();
-                explorationFactor =0;
+                explorationFactor = 0;
                 showLogs2(nofSteps);
-
-                findBestPath();
+                optimalStateSequence=findBestPath();
+                System.out.println("optimalStateSequence = "+optimalStateSequence);
 
             }
             nofSteps++;
@@ -135,7 +148,7 @@ public class PongAgentDPSearch extends AgentSearch {
     }
 
 
-    private void findBestPath() {
+    private List<StateForSearch> findBestPath() {
         logger.info("findBestPath called, searchDepthPrev= "+searchDepthPrev+", trimmedVSB.getDepthMax= "+trimmedVSB.getDepthMax());
       //  VisitedStatesBuffer trimResult =   vsb.createNewVSBWithNoLooseNodesBelowDepth(searchDepthPrev,cpuTimer);
       //  if (!trimResult.timeExceedWhenTrimming)  {
@@ -155,10 +168,7 @@ public class PongAgentDPSearch extends AgentSearch {
             bellmanCalculator.setNodeValues();
             logger.info("setNodeValues (millis) = " +timeChecker.getTimeInMillis()+", isTimeExceeded = "+bellmanCalculator.isTimeExceeded());
 
-            List<StateForSearch> optPath= bellmanCalculator.findNodesOnOptimalPath(this.startState);
-            System.out.println("optPath = "+optPath);
-
-
+            return bellmanCalculator.findNodesOnOptimalPath(this.startState);
 
        // }
 
@@ -199,23 +209,31 @@ public class PongAgentDPSearch extends AgentSearch {
 
     public StateForSearch selectState() {
         StateForSearch selectedState;
-        selectedState = vsb.selectRandomState();
+
+      //  selectedState = startState;
 
         for (int j = 0; j < MAX_NOF_SELECTION_TRIES; j++) {
-            if ( MathUtils.calcRandomFromIntervall(0,1)<PROB_SELECT_STATE_FROM_NEW_DEPTH_STEP && vsbForNewDepthSet.size()>0) {
-                logger.fine("MAX_NOF_SELECTION_TRIES exceeded");
-                selectedState = startState;
+            if ( MathUtils.calcRandomFromIntervall(0,1)>PROB_SELECT_STATE_FROM_NEW_DEPTH_STEP && vsbForNewDepthSet.size()>0) {
+                selectedState = vsbForNewDepthSet.selectRandomState();
             } else
             {
-                selectedState = vsb.selectRandomState();
+                if (MathUtils.calcRandomFromIntervall(0,1)>PROB_SELECT_FROM_OPTIMAL_PATH && optimalStateSequence.size()>0) {
+                    selectedState= optimalStateSequence.get(MathUtils.randInt(0,optimalStateSequence.size()-1));
+                } else
+                {
+                    selectedState = vsb.selectRandomState();
+                }
             }
 
             if (!isNullOrTerminalStateOrAllActionsTestedOrIsAtSearchDepth(selectedState)) {
-                break;
+                isSelectFailed=false;
+                return selectedState;
             }
         }
 
-      return selectedState;
+      logger.warning("MAX_NOF_SELECTION_TRIES exceeded");
+     isSelectFailed=true;
+      return startState;
     }
 
     public boolean isNullOrTerminalStateOrAllActionsTestedOrIsAtSearchDepth(StateForSearch state) {
