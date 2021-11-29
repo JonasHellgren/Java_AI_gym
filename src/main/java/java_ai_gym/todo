@@ -46,8 +46,8 @@ prob välja state över depthSearchPrev  x
 clean up PongAgentDPSearch x
 visa search result swing  x
 createNewVSBWithNoLooseNodesBelowDepth buggar  x
-Timer class
-hitogram plottar
+Timer class  x
+histogram plottar
 koda DynamicProgramming
 test DynamicProgramming
 StateVisitsDAO idList: farligt ej uppdatera etc med stateBuffer
@@ -57,6 +57,7 @@ dela upp VisitedStatesBuffer - stor
 hur använda DP klass i annat projekt/modul
 
 när tid:
+removeExpItemWithNewStateId är inte effektiv
 grafik för plan
 EnvironmentParametersAbstract, sub för tabular
 textBallStates

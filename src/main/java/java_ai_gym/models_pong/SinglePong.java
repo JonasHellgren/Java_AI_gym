@@ -24,10 +24,10 @@ public class SinglePong extends EnvironmentForSearchAgent {
     final int plotFrameHeight=gfxSettings.FRAME_HEIGHT*3;
     public PanelPongAnimation animationPanel;
 
-    public SearchTreePanel upperTreePanel;
-    public SearchTreePanel lowerTreePanel;
-    public HistogramPanel upperChartPanel;
-    public HistogramPanel lowerChartPanel;
+    public SearchTreePanel leftTreePanel;
+    public SearchTreePanel rightTreePanel;
+    public HistogramPanel leftChartPanel;
+    public HistogramPanel rightChartPanel;
     HistogramDataSetGenerator histogramDataSetGenerator;
 
 
@@ -204,23 +204,23 @@ public class SinglePong extends EnvironmentForSearchAgent {
 
         plotFrame =new FrameEnvironment(plotFrameWidth, plotFrameHeight,"SinglePong plots");
 
-        upperTreePanel =new SearchTreePanel();
-        defineTreePanel(upperTreePanel, "upperPLotPanel");
-        lowerTreePanel =new SearchTreePanel();
-        defineTreePanel(lowerTreePanel, "middlePLotPanel");
+        leftTreePanel =new SearchTreePanel();
+        defineTreePanel(leftTreePanel, "upperPLotPanel");
+        rightTreePanel =new SearchTreePanel();
+        defineTreePanel(rightTreePanel, "middlePLotPanel");
 
         histogramDataSetGenerator =new HistogramDataSetGenerator();
-        upperChartPanel = new HistogramPanel();
-        DefaultCategoryDataset dataset1 = upperChartPanel.getDataset();
+        leftChartPanel = new HistogramPanel();
+        DefaultCategoryDataset dataset1 = leftChartPanel.getDataset();
         histogramDataSetGenerator.defineDummyDataset(dataset1);
-        lowerChartPanel = new HistogramPanel();
-        DefaultCategoryDataset dataset2 = lowerChartPanel.getDataset();
+        rightChartPanel = new HistogramPanel();
+        DefaultCategoryDataset dataset2 = rightChartPanel.getDataset();
         histogramDataSetGenerator.defineDummyDataset(dataset2);
 
-        plotFrame.add(upperTreePanel);
-        plotFrame.add(lowerTreePanel);
-        plotFrame.add(upperChartPanel);
-        plotFrame.add(lowerChartPanel);
+        plotFrame.add(leftTreePanel);
+        plotFrame.add(rightTreePanel);
+        plotFrame.add(leftChartPanel);
+        plotFrame.add(rightChartPanel);
         plotFrame.setLayout(new GridLayout(2,2));
         plotFrame.setVisible(true);
     }
@@ -234,8 +234,8 @@ public class SinglePong extends EnvironmentForSearchAgent {
 
 
     public  void createHistogramsFromVisitedStatesBuffer(VisitedStatesBuffer vsb, List<Integer> evaluatedSearchDepths) {
-        histogramDataSetGenerator.updateDatasetForDepthStatistics(upperChartPanel.getDataset(),vsb,evaluatedSearchDepths);
-        histogramDataSetGenerator.updateDatasetForStatesPerDepth(lowerChartPanel.getDataset(),vsb);
+        histogramDataSetGenerator.updateDatasetForDepthStatistics(leftChartPanel.getDataset(),vsb,evaluatedSearchDepths);
+        histogramDataSetGenerator.updateDatasetForStatesPerDepth(rightChartPanel.getDataset(),vsb);
     }
 
 }

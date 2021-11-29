@@ -2,8 +2,10 @@ package java_ai_gym.test_search;
 
 import java_ai_gym.models_common.StateForSearch;
 import java_ai_gym.models_common.StepReturn;
+import java_ai_gym.models_pong.HistogramDataSetGenerator;
 import java_ai_gym.models_pong.VisitedStatesBuffer;
 import lombok.SneakyThrows;
+import org.jfree.data.category.DefaultCategoryDataset;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -39,8 +41,8 @@ public class TestPongAgentDPSearch extends TestSearchBase {
         createVSB(NOF_STEPS,MAX_DEPTH);
 
         System.out.println(agent.getVsb());
-        env.upperTreePanel.createTreeFromVisitedStatesBuffer(agent.getVsb(),agent.getSearchDepthPrev());
-        env.upperTreePanel.expandTree();
+        env.leftTreePanel.createTreeFromVisitedStatesBuffer(agent.getVsb(),agent.getSearchDepthPrev());
+        env.leftTreePanel.expandTree();
         Assert.assertEquals(NOF_STEPS + 1, agent.getVsb().nofStates());
         TimeUnit.MILLISECONDS.sleep(25000);
 
@@ -124,11 +126,18 @@ public class TestPongAgentDPSearch extends TestSearchBase {
 
 
     private void copyVSBsToFrame(VisitedStatesBuffer vsb, VisitedStatesBuffer trimmedVSB) {
-        env.upperTreePanel.createTreeFromVisitedStatesBuffer(vsb,vsb.getDepthMax());
-        env.upperTreePanel.expandTree();
+        env.leftTreePanel.createTreeFromVisitedStatesBuffer(vsb,vsb.getDepthMax());
+        env.leftTreePanel.expandTree();
+        HistogramDataSetGenerator histogramDataSetGenerator =new HistogramDataSetGenerator();
+       // DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
-        env.lowerTreePanel.createTreeFromVisitedStatesBuffer(trimmedVSB,agent.getSearchDepthPrev());
-        env.lowerTreePanel.expandTree();
+
+        env.rightTreePanel.createTreeFromVisitedStatesBuffer(trimmedVSB,agent.getSearchDepthPrev());
+        env.rightTreePanel.expandTree();
+
+        histogramDataSetGenerator.updateDatasetForDepthStatistics(env.leftChartPanel.getDataset(),vsb,agent.getEvaluatedSearchDepths());
+        histogramDataSetGenerator.updateDatasetForStatesPerDepth(env.rightChartPanel.getDataset(),vsb);
+
       //  env.createHistogramsFromVisitedStatesBuffer(vsb,agent.getEvaluatedSearchDepths());
       /// env.createHistogramFromVisitedStatesBufferFromStatesPerDepth(vsb,agent.getEvaluatedSearchDepths());
     }

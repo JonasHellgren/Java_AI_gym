@@ -28,6 +28,7 @@ public class PongAgentDPSearch extends AgentSearch {
     VisitedStatesBuffer vsbForNewDepthSet;
     StateForSearch startState;
     int nofStatesVsbForNewDepthSetPrev;
+    CpuTimer timeChecker;
 
 
     public PongAgentDPSearch(SinglePong env,
@@ -38,6 +39,7 @@ public class PongAgentDPSearch extends AgentSearch {
         this.searchDepth = searchDepthStep;
         this.evaluatedSearchDepths=new ArrayList<>();
         super.cpuTimer=new CpuTimer(timeBudget);
+        this.timeChecker=new CpuTimer(0);
         //this.state = new StateForSearch(env.getTemplateState());
     }
 
@@ -65,9 +67,9 @@ public class PongAgentDPSearch extends AgentSearch {
                 vsbForNewDepthSet.clear();
                 explorationFactor =0;
                 showLogs2(nofSteps);
-                cpuTimer.reset();
+                timeChecker.reset();
                 findBestPath();
-                logger.info("findBestPath (millis) = " +cpuTimer.getTimeInMillis());
+                logger.info("findBestPath (millis) = " +timeChecker.getTimeInMillis());
             }
             nofSteps++;
         }
@@ -85,8 +87,8 @@ public class PongAgentDPSearch extends AgentSearch {
     }
 
     private void showLogs1(int nofSteps, double explorationFactor) {
-        System.out.println("calcStatesAtDepth vsb = "+vsb.calcStatesAtDepth(searchDepth));
-        System.out.println("calcStatesAtDepth vsbForSpecificDepthStep= "+ vsbForNewDepthSet.calcStatesAtDepth(searchDepth));
+     //   System.out.println("calcStatesAtDepth vsb = "+vsb.calcStatesAtDepth(searchDepth));
+     //   System.out.println("calcStatesAtDepth vsbForSpecificDepthStep= "+ vsbForNewDepthSet.calcStatesAtDepth(searchDepth));
         logger.info("nofSteps = "+ nofSteps +", explorationFactor = "+ explorationFactor);
     }
 
@@ -131,15 +133,15 @@ public class PongAgentDPSearch extends AgentSearch {
 
     private void findBestPath() {
         logger.info("findBestPath called, searchDepthPrev= "+searchDepthPrev+", trimmedVSB.getDepthMax= "+trimmedVSB.getDepthMax());
-        VisitedStatesBuffer trimResult=   vsb.createNewVSBWithNoLooseNodesBelowDepth(searchDepthPrev,cpuTimer);
+        VisitedStatesBuffer trimResult =   vsb.createNewVSBWithNoLooseNodesBelowDepth(searchDepthPrev,cpuTimer);
         if (!trimResult.timeExceedWhenTrimming)  {
             trimmedVSB=trimResult;
 
             logger.info(". VSB trimmed size = "+trimmedVSB.size());
 
-            if (trimmedVSB.anyLooseNodeBelowDepth(trimmedVSB, searchDepthPrev)) {
-                logger.warning("in findBestPath, removeLooseNodesBelowDepth failed, still loose node(s).");
-            }
+      //      if (trimmedVSB.anyLooseNodeBelowDepth(trimmedVSB, searchDepthPrev)) {
+        //        logger.warning("in findBestPath, removeLooseNodesBelowDepth failed, still loose node(s).");
+        //    }
 
         }
 

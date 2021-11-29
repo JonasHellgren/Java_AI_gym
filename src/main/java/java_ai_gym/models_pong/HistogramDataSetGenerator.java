@@ -75,7 +75,7 @@ public class HistogramDataSetGenerator {
         }
     }
 
-    public void updateDepthStatistics(List<StateForSearch> states, int searchDepth) {
+    private void updateDepthStatistics(List<StateForSearch> states, int searchDepth) {
 
         if (vsb==null) {
             logger.warning("VisitedStatesBuffer not defined");
