@@ -56,7 +56,11 @@ public class StateVisitsDAO implements  DAO<StateForSearch> {
     }
 
     public void remove(String id) {
-        stateBuffer.remove(id);
+        if (!contains(id)) {
+            logger.warning("Id not present = " +id);
+        } else {
+            stateBuffer.remove(id);
+        }
     }
 
     public boolean contains(String id) {

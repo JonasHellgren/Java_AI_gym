@@ -13,10 +13,10 @@ import java.util.logging.Logger;
 public class VisitedStatesBuffer {
 
     protected final static Logger logger = Logger.getLogger(VisitedStatesBuffer.class.getName());
-    final double PROB_SELECTING_STATE_FOR_EXPLORATION_FACTOR_CALCULATON=1.0;
+    final double PROB_SELECTING_STATE_FOR_EXPLORATION_FACTOR_CALCULATON = 1.0;
 
     StateVisitsDAO stateVisitsDAO;
-    ExperiencesDAO experiencesDAO1;
+    ExperiencesDAO experiencesDAO;
     SetOfTerminalStatesDAO setOfTerminalStatesDAO;
     int depthMax;
 
@@ -24,7 +24,7 @@ public class VisitedStatesBuffer {
 
     public VisitedStatesBuffer() {
         stateVisitsDAO = new StateVisitsDAO();
-        experiencesDAO1 = new ExperiencesDAO();
+        experiencesDAO = new ExperiencesDAO();
         setOfTerminalStatesDAO = new SetOfTerminalStatesDAO();
         random = new Random();
         depthMax = 0;
@@ -34,18 +34,20 @@ public class VisitedStatesBuffer {
         this();
         StateForSearch startStateClone = new StateForSearch(startState);
         addState(startStateClone.START_STATE_ID, startStateClone);
-        experiencesDAO1.addStateWithNoExp(startStateClone.START_STATE_ID);
+        experiencesDAO.addStateWithNoExp(startStateClone.START_STATE_ID);
     }
 
     public VisitedStatesBuffer(VisitedStatesBuffer vsb) {
         this();
         stateVisitsDAO.copy(vsb.getStateVisitsDAO());
-        experiencesDAO1.copy(vsb.getExperiencesDAO1());
+        experiencesDAO.copy(vsb.getExperiencesDAO());
+        setOfTerminalStatesDAO.copy(vsb.getSetOfTerminalStatesDAO());
+        depthMax = vsb.depthMax;
     }
 
     public void clear() {
         stateVisitsDAO.clear();
-        experiencesDAO1.clear();
+        experiencesDAO.clear();
         setOfTerminalStatesDAO.clear();
     }
 
@@ -98,13 +100,13 @@ public class VisitedStatesBuffer {
     }
 
     public void addExperience(String id, StateExperience exp) {
-        experiencesDAO1.add(id, exp);
+        experiencesDAO.add(id, exp);
     }
 
     public List<StateExperience> getExperienceList(String id) {
         //  List<StateExperience> list = new ArrayList<>(experiencesDAO1.getExperienceList(id));
 
-        return new ArrayList<>(experiencesDAO1.getExperienceList(id).values());
+        return new ArrayList<>(experiencesDAO.getExperienceList(id).values());
     }
 
     boolean isActionInStateTerminalAccordingToExperience(String id, int action) {
@@ -119,7 +121,7 @@ public class VisitedStatesBuffer {
     }
 
     public StateExperience searchExperienceOfSteppingToState(String id) {
-        return experiencesDAO1.searchExperienceOfSteppingToState(id);
+        return experiencesDAO.searchExperienceOfSteppingToState(id);
     }
 
     public boolean isExperienceOfStateTerminal(String id) {
@@ -127,11 +129,11 @@ public class VisitedStatesBuffer {
     }
 
     public int nofActionsTested(String id) {
-        return experiencesDAO1.nofActionsTested(id);
+        return experiencesDAO.nofActionsTested(id);
     }
 
     public List<Integer> testedActions(String id) {
-        return experiencesDAO1.testedActions(id);
+        return experiencesDAO.testedActions(id);
     }
 
     public int getDepthMax() {
@@ -150,9 +152,10 @@ public class VisitedStatesBuffer {
     }
 
     public VisitedStatesBuffer createNewVSBWithNoLooseNodesBelowDepth(int searchDepth, AgentSearch agent) {
+        logger.info("createNewVSBWithNoLooseNodesBelowDepth called"+", searchDepth = "+searchDepth);
 
         if (getDepthMax() < searchDepth) {
-            logger.warning("removeLooseNodesBelowDepth failed, cant remove below non existing depth: searchDepth= " + searchDepth + ", maxDepth = " + getDepthMax());
+            logger.warning("removeLooseNodesBelowDepth failed, can't remove below non existing depth: searchDepth= " + searchDepth + ", maxDepth = " + getDepthMax());
             return new VisitedStatesBuffer(this);
         }
         VisitedStatesBuffer vsbTrimmed = new VisitedStatesBuffer(this);
@@ -166,22 +169,25 @@ public class VisitedStatesBuffer {
                     logger.warning("Time exceeded in createNewVSBWithNoLooseNodesBelowDepth");
                     break;
                 }
+                logger.fine("depth = "+depth+", nof states = "+statesAtDepth.size());
                 for (StateForSearch state : statesAtDepth) {
+                    logger.fine("state id =" + state.id + ", isNoActionTried =" + isNoActionTriedInStateWithId(state.id));
                     if (vsbTrimmed.isNoActionTriedInStateWithId(state.id)) {
+                        logger.fine("removing state id = " + state.id + ", size =" + vsbTrimmed.size());
                         nodeRemoved = true;
                         removedNodes++;
                         String idToRemove = state.id;
                         vsbTrimmed.getStateVisitsDAO().remove(idToRemove);
-                        vsbTrimmed.getExperiencesDAO1().removeExpItemWithNewStateId(idToRemove);
+                        vsbTrimmed.getExperiencesDAO().removeExpItemWithNewStateId(idToRemove);
+
                     }
                 }
+                logger.fine("nof states after = "+statesAtDepth.size());
+
             }
-        } while (nodeRemoved && agent.timeExceeded());
-
-
+        } while (nodeRemoved && !agent.timeExceeded());
 
         logger.info("Nof removed nodes are = " + removedNodes);
-
         return vsbTrimmed;
     }
 
@@ -189,6 +195,7 @@ public class VisitedStatesBuffer {
         for (int depth = depthMax - 1; depth >= 0; depth--) {
             List<StateForSearch> statesAtDepth = vsb.getAllStatesAtDepth(depth);
             for (StateForSearch state : statesAtDepth) {
+                logger.fine("state id =" + state.id + ", isNoActionTried =" + isNoActionTriedInStateWithId(state.id));
                 if (isNoActionTriedInStateWithId(state.id)) {
                     logger.warning("Following node is loose and below depth " + state);
                     return true;
@@ -229,10 +236,10 @@ public class VisitedStatesBuffer {
 
         int nofActionsTested = 0;
         int nofActionsAvailable = 0;
-        int nodNodesTested=0;
+        int nodNodesTested = 0;
         for (StateForSearch state : this.stateVisitsDAO.getAll()) {
-            if (   state.depth!=excludedDepth &&
-                    MathUtils.calcRandomFromIntervall(0,1)<PROB_SELECTING_STATE_FOR_EXPLORATION_FACTOR_CALCULATON) {
+            if (state.depth != excludedDepth &&
+                    MathUtils.calcRandomFromIntervall(0, 1) < PROB_SELECTING_STATE_FOR_EXPLORATION_FACTOR_CALCULATON) {
                 nofActionsTested = nofActionsTested + this.nofActionsTested(state.id);
                 nofActionsAvailable = nofActionsAvailable + state.nofActions;
                 nodNodesTested++;
@@ -247,12 +254,12 @@ public class VisitedStatesBuffer {
         return (double) nofActionsTested / (double) nofActionsAvailable;
     }
 
-    public Map<Integer,Integer> calcStatesPerDepth(int searchDepth) {
-        Map<Integer,Integer> statePerDepthList = new HashMap<>();
+    public Map<Integer, Integer> calcStatesAtDepth(int searchDepth) {
+        Map<Integer, Integer> statePerDepthList = new HashMap<>();
 
         for (int depth = 0; depth <= searchDepth; depth++) {
             List<StateForSearch> statesAtDepth = this.getAllStatesAtDepth(depth);
-            statePerDepthList.put(depth,statesAtDepth.size());
+            statePerDepthList.put(depth, statesAtDepth.size());
         }
         return statePerDepthList;
     }

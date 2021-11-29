@@ -16,14 +16,15 @@ public class SearchTreePanel extends JPanel {
     JTree tree;
     JLabel label;
     VisitedStatesBuffer vsb;
+    int searchDepthPrev;
 
     public SearchTreePanel() {
-     //   this.tree = tree;
+        //   this.tree = tree;
     }
 
 
     @SneakyThrows
-    public void createTreeWithOnlyRootNode(int panelW, int panelH,String rootName) {
+    public void createTreeWithOnlyRootNode(int panelW, int panelH, String rootName) {
         UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
         this.root = new DefaultMutableTreeNode(rootName);
         this.tree = new JTree(root);
@@ -66,10 +67,14 @@ public class SearchTreePanel extends JPanel {
     }
 
     @SneakyThrows
-    public void createTreeFromVisitedStatesBuffer(VisitedStatesBuffer vsb) {
+    public void createTreeFromVisitedStatesBuffer(VisitedStatesBuffer vsb, int searchDepthPrev) {
+
+        this.searchDepthPrev = searchDepthPrev;
+        //  System.out.println("createTreeFromVisitedStatesBuffer = "+vsb);
+
         this.vsb = vsb;
         addChildNodesRecursive(this.root, "start");
-        this.label.setText("Max depth = "+vsb.getDepthMax()+", nof nodes = "+vsb.getStateVisitsDAO().size());
+        this.label.setText("Max depth = " + vsb.getDepthMax() + ", searchDepth= " + searchDepthPrev + ", nof nodes = " + vsb.getStateVisitsDAO().size());
 
         //https://stackoverflow.com/questions/5042937/jtree-line-style-and-nimbus
         tree.putClientProperty("JTree.lineStyle", "Angled");
@@ -87,9 +92,12 @@ public class SearchTreePanel extends JPanel {
         List<StateExperience> experiences = vsb.getExperienceList(parentId);
 
         for (StateExperience exp : experiences) {
-            DefaultMutableTreeNode child = new DefaultMutableTreeNode(exp.idNewState);
-            parent.add(child);
-            addChildNodesRecursive(child,exp.idNewState);
+            //  System.out.println("parentId = "+parentId+", idNewState = "+exp.idNewState);
+            if (vsb.getStateVisitsDAO().get(exp.idNewState).depth <= searchDepthPrev) {
+                DefaultMutableTreeNode child = new DefaultMutableTreeNode(exp.idNewState);
+                parent.add(child);
+                addChildNodesRecursive(child, exp.idNewState);
+            }
         }
 
     }

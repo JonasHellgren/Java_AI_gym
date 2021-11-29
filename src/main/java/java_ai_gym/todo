@@ -44,6 +44,12 @@ createNewVSBWithNoLooseNodesBelowDepth krånglar x
 snabba upp performDynamicProgramming
 prob välja state över depthSearchPrev  x
 clean up PongAgentDPSearch x
+visa search result swing
+createNewVSBWithNoLooseNodesBelowDepth buggar
+Timer class
+koda DynamicProgramming
+test DynamicProgramming
+StateVisitsDAO idList: farligt ej uppdatera etc med stateBuffer
 
 PongAgentDPSearch - sätta EF_LIMIT och K i konstrucotr
 dela upp VisitedStatesBuffer - stor

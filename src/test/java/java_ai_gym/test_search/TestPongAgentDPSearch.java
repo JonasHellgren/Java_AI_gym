@@ -39,7 +39,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
         createVSB(NOF_STEPS,MAX_DEPTH);
 
         System.out.println(agent.getVsb());
-        env.upperTreePanel.createTreeFromVisitedStatesBuffer(agent.getVsb());
+        env.upperTreePanel.createTreeFromVisitedStatesBuffer(agent.getVsb(),agent.getSearchDepthPrev());
         env.upperTreePanel.expandTree();
         Assert.assertEquals(NOF_STEPS + 1, agent.getVsb().nofStates());
         TimeUnit.MILLISECONDS.sleep(25000);
@@ -103,9 +103,17 @@ public class TestPongAgentDPSearch extends TestSearchBase {
         setBallAndRacketInMiddleBallFallingDown();
 
         agent.search(state);
-        //printVSBs(agent.getVsb(), agent.getTrimmedVSB());
-       // copyVSBsToFrame(agent.getVsb(), agent.getTrimmedVSB());
-        TimeUnit.MILLISECONDS.sleep(1000);
+       // agent.getTrimmedVSB().createNewVSBWithNoLooseNodesBelowDepth(searchDepthPrev,);
+     //   VisitedStatesBuffer trimmedVSB =  agent.getVsb().createNewVSBWithNoLooseNodesBelowDepth(agent.getVsb().getDepthMax(),agent);
+      //  agent.setTrimmedVSB(trimmedVSB);
+
+     //  printVSBs(agent.getVsb(), agent.getTrimmedVSB());
+        copyVSBsToFrame(agent.getVsb(), agent.getTrimmedVSB());
+
+        System.out.println("anyLooseNodeBelowDepth = "+agent.getTrimmedVSB().anyLooseNodeBelowDepth(agent.getTrimmedVSB(), agent.getTrimmedVSB().getDepthMax())+
+                ", size vsb = "+agent.getVsb().size()+
+                ", size trimmed vsb = "+agent.getTrimmedVSB().size());
+        TimeUnit.MILLISECONDS.sleep(30000);
 
         Assert.assertTrue(agent.getTrimmedVSB().nofStates() <= agent.getVsb().nofStates());
         Assert.assertFalse(agent.getTrimmedVSB().anyLooseNodeBelowDepth(agent.getTrimmedVSB(), MAX_DEPTH));
@@ -113,20 +121,12 @@ public class TestPongAgentDPSearch extends TestSearchBase {
         agent.getVsb().clear();
     }
 
-    public void setBallAndRacketInMiddleBallFallingDown() {
-
-        state.setVariable("xPosBall", env.parameters.MAX_X_POSITION/2);
-        state.setVariable("yPosBall", env.parameters.MAX_Y_POSITION_BALL/2);
-        state.setVariable("xSpdBall", 0d);
-        state.setVariable("ySpdBall", -env.parameters.SPEED_BALL);
-        state.setVariable("xPosRacket", env.parameters.MAX_X_POSITION/2);
-        state.setVariable("xSpdRacket", 0d);
-    }
 
     private void copyVSBsToFrame(VisitedStatesBuffer vsb, VisitedStatesBuffer trimmedVSB) {
-        env.upperTreePanel.createTreeFromVisitedStatesBuffer(vsb);
+        env.upperTreePanel.createTreeFromVisitedStatesBuffer(vsb,agent.getSearchDepthPrev());
         env.upperTreePanel.expandTree();
-        env.lowerTreePanel.createTreeFromVisitedStatesBuffer(trimmedVSB);
+
+        env.lowerTreePanel.createTreeFromVisitedStatesBuffer(trimmedVSB,agent.getSearchDepthPrev());
         env.lowerTreePanel.expandTree();
       //  env.createHistogramsFromVisitedStatesBuffer(vsb,agent.getEvaluatedSearchDepths());
       /// env.createHistogramFromVisitedStatesBufferFromStatesPerDepth(vsb,agent.getEvaluatedSearchDepths());

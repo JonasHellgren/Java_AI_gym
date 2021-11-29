@@ -20,6 +20,10 @@ public class SetOfTerminalStatesDAO {
         stateIds.clear();
     }
 
+    public void copy(SetOfTerminalStatesDAO setOfTerminalStatesDAO) {
+        this.stateIds.addAll(setOfTerminalStatesDAO.stateIds);
+    }
+
     public void addIdIfTerminal(String newId, StepReturn stepReturn) {
         if (stepReturn.termState) {
             logger.info("Added terminal state to SetOfTerminalStatesDAO, size = "+ stateIds.size());

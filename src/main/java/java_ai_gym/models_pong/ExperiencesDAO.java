@@ -60,24 +60,23 @@ public class ExperiencesDAO implements DAO<StateExperience> {
     }
 
     public void removeExpItemWithNewStateId(String idNewState) {
-        /*
-        StateExperience exp= searchExperienceOfSteppingToState(id);
-        List<StateExperience> experiences= getExperienceList(id);
-        System.out.println("id = "+id+", exp = "+exp);
-        int sizeBefore=experiences.size();
-        experiences.remove(exp);
-        int sizeAfter=experiences.size();  */
 
+        boolean itemRemoved=false;
         for (String id:expBuffer.keySet()) {
             Map<Integer, StateExperience> experiences=getExperienceList(id);
-          //  int sizeBefore=experiences.size();
+            int sizeBefore=experiences.size();
             StateExperience exp = getStateExperience(idNewState, experiences);
             if (exp != null) {
-                experiences.remove(exp);
-                //System.out.println("sizeBefore = "+sizeBefore+", sizeAfter = "+experiences.size());
+                experiences.remove(exp.action);
+                if (sizeBefore > experiences.size()) {
+                    itemRemoved=true;
+                }
             }
         }
 
+        if (!itemRemoved) {
+            logger.warning("No experience removed, idNewState = "+idNewState);
+        }
 
     }
 
