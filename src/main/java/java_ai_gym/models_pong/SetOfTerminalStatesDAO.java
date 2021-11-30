@@ -26,7 +26,7 @@ public class SetOfTerminalStatesDAO {
 
     public void addIdIfTerminal(String newId, StepReturn stepReturn) {
         if (stepReturn.termState) {
-            logger.info("Added terminal state to SetOfTerminalStatesDAO, size = "+ stateIds.size());
+            logger.fine("Added terminal state to SetOfTerminalStatesDAO, size = "+ stateIds.size());
             stateIds.add(newId);
         }
     }

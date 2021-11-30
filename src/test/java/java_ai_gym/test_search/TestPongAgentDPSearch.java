@@ -13,7 +13,9 @@ import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
 
+
 public class TestPongAgentDPSearch extends TestSearchBase {
+    final long TIME_BUDGET = 500;
 
     @Before
     public void setup() {
@@ -98,13 +100,13 @@ public class TestPongAgentDPSearch extends TestSearchBase {
 
     @SneakyThrows
     @Test
-    //@Ignore
-    public void testSearch() {
+    @Ignore
+    public void testSearchBallAndRacketInMiddle() {
         final int NOF_STEPS = 100;
         final int MAX_DEPTH = 5; //agent.getVsb().getMaxDepth();
         setBallAndRacketInMiddleBallFallingDown();
 
-        agent.setTimeBudgetMillis(200);
+        agent.setTimeBudgetMillis(TIME_BUDGET);
         agent.search(state);
        // agent.getTrimmedVSB().createNewVSBWithNoLooseNodesBelowDepth(searchDepthPrev,);
      //   VisitedStatesBuffer trimmedVSB =  agent.getVsb().createNewVSBWithNoLooseNodesBelowDepth(agent.getVsb().getDepthMax(),agent);
@@ -125,19 +127,40 @@ public class TestPongAgentDPSearch extends TestSearchBase {
         agent.getVsb().clear();
     }
 
+    @SneakyThrows
+    @Test
+    //@Ignore
+    public void testSearchBallMiddleAndRacketRight() {
+
+        setBallInMiddleAndRacketInRightBallFallingDown();
+        agent.setTimeBudgetMillis(TIME_BUDGET);
+        agent.search(state);
+
+        copyVSBsToFrame(agent.getVsb(), agent.getTrimmedVSB());
+        // printVSBs(agent.getVsb(), agent.getTrimmedVSB());
+
+        TimeUnit.MILLISECONDS.sleep(30000);
+
+        Assert.assertTrue(agent.getTrimmedVSB().nofStates() <= agent.getVsb().nofStates());
+      //  Assert.assertFalse(agent.getTrimmedVSB().anyLooseNodeBelowDepth(agent.getTrimmedVSB(), MAX_DEPTH));
+
+        agent.getVsb().clear();
+    }
+
 
     private void copyVSBsToFrame(VisitedStatesBuffer vsb, VisitedStatesBuffer trimmedVSB) {
+        HistogramDataSetGenerator histogramDataSetGenerator =new HistogramDataSetGenerator();
+        histogramDataSetGenerator.updateDatasetForDepthStatistics(env.leftChartPanel.getDataset(),vsb,agent.getEvaluatedSearchDepths());
+        histogramDataSetGenerator.updateDatasetForStatesPerDepth(env.rightChartPanel.getDataset(),vsb);
+
+
+        /*
         env.leftTreePanel.createTreeFromVisitedStatesBuffer(vsb,vsb.getDepthMax());
         env.leftTreePanel.expandTree();
-        HistogramDataSetGenerator histogramDataSetGenerator =new HistogramDataSetGenerator();
-       // DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-
-
         env.rightTreePanel.createTreeFromVisitedStatesBuffer(trimmedVSB,agent.getSearchDepthPrev());
         env.rightTreePanel.expandTree();
 
-        histogramDataSetGenerator.updateDatasetForDepthStatistics(env.leftChartPanel.getDataset(),vsb,agent.getEvaluatedSearchDepths());
-        histogramDataSetGenerator.updateDatasetForStatesPerDepth(env.rightChartPanel.getDataset(),vsb);
+*/
 
       //  env.createHistogramsFromVisitedStatesBuffer(vsb,agent.getEvaluatedSearchDepths());
       /// env.createHistogramFromVisitedStatesBufferFromStatesPerDepth(vsb,agent.getEvaluatedSearchDepths());

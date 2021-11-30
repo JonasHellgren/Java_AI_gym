@@ -31,13 +31,19 @@ public class TestSearchBase {
     }
 
     public void setBallAndRacketInMiddleBallFallingDown() {
-
         state.setVariable("xPosBall", env.parameters.MAX_X_POSITION/2);
         state.setVariable("yPosBall", env.parameters.MAX_Y_POSITION_BALL/2);
         state.setVariable("xSpdBall", 0d);
         state.setVariable("ySpdBall", -env.parameters.SPEED_BALL);
         state.setVariable("xPosRacket", env.parameters.MAX_X_POSITION/2);
         state.setVariable("xSpdRacket", 0d);
+    }
+
+    public void setBallInMiddleAndRacketInRightBallFallingDown() {
+        setBallAndRacketInMiddleBallFallingDown();
+        state.setVariable("yPosBall", env.parameters.MAX_Y_POSITION_BALL/6);
+        state.setVariable("xPosRacket", env.parameters.MAX_X_POSITION*7/10);
+
     }
 
 }

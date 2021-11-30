@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 public class VisitedStatesBuffer {
 
     protected final static Logger logger = Logger.getLogger(VisitedStatesBuffer.class.getName());
-    final double PROB_SELECTING_STATE_FOR_EXPLORATION_FACTOR_CALCULATON = 1.0;
+    final double PROB_SELECTING_STATE_FOR_EXPLORATION_FACTOR_CALCULATION = 1.0;
 
     StateVisitsDAO stateVisitsDAO;
     ExperiencesDAO experiencesDAO;
@@ -242,7 +242,8 @@ public class VisitedStatesBuffer {
         int nodNodesTested = 0;
         for (StateForSearch state : this.stateVisitsDAO.getAll()) {
             if (state.depth != excludedDepth &&
-                    MathUtils.calcRandomFromIntervall(0, 1) < PROB_SELECTING_STATE_FOR_EXPLORATION_FACTOR_CALCULATON) {
+                    MathUtils.calcRandomFromIntervall(0, 1) < PROB_SELECTING_STATE_FOR_EXPLORATION_FACTOR_CALCULATION &&
+                    !setOfTerminalStatesDAO.isTerminal(state.id) ) {
                 nofActionsTested = nofActionsTested + this.nofActionsTested(state.id);
                 nofActionsAvailable = nofActionsAvailable + state.nofActions;
                 nodNodesTested++;

@@ -13,9 +13,9 @@ import java.util.List;
 @Setter
 public class PongAgentDPSearch extends AgentSearch {
 
-    final int MAX_NOF_SELECTION_TRIES = 100;
+    final int MAX_NOF_SELECTION_TRIES = 1000;
     final int ACTION_DEFAULT = 1;
-    double K=4.0;
+    double K=2.0;
     final double EF_LIMIT=0.5;
     final double PROB_SELECT_STATE_FROM_NEW_DEPTH_STEP=0.5;
     final double PROB_SELECT_FROM_OPTIMAL_PATH=0.1;
@@ -58,7 +58,7 @@ public class PongAgentDPSearch extends AgentSearch {
         int nofSteps = 0;
         double explorationFactor = 0;
 
-        while (!cpuTimer.isTimeExceeded() && nofSteps<150000) {  //TODO remove nofSteps
+        while (!cpuTimer.isTimeExceeded() && nofSteps<1500000) {  //TODO remove nofSteps
             StateForSearch selectedState = this.selectState();
             takeStepAndSaveExperience(nofActions, selectedState);
             if (isSelectFailed) {
@@ -109,7 +109,7 @@ public class PongAgentDPSearch extends AgentSearch {
     private void showLogs1(int nofSteps, double explorationFactor) {
      //   System.out.println("calcStatesAtDepth vsb = "+vsb.calcStatesAtDepth(searchDepth));
      //   System.out.println("calcStatesAtDepth vsbForSpecificDepthStep= "+ vsbForNewDepthSet.calcStatesAtDepth(searchDepth));
-        logger.info("nofSteps = "+ nofSteps +", explorationFactor = "+ explorationFactor);
+        logger.info("nofSteps = "+ nofSteps +", explorationFactor = "+ explorationFactor+", maxDepth= "+vsb.getDepthMax());
     }
 
     private void showLogs2(int nofSteps) {
@@ -208,16 +208,16 @@ public class PongAgentDPSearch extends AgentSearch {
     }
 
     public StateForSearch selectState() {
-        StateForSearch selectedState;
+        StateForSearch selectedState=null;
 
       //  selectedState = startState;
 
         for (int j = 0; j < MAX_NOF_SELECTION_TRIES; j++) {
-            if ( MathUtils.calcRandomFromIntervall(0,1)>PROB_SELECT_STATE_FROM_NEW_DEPTH_STEP && vsbForNewDepthSet.size()>0) {
+            if ( MathUtils.calcRandomFromIntervall(0,1)<PROB_SELECT_STATE_FROM_NEW_DEPTH_STEP && vsbForNewDepthSet.size()>0) {
                 selectedState = vsbForNewDepthSet.selectRandomState();
             } else
             {
-                if (MathUtils.calcRandomFromIntervall(0,1)>PROB_SELECT_FROM_OPTIMAL_PATH && optimalStateSequence.size()>0) {
+                if (MathUtils.calcRandomFromIntervall(0,1)<PROB_SELECT_FROM_OPTIMAL_PATH && optimalStateSequence.size()>0) {
                     selectedState= optimalStateSequence.get(MathUtils.randInt(0,optimalStateSequence.size()-1));
                 } else
                 {
@@ -231,8 +231,15 @@ public class PongAgentDPSearch extends AgentSearch {
             }
         }
 
-      logger.warning("MAX_NOF_SELECTION_TRIES exceeded");
-     isSelectFailed=true;
+      logger.warning("MAX_NOF_SELECTION_TRIES exceeded !!!");
+
+      logger.warning("id ="+selectedState.id+
+              ", depth ="+selectedState.depth+
+              ", null status ="+(selectedState == null)+
+              ", depth status ="+(selectedState.depth == searchDepth)+
+              ", nofActionsTested status ="+(vsb.nofActionsTested(selectedState.id) == selectedState.nofActions)+
+               ",isExperienceOfStateTerminal ="+vsb.isExperienceOfStateTerminal(selectedState.id));
+      isSelectFailed=true;
       return startState;
     }
 
