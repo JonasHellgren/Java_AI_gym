@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 public class VisitedStatesBuffer {
 
     protected final static Logger logger = Logger.getLogger(VisitedStatesBuffer.class.getName());
-    final double PROB_SELECTING_STATE_FOR_EXPLORATION_FACTOR_CALCULATION = 1.0;
+    final double PROB_SELECTING_STATE_FOR_EXPLORATION_FACTOR_CALCULATION = 0.5;  //for speeding up
 
     StateVisitsDAO stateVisitsDAO;
     ExperiencesDAO experiencesDAO;

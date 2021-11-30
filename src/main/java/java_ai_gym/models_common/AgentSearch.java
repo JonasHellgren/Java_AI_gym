@@ -61,6 +61,7 @@ public abstract class AgentSearch {
     protected SearchResults searchResults;
     protected final Random random;
     protected CpuTimer cpuTimer;
+    protected CpuTimer timeChecker;
 
     public AgentSearch(long timeBudget, Environment env, EnvironmentParametersAbstract envParams) {
         this.timeBudget = timeBudget;
@@ -68,8 +69,14 @@ public abstract class AgentSearch {
         this.env = env;
         this.envParams = envParams;
         this.searchResults = new SearchResults(-Double.MAX_VALUE, envParams.discreteActionsSpace);
-        random = new Random();
-        cpuTimer=new CpuTimer(0);  //time budget defined in sub class
+        this.random = new Random();
+        this.cpuTimer=new CpuTimer(0);  //time budget defined in sub class
+        this.timeChecker = new CpuTimer(0);
+    }
+
+    public void setTimeBudgetMillis(long time) {
+        this.timeBudget=time;
+        cpuTimer.setTimeBudgetMillis(time);
     }
 
     public abstract SearchResults search(final StateForSearch startState);
@@ -97,6 +104,33 @@ public abstract class AgentSearch {
         if (!searchResults.isResultOk()) {
             logger.warning("No feasible action sequence found");
         }
+    }
+
+    public SearchResults defineSearchResults(List<Integer> actionsOptimalPath, StateForSearch startState) {
+
+        SearchResults searchResults = new SearchResults();
+        if (actionsOptimalPath==null) {
+            logger.warning("actionsOptimalPath is null");
+        }
+        else if (actionsOptimalPath.size()==0) {
+            logger.warning("actionsOptimalPath is empty");
+        }  else {
+
+            StateForSearch state = new StateForSearch(startState);
+
+            searchResults.bestActionSequence = actionsOptimalPath;
+            double bestReturn = 0;
+            for (Integer action : actionsOptimalPath) {
+                StepReturn stepReturn = env.step(action, state);
+                state.copyState(stepReturn.state);
+                searchResults.bestStepReturnSequence.add(stepReturn);
+                bestReturn = bestReturn + stepReturn.reward;
+
+            }
+            searchResults.nofEpisodes = 0;
+            searchResults.bestReturn = bestReturn;
+        }
+        return searchResults;
     }
 
 

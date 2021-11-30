@@ -61,7 +61,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
         logger.info("VSB size = " + agent.getVsb().size());
         VisitedStatesBuffer trimmedVSB = agent.getVsb().createNewVSBWithNoLooseNodesBelowDepth(MAX_DEPTH,agent.getCpuTimer());   //agent.getVsb().getMaxDepth()
         printVSBs(agent.getVsb(), trimmedVSB);
-        copyVSBsToFrame(agent.getVsb(), trimmedVSB);
+        copyVSBsToFrame(agent.getVsb());
         TimeUnit.MILLISECONDS.sleep(15000);
 
         Assert.assertTrue(trimmedVSB.nofStates() <= agent.getVsb().nofStates());
@@ -86,7 +86,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
 
             if (trimmedVSB.anyLooseNodeBelowDepth(trimmedVSB, MAX_DEPTH)) {
                 TimeUnit.MILLISECONDS.sleep(15000);
-                copyVSBsToFrame(agent.getVsb(), trimmedVSB);
+                copyVSBsToFrame(agent.getVsb());
             }
             Assert.assertTrue(trimmedVSB.nofStates() <= agent.getVsb().nofStates());
             Assert.assertFalse(trimmedVSB.anyLooseNodeBelowDepth(trimmedVSB, MAX_DEPTH));
@@ -108,7 +108,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
 
         agent.setTimeBudgetMillis(TIME_BUDGET);
         AgentSearch.SearchResults searchResults=agent.search(state);
-        copyVSBsToFrame(agent.getVsb(), agent.getTrimmedVSB());
+        copyVSBsToFrame(agent.getVsb());
         printSummary(searchResults);
         TimeUnit.MILLISECONDS.sleep(3000);
 
@@ -124,7 +124,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
         setBallInMiddleAndRacketInRightBallFallingDown();
         agent.setTimeBudgetMillis(TIME_BUDGET);
         AgentSearch.SearchResults searchResults=agent.search(state);
-        copyVSBsToFrame(agent.getVsb(), agent.getTrimmedVSB());
+        copyVSBsToFrame(agent.getVsb());
         printSummary(searchResults);
         TimeUnit.MILLISECONDS.sleep(3000);
         Assert.assertTrue(searchResults.bestActionSequence.contains(0));
@@ -138,7 +138,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
         setBallLeftAndRacketRightHasNoSolution();
         agent.setTimeBudgetMillis(TIME_BUDGET);
         AgentSearch.SearchResults searchResults=agent.search(state);
-        copyVSBsToFrame(agent.getVsb(), agent.getTrimmedVSB());
+        copyVSBsToFrame(agent.getVsb());
         printSummary(searchResults);
         TimeUnit.MILLISECONDS.sleep(3000);
         //System.out.println(searchResults.getBestStepReturnSequence());
@@ -147,7 +147,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
 
 
 
-    private void copyVSBsToFrame(VisitedStatesBuffer vsb, VisitedStatesBuffer trimmedVSB) {
+    private void copyVSBsToFrame(VisitedStatesBuffer vsb) {
 
         HistogramDataSetGenerator histogramDataSetGenerator =new HistogramDataSetGenerator();
         histogramDataSetGenerator.updateDatasetForDepthStatistics(env.leftChartPanel.getDataset(),vsb,agent.getEvaluatedSearchDepths());

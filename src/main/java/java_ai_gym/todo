@@ -61,10 +61,10 @@ kriterie för misslyckad sökning  x
 ansätta SearchResults x
 tester DynamicProgramming - olika start positioner boll/racket x
 metod som söker rätt på första state ej alla actions provade x
-PongAgentDPSearch - sätta EF_LIMIT och K i konstrucotr
+PongAgentDPSearch - sätta EF_LIMIT och K i konstrucotr x
 clean up
 - StateVisitsDAO idList: farligt ej uppdatera etc med stateBuffer
-- fler undermetoder
+- fler undermetoder PongAgentDPSearch x
 
 
 dela upp VisitedStatesBuffer - stor
