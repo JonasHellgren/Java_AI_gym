@@ -1,9 +1,7 @@
 package java_ai_gym.test_search;
 
-import java_ai_gym.models_common.AgentSearch;
 import java_ai_gym.models_common.StateForSearch;
 import java_ai_gym.models_common.StepReturn;
-import java_ai_gym.models_pong.PongAgentDPSearch;
 import java_ai_gym.models_pong.StateExperience;
 import java_ai_gym.models_pong.VisitedStatesBuffer;
 import org.junit.Assert;
@@ -11,7 +9,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class TestVisitedStatesBuffer extends TestSearchBase {

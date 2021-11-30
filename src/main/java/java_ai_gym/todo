@@ -65,6 +65,7 @@ PongAgentDPSearch - sätta EF_LIMIT och K i konstrucotr x
 clean up
 - StateVisitsDAO idList: farligt ej uppdatera etc med stateBuffer
 - fler undermetoder PongAgentDPSearch x
+- PongAgentDPSearch sub class till AgentDPSearch
 
 
 dela upp VisitedStatesBuffer - stor

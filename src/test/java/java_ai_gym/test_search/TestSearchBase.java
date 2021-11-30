@@ -1,8 +1,7 @@
 package java_ai_gym.test_search;
 
-import java_ai_gym.models_common.AgentSearch;
-import java_ai_gym.models_common.State;
 import java_ai_gym.models_common.StateForSearch;
+import java_ai_gym.models_pong.AgentDPSearch;
 import java_ai_gym.models_pong.PongAgentDPSearch;
 import java_ai_gym.models_pong.SinglePong;
 
