@@ -55,8 +55,8 @@ selectedState has to high search depth BUGG, vid hög EF_LIMIT x
 hantera setNodeValues (millis) = 0, isTimeExceeded = true
 exlkudera trimmed variable från PongAgentDPSearch
 PROB_SELECT_FROM_OPTIMALAPTH  x
-calcExplorationFactor - stämmer inte
-updateDatasetForDepthStatistics superlångsam
+calcExplorationFactor - stämmer inte  x
+updateDatasetForDepthStatistics superlångsam  x
 kriterie för misslyckad sökning
 metod som söker rätt på första state ej alla actions provade
 clean up

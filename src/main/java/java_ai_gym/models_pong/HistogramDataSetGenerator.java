@@ -85,8 +85,9 @@ public class HistogramDataSetGenerator {
         else {
 
             for (StateForSearch state : states) {
-                StateExperience exp = vsb.searchExperienceOfSteppingToState(state.id);
-                if (exp.termState) {
+              //  StateExperience exp = vsb.searchExperienceOfSteppingToState(state.id);
+                //if (exp.termState) {
+                if (vsb.setOfTerminalStatesDAO.isTerminal(state.id))    {
                     depthStatistics.nofFailStates++;
                 } else if (vsb.nofActionsTested(state.id) == 0 && (state.depth != searchDepth)) {
                     depthStatistics.nofNoActionTestedStates++;

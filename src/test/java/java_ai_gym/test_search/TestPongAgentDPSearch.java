@@ -149,18 +149,20 @@ public class TestPongAgentDPSearch extends TestSearchBase {
 
 
     private void copyVSBsToFrame(VisitedStatesBuffer vsb, VisitedStatesBuffer trimmedVSB) {
+
         HistogramDataSetGenerator histogramDataSetGenerator =new HistogramDataSetGenerator();
         histogramDataSetGenerator.updateDatasetForDepthStatistics(env.leftChartPanel.getDataset(),vsb,agent.getEvaluatedSearchDepths());
         histogramDataSetGenerator.updateDatasetForStatesPerDepth(env.rightChartPanel.getDataset(),vsb);
 
-
-        /*
         env.leftTreePanel.createTreeFromVisitedStatesBuffer(vsb,vsb.getDepthMax());
         env.leftTreePanel.expandTree();
-        env.rightTreePanel.createTreeFromVisitedStatesBuffer(trimmedVSB,agent.getSearchDepthPrev());
-        env.rightTreePanel.expandTree();
+      //  env.rightTreePanel.createTreeFromVisitedStatesBuffer(trimmedVSB,agent.getSearchDepthPrev());
+     //   env.rightTreePanel.expandTree();
 
-*/
+
+
+
+
 
       //  env.createHistogramsFromVisitedStatesBuffer(vsb,agent.getEvaluatedSearchDepths());
       /// env.createHistogramFromVisitedStatesBufferFromStatesPerDepth(vsb,agent.getEvaluatedSearchDepths());

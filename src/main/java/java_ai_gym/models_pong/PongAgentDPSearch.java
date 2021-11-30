@@ -16,7 +16,7 @@ public class PongAgentDPSearch extends AgentSearch {
     final int MAX_NOF_SELECTION_TRIES = 1000;
     final int ACTION_DEFAULT = 1;
     double K=2.0;
-    final double EF_LIMIT=0.5;
+    final double EF_LIMIT=0.4;
     final double PROB_SELECT_STATE_FROM_NEW_DEPTH_STEP=0.5;
     final double PROB_SELECT_FROM_OPTIMAL_PATH=0.1;
     final double DISCOUNT_FACTOR=0.99;
