@@ -46,4 +46,12 @@ public class TestSearchBase {
 
     }
 
+    public void setBallLeftAndRacketRightHasNoSolution() {
+        setBallAndRacketInMiddleBallFallingDown();
+        state.setVariable("yPosBall", env.parameters.MAX_Y_POSITION_BALL/6);
+        state.setVariable("xPosBall", 0.0);
+        state.setVariable("xPosRacket", env.parameters.MAX_X_POSITION*1);
+    }
+
+
 }

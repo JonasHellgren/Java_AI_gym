@@ -13,6 +13,7 @@ public abstract class AgentSearch {
 
     protected final static Logger logger = Logger.getLogger(AgentSearch.class.getName());
 
+    @Getter
     public class SearchResults {
         public double bestReturn;
         public List<StepReturn> bestStepReturnSequence;
@@ -21,11 +22,17 @@ public abstract class AgentSearch {
         List<Integer> discreteActionsSpace;
 
 
-        public SearchResults(double bestReturn, List<Integer> discreteActionsSpace) {
-            this.bestReturn = bestReturn;
+        public SearchResults() {
+            this.bestReturn=0;
             this.bestStepReturnSequence = new ArrayList<>();
             this.bestActionSequence = new ArrayList<>();
-            this.nofEpisodes = 0;
+            nofEpisodes=0;
+            this.discreteActionsSpace = new ArrayList<>();
+        }
+
+        public SearchResults(double bestReturn, List<Integer> discreteActionsSpace) {
+            this();
+            this.bestReturn = bestReturn;
             this.discreteActionsSpace = discreteActionsSpace;
         }
 

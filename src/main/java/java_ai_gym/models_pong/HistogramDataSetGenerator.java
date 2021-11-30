@@ -58,7 +58,7 @@ public class HistogramDataSetGenerator {
 
     public void updateDatasetForDepthStatistics(DefaultCategoryDataset dataset,VisitedStatesBuffer vsb,  List<Integer> evaluatedSearchDepths) {
         dataset.clear();
-        logger.info("updateDatasetForDepthStatistics, evaluatedSearchDepths ="+evaluatedSearchDepths);
+        logger.fine("updateDatasetForDepthStatistics, evaluatedSearchDepths ="+evaluatedSearchDepths);
         this.vsb=vsb;
         //DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         int prevDepth=0;
@@ -69,7 +69,7 @@ public class HistogramDataSetGenerator {
                 List<StateForSearch> states=vsb.getAllStatesAtDepth(depth);
                 updateDepthStatistics(states,searchDepth);
             }
-            logger.info("searchDepth ="+searchDepth+", depthStatistics = "+depthStatistics);
+            logger.fine("searchDepth ="+searchDepth+", depthStatistics = "+depthStatistics);
             dataset.addValue(depthStatistics.nofFailStates, "fail", depthSet);
             dataset.addValue(depthStatistics.nofNoActionTestedStates, "no action tested", depthSet);
             dataset.addValue(depthStatistics.nofReachedDepth, "reached depth", depthSet);

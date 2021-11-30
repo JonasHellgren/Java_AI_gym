@@ -25,6 +25,7 @@ public class BellmanCalculator {
     int maxDepth;
     int minDepth;
     List<StateForSearch> nodesOnOptPath;
+    List<Integer> actionsOptPath;
     CpuTimer timeChecker;
     boolean timeExceed;
 
@@ -37,11 +38,19 @@ public class BellmanCalculator {
         this.timeChecker=timeChecker;
         this.timeExceed=false;
 
-        logger.info("BellmanCalculator initiated. maxDepth = "+maxDepth);
+        logger.fine("BellmanCalculator initiated. maxDepth = "+maxDepth);
     }
 
     public List<StateForSearch> getNodesOnOptPath() {
         return nodesOnOptPath;
+    }
+
+    public List<Integer> getActionsOptPath() {
+        if (actionsOptPath==null) {
+            logger.warning("actionsOptPath not defined");
+            return new ArrayList<>();
+        }
+        return actionsOptPath;
     }
 
     public void setNodeValues() {
@@ -105,13 +114,14 @@ public class BellmanCalculator {
 
     public List<StateForSearch> findNodesOnOptimalPath(StateForSearch startNode) {
         nodesOnOptPath = new ArrayList<>();
+        actionsOptPath = new ArrayList<>();
         addBestNodeAndFindNewBestNodeRecursive(startNode);
         return nodesOnOptPath;
     }
 
     public void addBestNodeAndFindNewBestNodeRecursive(State bestNode) {
         nodesOnOptPath.add((StateForSearch) bestNode);
-        State newBestNode = findNewBestNode((StateForSearch) bestNode);
+        State newBestNode = findNewBestNodeAndAddActionBest((StateForSearch) bestNode);
         showLogIfBestNodeHasNoDestination((StateForSearch) bestNode, newBestNode);
         if (! (newBestNode instanceof NullState)) {
             addBestNodeAndFindNewBestNodeRecursive(newBestNode);
@@ -124,9 +134,11 @@ public class BellmanCalculator {
         }
     }
 
-    private State findNewBestNode(StateForSearch bestNode) {
+    private State findNewBestNodeAndAddActionBest(StateForSearch bestNode) {
         State newBestNode = new NullState();
         double costBest = strategy.badNumber();
+        String idBest="";
+        int actionBest=0;
         List<StateExperience> expList = vsb.getExperienceList(bestNode.id);
         for (StateExperience edge : expList) {
             if (!vsb.getStateVisitsDAO().contains(edge.idNewState)) {
@@ -135,14 +147,21 @@ public class BellmanCalculator {
                 double cost = calcLongCost(bestNode, edge);
                 if (strategy.isFirstBetterThanSecond(cost,costBest)) {
                     costBest = cost;
+                    actionBest=edge.action;
+                    idBest= edge.idNewState;
                     newBestNode = vsb.getStateVisitsDAO().get(edge.idNewState);
                 }
             }
         }
+        if (!hasNoExperienceOrTerminal(idBest, expList)) {
+            actionsOptPath.add(actionBest);
+        }
         return newBestNode;
     }
 
-
+    private boolean hasNoExperienceOrTerminal(String idBest, List<StateExperience> expList) {
+        return expList.size() == 0 || vsb.setOfTerminalStatesDAO.isTerminal(idBest);
+    }
 }
 
 

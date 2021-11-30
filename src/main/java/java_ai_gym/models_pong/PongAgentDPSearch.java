@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -24,6 +25,7 @@ public class PongAgentDPSearch extends AgentSearch {
     int searchDepthStep;
     int searchDepthPrev;
     int searchDepth;
+    double explorationFactor;
     StateForSearch startState;
     List<Integer> evaluatedSearchDepths;
     VisitedStatesBuffer vsb;
@@ -33,6 +35,7 @@ public class PongAgentDPSearch extends AgentSearch {
     int nofStatesVsbForNewDepthSetPrev;
     CpuTimer timeChecker;
     boolean isSelectFailed;
+    BellmanCalculator bellmanCalculator;
 
 
     public PongAgentDPSearch(SinglePong env,
@@ -45,6 +48,7 @@ public class PongAgentDPSearch extends AgentSearch {
         super.cpuTimer=new CpuTimer(timeBudget);
         this.timeChecker=new CpuTimer(0);
         this.isSelectFailed=false;
+        
         this.optimalStateSequence =new ArrayList<>();
         //this.state = new StateForSearch(env.getTemplateState());
     }
@@ -56,7 +60,7 @@ public class PongAgentDPSearch extends AgentSearch {
         initInstanceVariables(startState);
         int nofActions = envParams.discreteActionsSpace.size();
         int nofSteps = 0;
-        double explorationFactor = 0;
+        this.explorationFactor = 0;
 
         while (!cpuTimer.isTimeExceeded() && nofSteps<1500000) {  //TODO remove nofSteps
             StateForSearch selectedState = this.selectState();
@@ -79,16 +83,21 @@ public class PongAgentDPSearch extends AgentSearch {
             if ((double) vsbForNewDepthSet.size()/(double)nofStatesVsbForNewDepthSetPrev > K)  {
                 nofStatesVsbForNewDepthSetPrev = vsbForNewDepthSet.size();
                 explorationFactor= vsbForNewDepthSet.calcExplorationFactor(searchDepth);
-                showLogs1(nofSteps, explorationFactor);
+               // showLogs1(nofSteps, explorationFactor);
             }
 
-            if (vsb.getDepthMax()>=searchDepth && (explorationFactor>=EF_LIMIT || isSelectFailed))  {
+            if (isAnyStateAtSearchDepth() && areManyActionsTested())  {
                 increaseSearchDepth();
                 vsbForNewDepthSet.clear();
                 explorationFactor = 0;
-                showLogs2(nofSteps);
-                optimalStateSequence=findBestPath();
-                System.out.println("optimalStateSequence = "+optimalStateSequence);
+                //showLogs2(nofSteps);
+                BellmanCalculator bellmanCalculator=new BellmanCalculator(vsb, new FindMax(), searchDepthPrev,  DISCOUNT_FACTOR,cpuTimer);
+                if (!bellmanCalculator.timeExceed) {
+                    this.optimalStateSequence = findBestPath(bellmanCalculator);
+                    this.bellmanCalculator=bellmanCalculator;
+                }
+               // System.out.println("optimalStateSequence = "+optimalStateSequence);
+              // System.out.println("actionsOptPath = "+bellmanCalculator.actionsOptPath);
 
             }
             nofSteps++;
@@ -96,9 +105,22 @@ public class PongAgentDPSearch extends AgentSearch {
 
         //findBestPath();  //TODO remove
         logger.info("search finished, vsb size = "+vsb.size());
-        showLogs1(nofSteps, explorationFactor);
+      //  showLogs1(nofSteps, explorationFactor);
         showLogs2(nofSteps);
-        return null;
+
+        SearchResults searchResults=defineSearchResults(bellmanCalculator.actionsOptPath);
+        if (!wasSearchFailing()) {
+            logger.warning("Failed search, no state at search depth, i.e end of search horizon");
+        }
+        return searchResults;
+    }
+
+    private boolean areManyActionsTested() {
+        return explorationFactor >= EF_LIMIT || isSelectFailed;
+    }
+
+    private boolean isAnyStateAtSearchDepth() {
+        return vsb.getDepthMax()>=searchDepth;
     }
 
     public void setTimeBudgetMillis(long time) {
@@ -116,10 +138,15 @@ public class PongAgentDPSearch extends AgentSearch {
         logger.info("searchDept increased to = "+searchDepth+". VSB size = "+vsb.size()+", nofSteps = "+ nofSteps);
         System.out.println("statesAtDepth vsb = "+vsb.calcStatesAtDepth(searchDepth));
         System.out.println("statesAtDepth vsbForSpecificDepthStep= "+ vsbForNewDepthSet.calcStatesAtDepth(searchDepth));
-        System.out.println("searchDepthPrev = "+searchDepthPrev);
+        System.out.println("searchDepth = "+searchDepth+", searchDepthPrev = "+searchDepthPrev+", explorationFactor = "+ vsbForNewDepthSet.calcExplorationFactor(searchDepth));
         System.out.println("evaluatedSearchDepths = "+evaluatedSearchDepths);
-        System.out.println("maxDepth trimmed = "+trimmedVSB.getDepthMax());
-        System.out.println("maxDepth not trimmed  = "+vsb.getDepthMax());
+        System.out.println("maxDepth  = "+vsb.getDepthMax());
+        System.out.println("isAnyStateAtSearchDepth() = "+isAnyStateAtSearchDepth()+", areManyActionsTested() = "+areManyActionsTested());
+    }
+
+    public boolean wasSearchFailing() {
+        Map<Integer,Integer> statesAtDepth=vsb.calcStatesAtDepth(searchDepthPrev);
+        return !isAnyStateAtSearchDepth() && areManyActionsTested();
     }
 
     private void takeStepAndSaveExperience(int nofActions, StateForSearch selectedState) {
@@ -148,25 +175,21 @@ public class PongAgentDPSearch extends AgentSearch {
     }
 
 
-    private List<StateForSearch> findBestPath() {
-        logger.info("findBestPath called, searchDepthPrev= "+searchDepthPrev+", trimmedVSB.getDepthMax= "+trimmedVSB.getDepthMax());
+    private List<StateForSearch> findBestPath(BellmanCalculator bellmanCalculator) {
+        logger.fine("findBestPath called, searchDepthPrev= "+searchDepthPrev+", trimmedVSB.getDepthMax= "+trimmedVSB.getDepthMax());
       //  VisitedStatesBuffer trimResult =   vsb.createNewVSBWithNoLooseNodesBelowDepth(searchDepthPrev,cpuTimer);
       //  if (!trimResult.timeExceedWhenTrimming)  {
      //       trimmedVSB=trimResult;
-
-            logger.info(". VSB trimmed size = "+trimmedVSB.size());
+            logger.fine(". VSB trimmed size = "+trimmedVSB.size());
 
       //      if (trimmedVSB.anyLooseNodeBelowDepth(trimmedVSB, searchDepthPrev)) {
         //        logger.warning("in findBestPath, removeLooseNodesBelowDepth failed, still loose node(s).");
         //    }
 
            // BellmanCalculator bellmanCalculator=new BellmanCalculator(trimmedVSB, new FindMax(), searchDepthPrev,  DISCOUNT_FACTOR);
-
-            BellmanCalculator bellmanCalculator=new BellmanCalculator(vsb, new FindMax(), searchDepthPrev,  DISCOUNT_FACTOR,cpuTimer);
-
             timeChecker.reset();
             bellmanCalculator.setNodeValues();
-            logger.info("setNodeValues (millis) = " +timeChecker.getTimeInMillis()+", isTimeExceeded = "+bellmanCalculator.isTimeExceeded());
+            logger.fine("setNodeValues (millis) = " +timeChecker.getTimeInMillis()+", isTimeExceeded = "+bellmanCalculator.isTimeExceeded());
 
             return bellmanCalculator.findNodesOnOptimalPath(this.startState);
 
@@ -263,6 +286,30 @@ public class PongAgentDPSearch extends AgentSearch {
         }
 
         return false;
+    }
+
+    public SearchResults defineSearchResults(List<Integer> actionsOptimalPath) {
+
+        SearchResults searchResults = new SearchResults();
+        if (actionsOptimalPath.size()==0) {
+            logger.warning("actionsOptimalPath is empty");
+        }  else {
+
+            StateForSearch state = new StateForSearch(startState);
+
+            searchResults.bestActionSequence = actionsOptimalPath;
+            double bestReturn = 0;
+            for (Integer action : actionsOptimalPath) {
+                StepReturn stepReturn = env.step(action, state);
+                state.copyState(stepReturn.state);
+                searchResults.bestStepReturnSequence.add(stepReturn);
+                bestReturn = bestReturn + stepReturn.reward;
+
+            }
+            searchResults.nofEpisodes = 0;
+            searchResults.bestReturn = bestReturn;
+        }
+        return searchResults;
     }
 
 

@@ -57,12 +57,14 @@ exlkudera trimmed variable från PongAgentDPSearch
 PROB_SELECT_FROM_OPTIMALAPTH  x
 calcExplorationFactor - stämmer inte  x
 updateDatasetForDepthStatistics superlångsam  x
-kriterie för misslyckad sökning
+kriterie för misslyckad sökning  x
+ansätta SearchResults x
 metod som söker rätt på första state ej alla actions provade
+tester DynamicProgramming - olika start positioner boll/racket
 clean up
 - StateVisitsDAO idList: farligt ej uppdatera etc med stateBuffer
 - fler undermetoder
-tester DynamicProgramming - olika start positioner boll/racket
+
 
 
 PongAgentDPSearch - sätta EF_LIMIT och K i konstrucotr
