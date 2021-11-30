@@ -14,13 +14,14 @@ import java.util.Map;
 @Setter
 public class PongAgentDPSearch extends AgentSearch {
 
+    double EF_LIMIT=0.4;
+    double DISCOUNT_FACTOR=0.99;
+
     final int MAX_NOF_SELECTION_TRIES = 1000;
     final int ACTION_DEFAULT = 1;
     double K=2.0;
-    final double EF_LIMIT=0.4;
     final double PROB_SELECT_STATE_FROM_NEW_DEPTH_STEP=0.5;
     final double PROB_SELECT_FROM_OPTIMAL_PATH=0.1;
-    final double DISCOUNT_FACTOR=0.99;
 
     int searchDepthStep;
     int searchDepthPrev;
@@ -48,9 +49,17 @@ public class PongAgentDPSearch extends AgentSearch {
         super.cpuTimer=new CpuTimer(timeBudget);
         this.timeChecker=new CpuTimer(0);
         this.isSelectFailed=false;
-        
         this.optimalStateSequence =new ArrayList<>();
-        //this.state = new StateForSearch(env.getTemplateState());
+    }
+
+    public PongAgentDPSearch(SinglePong env,
+                             long timeBudget,
+                             int searchDepthStep,
+                             double explorationFactorLimit,
+                             double discountFactor) {
+     this(env,timeBudget,searchDepthStep);
+     this.EF_LIMIT=explorationFactorLimit;
+     this.DISCOUNT_FACTOR=discountFactor;
     }
 
 
@@ -65,9 +74,9 @@ public class PongAgentDPSearch extends AgentSearch {
         while (!cpuTimer.isTimeExceeded() && nofSteps<1500000) {  //TODO remove nofSteps
             StateForSearch selectedState = this.selectState();
             takeStepAndSaveExperience(nofActions, selectedState);
+
             if (isSelectFailed) {
                 logger.warning("isSelectFailed, searchDepth = "+searchDepth);
-              //  System.out.println(vsbForNewDepthSet);
             }
 
             if (selectedState.depth>searchDepth) {
@@ -88,6 +97,7 @@ public class PongAgentDPSearch extends AgentSearch {
 
             if (isAnyStateAtSearchDepth() && areManyActionsTested())  {
                 increaseSearchDepth();
+                logger.fine("searchDept increased to = "+searchDepth+". VSB size = "+vsb.size()+", nofSteps = "+ nofSteps);
                 vsbForNewDepthSet.clear();
                 explorationFactor = 0;
                 //showLogs2(nofSteps);
@@ -106,11 +116,11 @@ public class PongAgentDPSearch extends AgentSearch {
         //findBestPath();  //TODO remove
         logger.info("search finished, vsb size = "+vsb.size());
       //  showLogs1(nofSteps, explorationFactor);
-        showLogs2(nofSteps);
+        printInfo(nofSteps);
 
         SearchResults searchResults=defineSearchResults(bellmanCalculator.actionsOptPath);
-        if (!wasSearchFailing()) {
-            logger.warning("Failed search, no state at search depth, i.e end of search horizon");
+        if (wasSearchFailing()) {
+            logger.warning("Failed search, despite many steps there is no state at search depth, i.e end of search horizon");
         }
         return searchResults;
     }
@@ -128,14 +138,11 @@ public class PongAgentDPSearch extends AgentSearch {
         cpuTimer.setTimeBudgetMillis(time);
     }
 
-    private void showLogs1(int nofSteps, double explorationFactor) {
-     //   System.out.println("calcStatesAtDepth vsb = "+vsb.calcStatesAtDepth(searchDepth));
-     //   System.out.println("calcStatesAtDepth vsbForSpecificDepthStep= "+ vsbForNewDepthSet.calcStatesAtDepth(searchDepth));
-        logger.info("nofSteps = "+ nofSteps +", explorationFactor = "+ explorationFactor+", maxDepth= "+vsb.getDepthMax());
+    public boolean wasSearchFailing() {
+        return !isAnyStateAtSearchDepth() && areManyActionsTested();
     }
 
-    private void showLogs2(int nofSteps) {
-        logger.info("searchDept increased to = "+searchDepth+". VSB size = "+vsb.size()+", nofSteps = "+ nofSteps);
+    private void printInfo(int nofSteps) {
         System.out.println("statesAtDepth vsb = "+vsb.calcStatesAtDepth(searchDepth));
         System.out.println("statesAtDepth vsbForSpecificDepthStep= "+ vsbForNewDepthSet.calcStatesAtDepth(searchDepth));
         System.out.println("searchDepth = "+searchDepth+", searchDepthPrev = "+searchDepthPrev+", explorationFactor = "+ vsbForNewDepthSet.calcExplorationFactor(searchDepth));
@@ -144,10 +151,7 @@ public class PongAgentDPSearch extends AgentSearch {
         System.out.println("isAnyStateAtSearchDepth() = "+isAnyStateAtSearchDepth()+", areManyActionsTested() = "+areManyActionsTested());
     }
 
-    public boolean wasSearchFailing() {
-        Map<Integer,Integer> statesAtDepth=vsb.calcStatesAtDepth(searchDepthPrev);
-        return !isAnyStateAtSearchDepth() && areManyActionsTested();
-    }
+
 
     private void takeStepAndSaveExperience(int nofActions, StateForSearch selectedState) {
         int action = this.chooseAction(selectedState);
@@ -172,6 +176,7 @@ public class PongAgentDPSearch extends AgentSearch {
         this.nofStatesVsbForNewDepthSetPrev=1;
         this.searchDepth = searchDepthStep;
         this.searchDepthPrev=0;
+        this.bellmanCalculator=new BellmanCalculator(vsb, new FindMax(), searchDepthPrev,  DISCOUNT_FACTOR,cpuTimer);
     }
 
 
@@ -255,15 +260,15 @@ public class PongAgentDPSearch extends AgentSearch {
         }
 
       logger.warning("MAX_NOF_SELECTION_TRIES exceeded !!!");
-
       logger.warning("id ="+selectedState.id+
               ", depth ="+selectedState.depth+
               ", null status ="+(selectedState == null)+
               ", depth status ="+(selectedState.depth == searchDepth)+
               ", nofActionsTested status ="+(vsb.nofActionsTested(selectedState.id) == selectedState.nofActions)+
                ",isExperienceOfStateTerminal ="+vsb.isExperienceOfStateTerminal(selectedState.id));
-      isSelectFailed=true;
-      return startState;
+      State stateNotAllActionsTested=vsb.findStateWithNotAllActionsTested(searchDepth);
+      logger.info("Found stateNotAllActionsTested? = "+!(stateNotAllActionsTested instanceof NullState));
+      return (stateNotAllActionsTested instanceof NullState)?startState:(StateForSearch)stateNotAllActionsTested ;
     }
 
     public boolean isNullOrTerminalStateOrAllActionsTestedOrIsAtSearchDepth(StateForSearch state) {
@@ -288,10 +293,13 @@ public class PongAgentDPSearch extends AgentSearch {
         return false;
     }
 
-    public SearchResults defineSearchResults(List<Integer> actionsOptimalPath) {
+    public SearchResults defineSearchResults(List<Integer> actionsOptimalPath) {  //TODO to super class
 
         SearchResults searchResults = new SearchResults();
-        if (actionsOptimalPath.size()==0) {
+        if (actionsOptimalPath==null) {
+            logger.warning("actionsOptimalPath is null");
+        }
+        else if (actionsOptimalPath.size()==0) {
             logger.warning("actionsOptimalPath is empty");
         }  else {
 

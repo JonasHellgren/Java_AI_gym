@@ -17,11 +17,13 @@ public class TestSearchBase {
     final int NOF_ACTIONS=3;
     final int TIME_BUDGET_MS=1000;
     final int SEARCH_DEPTH_STEP=5;
+    final double explorationFactorLimit=0.5;
+    final double discountFactor=1.0;
     SinglePong env=new SinglePong();
     StateForSearch state = new StateForSearch((StateForSearch) env.getTemplateState());
     SinglePong.EnvironmentParameters p=env.parameters;
     Map<String,Integer> moves=new HashMap();
-    PongAgentDPSearch agent= new PongAgentDPSearch(env,TIME_BUDGET_MS,SEARCH_DEPTH_STEP);
+    PongAgentDPSearch agent= new PongAgentDPSearch(env,TIME_BUDGET_MS,SEARCH_DEPTH_STEP,explorationFactorLimit,discountFactor);
 
     public void setupMoves() {
 

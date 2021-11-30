@@ -2,6 +2,8 @@ package java_ai_gym.models_pong;
 
 import java_ai_gym.helpers.CpuTimer;
 import java_ai_gym.helpers.MathUtils;
+import java_ai_gym.models_common.NullState;
+import java_ai_gym.models_common.State;
 import java_ai_gym.models_common.StateForSearch;
 import java_ai_gym.models_common.StepReturn;
 import lombok.Getter;
@@ -216,6 +218,10 @@ public class VisitedStatesBuffer {
         return (getExperienceList(id).size() == 0);
     }
 
+    public boolean areAllActionsTriedInStateWithId(String id) {
+        return (getExperienceList(id).size() == stateVisitsDAO.get(id).nofActions);
+    }
+
     public double calcExplorationFactor(int searchDepthPrev, int searchDepth) {  //TODO REMOVE
 
         int nofActionsTested = 0;
@@ -266,6 +272,16 @@ public class VisitedStatesBuffer {
             statePerDepthList.put(depth, statesAtDepth.size());
         }
         return statePerDepthList;
+    }
+
+    public State findStateWithNotAllActionsTested(int searchDepth)  {
+
+        for (StateForSearch state : this.stateVisitsDAO.getAll()) {
+            if (!areAllActionsTriedInStateWithId(state.id) && state.depth!=searchDepth) {
+                return stateVisitsDAO.get(state.id);
+            }
+        }
+        return new NullState();
     }
 
 

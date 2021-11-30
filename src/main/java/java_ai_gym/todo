@@ -59,17 +59,15 @@ calcExplorationFactor - stämmer inte  x
 updateDatasetForDepthStatistics superlångsam  x
 kriterie för misslyckad sökning  x
 ansätta SearchResults x
-metod som söker rätt på första state ej alla actions provade
-tester DynamicProgramming - olika start positioner boll/racket
+tester DynamicProgramming - olika start positioner boll/racket x
+metod som söker rätt på första state ej alla actions provade x
+PongAgentDPSearch - sätta EF_LIMIT och K i konstrucotr
 clean up
 - StateVisitsDAO idList: farligt ej uppdatera etc med stateBuffer
 - fler undermetoder
 
 
-
-PongAgentDPSearch - sätta EF_LIMIT och K i konstrucotr
 dela upp VisitedStatesBuffer - stor
-hur använda DP klass i annat projekt/modul
 
 när tid:
 removeExpItemWithNewStateId är inte effektiv
