@@ -51,6 +51,7 @@ public class SinglePong extends EnvironmentForSearchAgent {
         public  double TERMINAL_REWARD = -10.0;  //1.0
         public  double NON_TERMINAL_REWARD_MOTION = -.01;  //1.0
         public  double NON_TERMINAL_REWARD_STILL = 0.0;  //1.0
+        public double REWARD_PER_STEP_STILL_BEFORE_BALL_HITS=10;
 
         public int NOF_ACTIONS;
         public int MIN_ACTION;
@@ -77,6 +78,8 @@ public class SinglePong extends EnvironmentForSearchAgent {
         parameters.continuousStateVariableNames.add("ySpdBall");
         parameters.continuousStateVariableNames.add("xPosRacket");
         parameters.continuousStateVariableNames.add("xSpdRacket");
+        parameters.discreteStateVariableNames.add("rapidRacketChange");
+        parameters.discreteStateVariableNames.add("nofStepsStillRacket");
         parameters.discreteStateVariableNames.add("nofSteps");
         parameters.discreteActionsSpace.addAll(Arrays.asList(0,1,2));
         parameters.MIN_ACTION = parameters.discreteActionsSpace.stream().min(Integer::compare).orElse(0);
@@ -106,6 +109,8 @@ public class SinglePong extends EnvironmentForSearchAgent {
         state.createContinuousVariable("ySpdBall", 0.0);
         state.createContinuousVariable("xPosRacket", 0d);
         state.createContinuousVariable("xSpdRacket", 0d);
+        state.createDiscreteVariable("rapidRacketChange", 0);
+        state.createDiscreteVariable("nofStepsStillRacket", 0);
         state.createDiscreteVariable("nofSteps", 0);
     }
 
@@ -126,9 +131,11 @@ public class SinglePong extends EnvironmentForSearchAgent {
     }
 
     public double calcRewardNotTerminal(State state,State stepReturnState) {
-        return (MathUtils.isZero((state.getContinuousVariable("xPosRacket") - stepReturnState.getContinuousVariable("xPosRacket"))))?
+        double r1=(MathUtils.isZero((state.getContinuousVariable("xPosRacket") - stepReturnState.getContinuousVariable("xPosRacket"))))?
                 parameters.NON_TERMINAL_REWARD_STILL:
                 parameters.NON_TERMINAL_REWARD_MOTION;
+        double r2=state.getDiscreteVariable("nofStepsStillRacket")*parameters.REWARD_PER_STEP_STILL_BEFORE_BALL_HITS;
+        return r1+r2;
     }
 
     @NotNull
@@ -139,11 +146,14 @@ public class SinglePong extends EnvironmentForSearchAgent {
         double xSpdBall= state.getContinuousVariable("xSpdBall");
         double ySpdBall= state.getContinuousVariable("ySpdBall");
         double xPosRacket= state.getContinuousVariable("xPosRacket");
+        int nofStepsStillRacket= state.getDiscreteVariable("nofStepsStillRacket");
 
         RacketPhysics racket =new RacketPhysics(xPosRacket,this);
         racket.updateStates(action);
         BallPhysics ball =new BallPhysics(xPosBall,yPosBall,xSpdBall,ySpdBall,this);
         ball.updateStates(racket);
+
+        nofStepsStillRacket=MathUtils.isZero(racket.xSpd)?nofStepsStillRacket+1:0;
 
         newState.setVariable("xPosBall", ball.xPos);
         newState.setVariable("yPosBall", ball.yPos);
@@ -151,6 +161,7 @@ public class SinglePong extends EnvironmentForSearchAgent {
         newState.setVariable("ySpdBall", ball.ySpd);
         newState.setVariable("xPosRacket", racket.xPos);
         newState.setVariable("xSpdRacket", racket.xSpd);
+        newState.setVariable("nofStepsStillRacket", nofStepsStillRacket);
         newState.setVariable("nofSteps", state.getDiscreteVariable("nofSteps")+1);
         return newState;
     }
@@ -164,7 +175,8 @@ public class SinglePong extends EnvironmentForSearchAgent {
     protected boolean isFailsState(State state) {
 
         double yPosBall= state.getContinuousVariable("yPosBall");
-        return (yPosBall  < parameters.MIN_Y_POSITION_BALL);
+        boolean rapidRacketChange= (state.getDiscreteVariable("rapidRacketChange")==1);
+        return (yPosBall  < parameters.MIN_Y_POSITION_BALL || rapidRacketChange);
     }
 
     @Override
@@ -185,6 +197,8 @@ public class SinglePong extends EnvironmentForSearchAgent {
         state.setVariable("ySpdBall", parameters.SPEED_BALL);
         state.setVariable("xPosRacket", MathUtils.calcRandomFromIntervall(parameters.MIN_X_POSITION,parameters.MAX_X_POSITION));
         state.setVariable("xSpdRacket", 0.0);
+        state.setVariable("rapidRacketChange", 0.0);
+        state.setVariable("nofStepsStillRacket", 0.0);
         state.setVariable("nofSteps", state.getDiscreteVariable("nofSteps")+1);
 
     }

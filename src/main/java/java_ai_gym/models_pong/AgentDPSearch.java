@@ -70,11 +70,11 @@ public abstract class AgentDPSearch extends AgentSearch {
         reset();
         this.explorationFactor = 0;
 
-        while (!cpuTimer.isTimeExceeded()) {  //TODO remove nofSteps
-            StateForSearch selectedState = this.selectState();
+        while (!cpuTimer.isTimeExceeded()) {
+            State selectedState = this.selectState();  //can be of type NullState
             int nofActions = getActionSet().size();
-            takeStepAndSaveExperience(nofActions, selectedState);
-            ifMotivatedShowLogs(selectedState);
+            takeStepAndSaveExperience(nofActions, (StateForSearch) selectedState);
+            ifMotivatedShowLogs((StateForSearch) selectedState);
 
             if (hasVsbSizeIncreasedSignificantly()) {
                 nofStatesVsbForNewDepthSetPrev = vsbForNewDepthSet.size();
@@ -93,8 +93,8 @@ public abstract class AgentDPSearch extends AgentSearch {
         return searchResults;
     }
 
-    public StateForSearch selectState() {
-        StateForSearch selectedState = null;  //Todo NullState pattern
+    public State selectState() {
+        State selectedState = new NullState();  //hopefullt will change type later
         for (int j = 0; j < MAX_NOF_SELECTION_TRIES; j++) {
             if (MathUtils.calcRandomFromIntervall(0, 1) < PROB_SELECT_STATE_FROM_NEW_DEPTH_STEP && vsbForNewDepthSet.size() > 0) {
                 selectedState = vsbForNewDepthSet.selectRandomState();
@@ -106,7 +106,7 @@ public abstract class AgentDPSearch extends AgentSearch {
                 }
             }
 
-            if (!isNullOrTerminalStateOrAllActionsTestedOrIsAtSearchDepth(selectedState)) {
+            if (!isNullOrTerminalStateOrAllActionsTestedOrIsAtSearchDepth((StateForSearch) selectedState)) {
                 isSelectFailed = false;
                 return selectedState;
             }
@@ -116,14 +116,18 @@ public abstract class AgentDPSearch extends AgentSearch {
     }
 
     private void takeStepAndSaveExperience(int nofActions, StateForSearch selectedState) {
-        int action = this.chooseAction(selectedState);
-        StepReturn stepReturn = env.step(action, selectedState);
-        StateForSearch stateNew = (StateForSearch) stepReturn.state;
-        stateNew.setDepthNofActions(selectedState.depth + 1, nofActions);
-        vsb.addNewStateAndExperienceFromStep(selectedState.id, action, stepReturn);
+        if (isSelectFailed) {
+            logger.warning("Cant step when failed state selection");
+        } else {
+            int action = this.chooseAction(selectedState);
+            StepReturn stepReturn = env.step(action, selectedState);
+            StateForSearch stateNew = (StateForSearch) stepReturn.state;
+            stateNew.setDepthNofActions(selectedState.depth + 1, nofActions);
+            vsb.addNewStateAndExperienceFromStep(selectedState.id, action, stepReturn);
 
-        if (stateNew.depth >= searchDepthPrev) {
-            vsbForNewDepthSet.addNewStateAndExperienceFromStep(selectedState.id, action, stepReturn);
+            if (stateNew.depth >= searchDepthPrev) {
+                vsbForNewDepthSet.addNewStateAndExperienceFromStep(selectedState.id, action, stepReturn);
+            }
         }
     }
 
@@ -167,7 +171,6 @@ public abstract class AgentDPSearch extends AgentSearch {
     private boolean isAnyStateAtSearchDepth() {
         return vsb.getDepthMax() >= searchDepth;
     }
-
 
     public boolean wasSearchFailing() {
         return !isAnyStateAtSearchDepth() && areManyActionsTested();
@@ -242,17 +245,19 @@ public abstract class AgentDPSearch extends AgentSearch {
     }
 
 
-    private StateForSearch getStateForSearchIfFailedToFind(StateForSearch selectedState) {
+    private State getStateForSearchIfFailedToFind(State selectedState) {
         logger.warning("MAX_NOF_SELECTION_TRIES exceeded !!!");
-        logger.warning("id =" + selectedState.id +
-                ", depth =" + selectedState.depth +
+        StateForSearch castedState=(StateForSearch) selectedState;
+        logger.warning("id =" + castedState.id +
+                ", depth =" + castedState.depth +
                 ", null status =" + (selectedState == null) +
-                ", depth status =" + (selectedState.depth == searchDepth) +
-                ", nofActionsTested status =" + (vsb.nofActionsTested(selectedState.id) == selectedState.nofActions) +
-                ",isExperienceOfStateTerminal =" + vsb.isExperienceOfStateTerminal(selectedState.id));
+                ", depth status =" + (castedState.depth == searchDepth) +
+                ", nofActionsTested status =" + (vsb.nofActionsTested(castedState.id) == castedState.nofActions) +
+                ",isExperienceOfStateTerminal =" + vsb.isExperienceOfStateTerminal(castedState.id));
         State stateNotAllActionsTested = vsb.findStateWithNotAllActionsTested(searchDepth);
         logger.info("Found stateNotAllActionsTested? = " + !(stateNotAllActionsTested instanceof NullState));
-        return (stateNotAllActionsTested instanceof NullState) ? startState : (StateForSearch) stateNotAllActionsTested;
+        isSelectFailed=(stateNotAllActionsTested instanceof NullState);
+        return (stateNotAllActionsTested instanceof NullState) ? new NullState() : (StateForSearch) stateNotAllActionsTested;
     }
 
     public boolean isNullOrTerminalStateOrAllActionsTestedOrIsAtSearchDepth(StateForSearch state) {

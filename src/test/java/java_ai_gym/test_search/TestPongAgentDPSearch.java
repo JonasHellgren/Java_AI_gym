@@ -149,7 +149,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
 
     @SneakyThrows
     @Test
-   // @Ignore("Takes time")
+    //@Ignore("Takes time")
     public void testAnimate() {
 
         env.setRandomStateValuesStart(state);
@@ -204,7 +204,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
         int nofActions = p.discreteActionsSpace.size();
 
         for (int i = 0; i < nofSteps; i++) {
-            StateForSearch selectedState = agent.selectState();
+            StateForSearch selectedState = (StateForSearch) agent.selectState();
             int action = agent.chooseAction(selectedState);
             StepReturn stepReturn = env.step(action, selectedState);
             StateForSearch stateNew = (StateForSearch) stepReturn.state;

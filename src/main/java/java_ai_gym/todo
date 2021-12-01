@@ -65,8 +65,10 @@ PongAgentDPSearch - sätta EF_LIMIT och K i konstrucotr x
 test anim PongAgentDPSearch x
 skall kunna komma ur MAX_NOF_SELECTION_TRIES exceeded !!!
 belöna racket still innan boll träffar
-
-
+straffa direkt från vänster till höger och vice versa
+ngt mer test på - racket ball x pos nära
+testSearchBallMiddleAndRacketRight buggar
+calcRewardNotTerminal - basera på speed
 
 clean up
 - fler undermetoder PongAgentDPSearch x

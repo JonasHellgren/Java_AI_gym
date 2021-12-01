@@ -43,7 +43,7 @@ public class TestSearchBase {
     public void setBallInMiddleAndRacketInRightBallFallingDown() {
         setBallAndRacketInMiddleBallFallingDown();
         state.setVariable("yPosBall", env.parameters.MAX_Y_POSITION_BALL/6);
-        state.setVariable("xPosRacket", env.parameters.MAX_X_POSITION*6/10);
+        state.setVariable("xPosRacket", env.parameters.MAX_X_POSITION*7/10);
 
     }
 
