@@ -4,6 +4,7 @@ import java_ai_gym.models_common.AgentSearch;
 import java_ai_gym.models_common.StateForSearch;
 import java_ai_gym.models_common.StepReturn;
 import java_ai_gym.models_pong.HistogramDataSetGenerator;
+import java_ai_gym.models_pong.PongAgentRandomSearch;
 import java_ai_gym.models_pong.VisitedStatesBuffer;
 import lombok.SneakyThrows;
 import org.junit.Assert;
@@ -15,12 +16,12 @@ import java.util.concurrent.TimeUnit;
 
 
 public class TestPongAgentDPSearch extends TestSearchBase {
-    final long TIME_BUDGET = 200;
+    final long TIME_BUDGET = 100;
 
     @Before
     public void setup() {
         super.setupMoves();
-        p.MAX_SPEED_RACKET = .01;
+        p.MAX_SPEED_RACKET = .1;
         env.setRandomStateValuesStart(state);
         state.setIdDepthNofActions(state.START_STATE_ID, 0, 0);
     }
@@ -100,7 +101,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
 
     @SneakyThrows
     @Test
-    //@Ignore
+    @Ignore
     public void testSearchBallAndRacketInMiddle() {
         final int NOF_STEPS = 100;
         final int MAX_DEPTH = 5; //agent.getVsb().getMaxDepth();
@@ -119,7 +120,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
 
     @SneakyThrows
     @Test
-    //@Ignore
+    @Ignore
     public void testSearchBallMiddleAndRacketRight() {
         setBallInMiddleAndRacketInRightBallFallingDown();
         agent.setTimeBudgetMillis(TIME_BUDGET);
@@ -133,7 +134,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
 
     @SneakyThrows
     @Test
-    //@Ignore
+    @Ignore
     public void testSearchBallLeftAndRacketRightHasNoSolution() {
         setBallLeftAndRacketRightHasNoSolution();
         agent.setTimeBudgetMillis(TIME_BUDGET);
@@ -145,6 +146,31 @@ public class TestPongAgentDPSearch extends TestSearchBase {
         Assert.assertTrue(agent.wasSearchFailing());
     }
 
+
+    @SneakyThrows
+    @Test
+   // @Ignore("Takes time")
+    public void testAnimate() {
+
+        env.setRandomStateValuesStart(state);
+        //setBallInMiddleAndRacketInRightBallFallingDown();
+        agent.setTimeBudgetMillis(TIME_BUDGET);
+
+        StepReturn stepReturn;
+        for (int i = 0; i <2000 ; i++) {
+            System.out.println("i = "+i);
+            AgentSearch.SearchResults sr=agent.search(state);
+            stepReturn=env.step(sr.firstAction(),state);
+            copyVSBsToFrame(agent.getVsb());
+
+            state.copyState(stepReturn.state);
+            env.render(state,sr.bestReturn,sr.firstAction());
+
+        }
+
+
+        TimeUnit.MILLISECONDS.sleep(5000);
+    }
 
 
     private void copyVSBsToFrame(VisitedStatesBuffer vsb) {

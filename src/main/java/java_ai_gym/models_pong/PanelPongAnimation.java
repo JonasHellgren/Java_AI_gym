@@ -9,7 +9,7 @@ import java.awt.*;
 public class PanelPongAnimation extends JPanel {
 
     final int BALL_RADIUS_PIXELS = 3;
-    final int RACKET_WIDTH_PIXELS = 50;
+    final int RACKET_WIDTH_PIXELS = 100;
     final int RACKET_HEIGHT_PIXELS = 10;
 
     ScaleLinear xScaler;

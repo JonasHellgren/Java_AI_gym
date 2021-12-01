@@ -10,7 +10,7 @@ import org.junit.Test;
 
 public class TestPongAgentRandomSearch extends TestSearchBase {
 
-    final long TIME_BUDGET=50;
+    final long TIME_BUDGET=100;
     int SEARCH_DEPTH;
 
     @Before

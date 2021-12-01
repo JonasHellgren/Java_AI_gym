@@ -70,7 +70,7 @@ public abstract class AgentSearch {
         this.envParams = envParams;
         this.searchResults = new SearchResults(-Double.MAX_VALUE, envParams.discreteActionsSpace);
         this.random = new Random();
-        this.cpuTimer=new CpuTimer(0);  //time budget defined in sub class
+        this.cpuTimer=new CpuTimer(timeBudget);  //time budget defined in sub class
         this.timeChecker = new CpuTimer(0);
     }
 

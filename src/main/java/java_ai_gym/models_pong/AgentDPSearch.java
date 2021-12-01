@@ -19,7 +19,7 @@ public abstract class AgentDPSearch extends AgentSearch {
     final int MAX_NOF_SELECTION_TRIES = 1000;
 
     double K = 2.0;
-    final double PROB_SELECT_STATE_FROM_NEW_DEPTH_STEP = 0.5;
+    final double PROB_SELECT_STATE_FROM_NEW_DEPTH_STEP = 0.5;  //0.5
     final double PROB_SELECT_FROM_OPTIMAL_PATH = 0.1;
 
     int searchDepthStep;
@@ -65,7 +65,9 @@ public abstract class AgentDPSearch extends AgentSearch {
     @Override
     public SearchResults search(final StateForSearch startState) {
 
+
         initInstanceVariables(startState);
+        reset();
         this.explorationFactor = 0;
 
         while (!cpuTimer.isTimeExceeded()) {  //TODO remove nofSteps
@@ -87,6 +89,7 @@ public abstract class AgentDPSearch extends AgentSearch {
 
         SearchResults searchResults = super.defineSearchResults(bellmanCalculator.actionsOptPath, this.startState);
         printResultInfo();
+       // reset();
         return searchResults;
     }
 
@@ -148,6 +151,14 @@ public abstract class AgentDPSearch extends AgentSearch {
     }
 
     //below is methods of more dummy/supporting nature
+    public void reset() {
+     //   vsb.clear();
+        vsbForNewDepthSet.clear();
+        evaluatedSearchDepths.clear();
+        optimalStateSequence.clear();
+        cpuTimer.reset();
+
+    }
 
     private boolean areManyActionsTested() {
         return explorationFactor >= EF_LIMIT || isSelectFailed;

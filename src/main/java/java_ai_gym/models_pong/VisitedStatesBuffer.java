@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 public class VisitedStatesBuffer {
 
     protected final static Logger logger = Logger.getLogger(VisitedStatesBuffer.class.getName());
-    final double PROB_SELECTING_STATE_FOR_EXPLORATION_FACTOR_CALCULATION = 0.5;  //for speeding up
+    final double PROB_SELECTING_STATE_FOR_EXPLORATION_FACTOR_CALCULATION = 0.9;  //for speeding up
 
     StateVisitsDAO stateVisitsDAO;
     ExperiencesDAO experiencesDAO;
@@ -258,7 +258,8 @@ public class VisitedStatesBuffer {
         }
 
         if (nofActionsAvailable == 0) {
-            logger.warning("Sum of all actions available is zero, setting exploration factor as 1");
+            logger.warning("Sum of all actions available is zero, setting exploration factor as 0");
+            System.out.println(this.stateVisitsDAO.getAll());
             return 0.0;
         }
         return (double) nofActionsTested / (double) nofActionsAvailable;

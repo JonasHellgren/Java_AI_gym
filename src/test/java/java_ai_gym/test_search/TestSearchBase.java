@@ -16,8 +16,8 @@ public class TestSearchBase {
     final int NOF_ACTIONS=3;
     final int TIME_BUDGET_MS=1000;
     final int SEARCH_DEPTH_STEP=5;
-    final double explorationFactorLimit=0.5;
-    final double discountFactor=1.0;
+    final double explorationFactorLimit=0.4;
+    final double discountFactor=0.9;
     SinglePong env=new SinglePong();
     StateForSearch state = new StateForSearch((StateForSearch) env.getTemplateState());
     SinglePong.EnvironmentParameters p=env.parameters;

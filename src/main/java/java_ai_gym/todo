@@ -62,13 +62,18 @@ ansätta SearchResults x
 tester DynamicProgramming - olika start positioner boll/racket x
 metod som söker rätt på första state ej alla actions provade x
 PongAgentDPSearch - sätta EF_LIMIT och K i konstrucotr x
+test anim PongAgentDPSearch x
+skall kunna komma ur MAX_NOF_SELECTION_TRIES exceeded !!!
+belöna racket still innan boll träffar
+
+
+
 clean up
-- StateVisitsDAO idList: farligt ej uppdatera etc med stateBuffer
 - fler undermetoder PongAgentDPSearch x
-- PongAgentDPSearch sub class till AgentDPSearch
-
-
-dela upp VisitedStatesBuffer - stor
+- PongAgentDPSearch sub class till AgentDPSearch  x
+- StateVisitsDAO idList: farligt ej uppdatera etc med stateBuffer
+- dela upp VisitedStatesBuffer - stor
+- dela upp PongAgentDPSearch - stor
 
 när tid:
 removeExpItemWithNewStateId är inte effektiv
