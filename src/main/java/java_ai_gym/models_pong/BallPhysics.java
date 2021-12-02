@@ -45,7 +45,7 @@ public class BallPhysics {
                 2*r);
     }
 
-    private boolean collision(RacketPhysics racket) {
+    public boolean collision(RacketPhysics racket) {
         //Returns true if racket and ball collides
         return racket.getBounds().intersects(getBounds());
     }

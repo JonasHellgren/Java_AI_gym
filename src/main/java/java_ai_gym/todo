@@ -70,6 +70,11 @@ ngt mer test på - racket ball x pos nära
 testSearchBallMiddleAndRacketRight buggar
 calcRewardNotTerminal - basera på speed
 
+testSearchBallMiddleAndRacketRight borde hitta mer optimal lösning
+testGameOver
+
+ava.lang.ClassCastException: class java_ai_gym.models_common.NullState cannot be cast to class java_ai_g
+takeStepAndSaveExperience(nofActions, (StateForSearch) selectedState);
 clean up
 - fler undermetoder PongAgentDPSearch x
 - PongAgentDPSearch sub class till AgentDPSearch  x

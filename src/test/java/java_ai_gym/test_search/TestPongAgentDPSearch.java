@@ -21,7 +21,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
     @Before
     public void setup() {
         super.setupMoves();
-        p.MAX_SPEED_RACKET = .1;
+       // p.MAX_SPEED_RACKET = .1;
         env.setRandomStateValuesStart(state);
         state.setIdDepthNofActions(state.START_STATE_ID, 0, 0);
     }
@@ -157,7 +157,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
 
     @SneakyThrows
     @Test
-   @Ignore("Takes time")
+    @Ignore("Takes time")
     public void testAnimate() {
 
         env.setRandomStateValuesStart(state);

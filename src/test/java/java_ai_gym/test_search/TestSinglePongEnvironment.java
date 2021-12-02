@@ -1,18 +1,13 @@
 package java_ai_gym.test_search;
 
-import java_ai_gym.models_common.State;
 import java_ai_gym.models_common.StepReturn;
-import java_ai_gym.models_pong.SinglePong;
 import lombok.SneakyThrows;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 public class TestSinglePongEnvironment extends TestSearchBase {
 
@@ -20,7 +15,7 @@ public class TestSinglePongEnvironment extends TestSearchBase {
     @Before
     public void setup() {
         super.setupMoves();
-        p.MAX_SPEED_RACKET=.01;
+      //  p.MAX_SPEED_RACKET=.1;
         env.setRandomStateValuesStart(state);
 
     }
@@ -72,6 +67,60 @@ public class TestSinglePongEnvironment extends TestSearchBase {
     }
 
     @Test
+    public void TestTimerLogic() {
+
+        setBallInMiddleAndRacketInRightBallFallingDown();
+        double sumRewardStartMoveLate=0;
+        int STEP_WHEN_STARTING_TO_MOVE=5;
+        sumRewardStartMoveLate = moveRacketLeftSequence(sumRewardStartMoveLate, STEP_WHEN_STARTING_TO_MOVE);
+        System.out.println("sumRewardStartMoveLate = "+sumRewardStartMoveLate);
+
+        setBallInMiddleAndRacketInRightBallFallingDown();
+        double sumRewardStartMoveDirectly=0;
+        STEP_WHEN_STARTING_TO_MOVE=0;
+        sumRewardStartMoveDirectly = moveRacketLeftSequence(sumRewardStartMoveDirectly, STEP_WHEN_STARTING_TO_MOVE);
+        System.out.println("sumRewardStartMoveDirectly = "+sumRewardStartMoveDirectly);
+
+
+        Assert.assertTrue(sumRewardStartMoveDirectly>sumRewardStartMoveLate);
+    //    Assert.assertEquals(state.getContinuousVariable("yPosBall")+state.getContinuousVariable("ySpdBall"),stepReturn.state.getContinuousVariable("yPosBall"),0.01d);
+    }
+
+    private double moveRacketLeftSequence(double sumReward, int STEP_WHEN_STARTING_TO_MOVE) {
+        for (int i = 0; i < STEP_WHEN_STARTING_TO_MOVE; i++) {
+            StepReturn stepReturn=env.step(moves.get("still"),state);
+            sumReward =printSomeVariablesAndIncreaseSumReward(stepReturn, sumReward);
+            state.copyState(stepReturn.state);
+
+        }
+
+        for (int i = 0; i <3 ; i++) {
+            StepReturn stepReturn=env.step(moves.get("left"),state);
+            sumReward =printSomeVariablesAndIncreaseSumReward(stepReturn, sumReward);
+            state.copyState(stepReturn.state);
+        }
+
+        for (int i = 0; i <10 ; i++) {
+            StepReturn stepReturn=env.step(moves.get("still"),state);
+            sumReward =printSomeVariablesAndIncreaseSumReward(stepReturn, sumReward);
+            state.copyState(stepReturn.state);
+        }
+        return sumReward;
+    }
+
+    private double printSomeVariablesAndIncreaseSumReward(StepReturn stepReturn, double sumReward) {
+        System.out.println("nofSteps = "+state.getDiscreteVariable("nofSteps")+
+                " ,xSpdRacket = "+state.getContinuousVariable("xSpdRacket")+
+                " ,xPosRacket = "+state.getContinuousVariable("xPosRacket")+
+                " ,yPosBall = "+state.getContinuousVariable("yPosBall")+
+                " ,collision = "+state.getDiscreteVariable("collision")+
+                " ,isTimerOn = "+state.getDiscreteVariable("isTimerOn")+
+                " ,nofStepsStillBeforeCollision = "+state.getDiscreteVariable("nofStepsStillBeforeCollision")+
+                ", reward = "+stepReturn.reward);
+        return sumReward+stepReturn.reward*Math.pow(agent.getDISCOUNT_FACTOR(),state.getDiscreteVariable("nofSteps")-1);
+    }
+
+    @Test
     public void testGameOver() {
 
         state.setVariable("xPosBall", 0);
@@ -114,7 +163,7 @@ public class TestSinglePongEnvironment extends TestSearchBase {
             }
 
             if (stepReturn.termState) {
-                logger.warning("Fail state");
+                logger.warning("Fail stateee");
                 System.out.println(stepReturn);
             }
 
