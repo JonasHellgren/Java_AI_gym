@@ -23,6 +23,16 @@ public class MathUtils {
         return (Math.abs(value-0)<2*Double.MIN_VALUE);
     }
 
+    public static boolean isNeg(double value) {
+        return value<-Double.MIN_VALUE;
+    }
+
+    public static boolean isPos(double value) {
+        return value>Double.MIN_VALUE;
+    }
+
+
+
     public static double setAsSmallIfZero(double value) {
         return (isZero(value)?Double.MIN_VALUE:value);
     }

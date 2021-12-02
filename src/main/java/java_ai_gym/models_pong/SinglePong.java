@@ -32,7 +32,6 @@ public class SinglePong extends EnvironmentForSearchAgent {
     public JLabel labelBallPosX;
     public JLabel labelBallPosY;
 
-    protected double racketSpdPrev;
 
     public class EnvironmentParameters extends EnvironmentParametersAbstract {
 
@@ -89,7 +88,7 @@ public class SinglePong extends EnvironmentForSearchAgent {
         createVariablesInState(getTemplateState());
         setupFramesAndPanels();
         animationPanel.repaint();
-        racketSpdPrev=0;
+
 
     }
 
@@ -147,16 +146,21 @@ public class SinglePong extends EnvironmentForSearchAgent {
         double xSpdBall= state.getContinuousVariable("xSpdBall");
         double ySpdBall= state.getContinuousVariable("ySpdBall");
         double xPosRacket= state.getContinuousVariable("xPosRacket");
-        int racketHasStopped= state.getDiscreteVariable("racketHasStopped");
+        double xSpdRacket= state.getContinuousVariable("xSpdRacket");
 
         RacketPhysics racket =new RacketPhysics(xPosRacket,this);
         racket.updateStates(action);
         BallPhysics ball =new BallPhysics(xPosBall,yPosBall,xSpdBall,ySpdBall,this);
         ball.updateStates(racket);
 
+        int rapidRacketChange=0;
+        if (!MathUtils.isZero(racket.xSpd)) {
+            rapidRacketChange=MathUtils.isNeg(racket.xSpd) && MathUtils.isPos(xSpdRacket)  ||
+                    MathUtils.isPos(racket.xSpd) && MathUtils.isNeg(xSpdRacket)
+                    ?1
+                    :0;
+        }
 
-        racketHasStopped=MathUtils.isZero(racket.xSpd) && !MathUtils.isZero(racketSpdPrev)?1:0;
-        racketSpdPrev=racket.xSpd;
 
         newState.setVariable("xPosBall", ball.xPos);
         newState.setVariable("yPosBall", ball.yPos);
@@ -164,7 +168,7 @@ public class SinglePong extends EnvironmentForSearchAgent {
         newState.setVariable("ySpdBall", ball.ySpd);
         newState.setVariable("xPosRacket", racket.xPos);
         newState.setVariable("xSpdRacket", racket.xSpd);
-        newState.setVariable("racketHasStopped", racketHasStopped);
+        newState.setVariable("rapidRacketChange", rapidRacketChange);
         newState.setVariable("nofSteps", state.getDiscreteVariable("nofSteps")+1);
         return newState;
     }
@@ -179,6 +183,11 @@ public class SinglePong extends EnvironmentForSearchAgent {
 
         double yPosBall= state.getContinuousVariable("yPosBall");
         boolean rapidRacketChange= (state.getDiscreteVariable("rapidRacketChange")==1);
+
+        if (rapidRacketChange) {
+            logger.warning("rapidRacketChange true");
+        }
+
         return (yPosBall  < parameters.MIN_Y_POSITION_BALL || rapidRacketChange);
     }
 
