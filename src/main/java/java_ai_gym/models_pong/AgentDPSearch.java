@@ -17,9 +17,9 @@ public abstract class AgentDPSearch extends AgentSearch {
     double DISCOUNT_FACTOR = 0.99;
 
     final int MAX_NOF_SELECTION_TRIES = 1000;
-    double K = 10.0;
+    double K = 5.0;
     final double PROB_SELECT_STATE_FROM_NEW_DEPTH_STEP = 0.9;  //0.5
-    final double PROB_SELECT_FROM_OPTIMAL_PATH = 0.01;
+    final double PROB_SELECT_FROM_OPTIMAL_PATH = 0.5;
 
     int searchDepthStep;
     int searchDepthPrev;
@@ -33,6 +33,7 @@ public abstract class AgentDPSearch extends AgentSearch {
     int nofStatesVsbForNewDepthSetPrev;
 
     boolean isSelectFailed;
+    boolean isMaxNofSelectionsExceeded;
     BellmanCalculator bellmanCalculator;
 
     public abstract int getActionDefault();
@@ -48,6 +49,7 @@ public abstract class AgentDPSearch extends AgentSearch {
         super.cpuTimer = new CpuTimer(timeBudget);
         System.out.println("timeBudget = "+timeBudget);
         this.isSelectFailed = false;
+        this.isMaxNofSelectionsExceeded=false;
         this.optimalStateSequence = new ArrayList<>();
     }
 
@@ -114,6 +116,7 @@ public abstract class AgentDPSearch extends AgentSearch {
 
             if (!isNullOrTerminalStateOrAllActionsTestedOrIsAtSearchDepth((StateForSearch) selectedState)) {
                 isSelectFailed = false;
+                isMaxNofSelectionsExceeded = false;
                 return selectedState;
             }
         }
@@ -145,6 +148,7 @@ public abstract class AgentDPSearch extends AgentSearch {
         searchDepthPrev = searchDepth;
         searchDepth = searchDepth + searchDepthStep;
         vsbForNewDepthSet.clear();
+        nofStatesVsbForNewDepthSetPrev=1;
         explorationFactor = 0;
         logger.fine("searchDept increased to = " + searchDepth + ". VSB size = " + vsb.size());
     }
@@ -171,7 +175,7 @@ public abstract class AgentDPSearch extends AgentSearch {
     }
 
     private boolean areManyActionsTested() {
-        return explorationFactor >= EF_LIMIT || isSelectFailed;
+        return explorationFactor >= EF_LIMIT || isSelectFailed;  //isMaxNofSelectionsExceeded
     }
 
     private boolean isAnyStateAtSearchDepth() {
@@ -221,7 +225,7 @@ public abstract class AgentDPSearch extends AgentSearch {
     }
 
     private void logProgress() {
-        logger.info("searchDepth ="+searchDepth+", explorationFactor ="+explorationFactor+", time ="+cpuTimer.getTimeInMillis()+", isTimeExceeded ="+cpuTimer.isTimeExceeded());
+        logger.info("searchDepth ="+searchDepth+", explorationFactor ="+explorationFactor+", time ="+cpuTimer.getTimeInMillis()+", vsbForNewDepthSet size ="+vsbForNewDepthSet.size());
     }
 
     public void initInstanceVariables(StateForSearch startState) {
@@ -261,6 +265,7 @@ public abstract class AgentDPSearch extends AgentSearch {
 
 
     private StateForSearch getStateForSearchIfFailedToFind(State selectedState) {
+        isMaxNofSelectionsExceeded=true;
         logger.warning("MAX_NOF_SELECTION_TRIES exceeded !!!");
         StateForSearch castedState=(StateForSearch) selectedState;
         logger.warning("id =" + castedState.id +

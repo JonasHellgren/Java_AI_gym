@@ -72,10 +72,11 @@ calcRewardNotTerminal - basera på speed
 Time som ävan kan pause
 Finna fördelning step, DP och calcEf med ovan
 
-findStateWithNotAllActionsTested -> findStateWithNotAllActionsTestedAndNotTerminal
+findStateWithNotAllActionsTested -> findStateWithNotAllActionsTestedAndNotTerminal  x
 isExperienceOfStateTerminal =true
 
-explorationFactorLimit som hög ger strul - kasnke fel på caclExpFactor
+calcExplorationFactor strular - blir stor snabbt
+explorationFactorLimit som hög ger strul - kasnke fel på caclExpFactor  x
 snabbare boll
 omdef exploratin factor
 rapidRacketChange påverka isFailsState
