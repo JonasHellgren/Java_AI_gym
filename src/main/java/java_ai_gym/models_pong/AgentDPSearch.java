@@ -18,8 +18,8 @@ public abstract class AgentDPSearch extends AgentSearch {
 
     final int MAX_NOF_SELECTION_TRIES = 1000;
     double K = 10.0;
-    final double PROB_SELECT_STATE_FROM_NEW_DEPTH_STEP = 0.5;  //0.5
-    final double PROB_SELECT_FROM_OPTIMAL_PATH = 0.1;
+    final double PROB_SELECT_STATE_FROM_NEW_DEPTH_STEP = 0.9;  //0.5
+    final double PROB_SELECT_FROM_OPTIMAL_PATH = 0.01;
 
     int searchDepthStep;
     int searchDepthPrev;
@@ -70,7 +70,8 @@ public abstract class AgentDPSearch extends AgentSearch {
         this.explorationFactor = 0;
 
 
-        while (!cpuTimer.isTimeExceeded() && searchDepth<=150) {
+      //  int maxEval=evaluatedSearchDepths.stream().collect(Collectors.summarizingInt(Integer::intValue)).getMax();
+        while (!cpuTimer.isTimeExceeded() && searchDepth<=10) {
             StateForSearch selectedState = this.selectState();  //can be of type NullState
             int nofActions = getActionSet().size();
             takeStepAndSaveExperience(nofActions, selectedState);
@@ -268,7 +269,7 @@ public abstract class AgentDPSearch extends AgentSearch {
                 ", depth status =" + (castedState.depth == searchDepth) +
                 ", nofActionsTested status =" + (vsb.nofActionsTested(castedState.id) == castedState.nofActions) +
                 ",isExperienceOfStateTerminal =" + vsb.isExperienceOfStateTerminal(castedState.id));
-        StateForSearch stateNotAllActionsTested = vsb.findStateWithNotAllActionsTested(searchDepth);
+        StateForSearch stateNotAllActionsTested = vsb.findStateWithNotAllActionsTestedAndNotTerminal(searchDepth);
         logger.info("Found stateNotAllActionsTested? = " + !(stateNotAllActionsTested==null));
         //isSelectFailed=(stateNotAllActionsTested instanceof NullState);
         isSelectFailed=(stateNotAllActionsTested==null);

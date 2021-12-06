@@ -102,8 +102,6 @@ public class TestPongAgentDPSearch extends TestSearchBase {
     @Test
     @Ignore
     public void testSearchBallAndRacketInMiddle() {
-        final int NOF_STEPS = 100;
-        final int MAX_DEPTH = 5; //agent.getVsb().getMaxDepth();
         setBallAndRacketInMiddleBallFallingDown();
 
         AgentSearch.SearchResults searchResults=agent.search(state);
@@ -118,7 +116,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
 
     @SneakyThrows
     @Test
-    //@Ignore
+   // @Ignore
     public void testSearchBallMiddleAndRacketRight() {
         setBallInMiddleAndRacketInRightBallFallingDown();
         AgentSearch.SearchResults searchResults=agent.search(state);
@@ -129,10 +127,11 @@ public class TestPongAgentDPSearch extends TestSearchBase {
             System.out.print(sr.reward+", ");
         }
 
-
-        TimeUnit.MILLISECONDS.sleep(30000);
-        Assert.assertTrue(searchResults.bestActionSequence.contains(0));
+        Assert.assertTrue(searchResults.bestActionSequence.subList(0,3).contains(moves.get("left")));
         Assert.assertFalse(agent.wasSearchFailing());
+
+
+        TimeUnit.MILLISECONDS.sleep(10000);
     }
 
     @SneakyThrows
@@ -153,7 +152,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
 
     @SneakyThrows
     @Test
-    @Ignore("Takes time")
+   // @Ignore("Takes time")
     public void testAnimate() {
 
         env.setRandomStateValuesStart(state);
@@ -164,7 +163,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
             System.out.println("i = "+i);
             AgentSearch.SearchResults sr=agent.search(state);
             stepReturn=env.step(sr.firstAction(),state);
-            copyVSBsToFrame(agent.getVsb());
+           // copyVSBsToFrame(agent.getVsb());
 
             state.copyState(stepReturn.state);
             env.render(state,sr.bestReturn,sr.firstAction());

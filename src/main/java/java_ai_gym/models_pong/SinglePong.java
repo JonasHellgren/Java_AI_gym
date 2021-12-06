@@ -230,7 +230,8 @@ public class SinglePong extends EnvironmentForSearchAgent {
     protected boolean isFailsState(State state) {
 
         double yPosBall= state.getContinuousVariable("yPosBall");
-        boolean rapidRacketChange= false; // (state.getDiscreteVariable("rapidRacketChange")==1);
+        boolean rapidRacketChange= (state.getDiscreteVariable("rapidRacketChange")==1);
+       // boolean rapidRacketChange = false;
         return (yPosBall  < parameters.MIN_Y_POSITION_BALL || rapidRacketChange);
     }
 

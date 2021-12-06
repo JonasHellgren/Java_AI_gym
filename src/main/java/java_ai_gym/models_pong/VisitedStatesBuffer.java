@@ -275,10 +275,12 @@ public class VisitedStatesBuffer {
         return statePerDepthList;
     }
 
-    public StateForSearch findStateWithNotAllActionsTested(int searchDepth)  {
+    public StateForSearch findStateWithNotAllActionsTestedAndNotTerminal(int searchDepth)  {
 
         for (StateForSearch state : this.stateVisitsDAO.getAll()) {
-            if (!areAllActionsTriedInStateWithId(state.id) && state.depth!=searchDepth) {
+            if (!areAllActionsTriedInStateWithId(state.id) &&
+                    !isExperienceOfStateTerminal(state.id) &&
+                    state.depth!=searchDepth) {
                 return stateVisitsDAO.get(state.id);
             }
         }
