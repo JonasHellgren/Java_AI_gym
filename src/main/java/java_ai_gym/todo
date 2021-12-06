@@ -67,11 +67,15 @@ skall kunna komma ur MAX_NOF_SELECTION_TRIES exceeded !!!
 belöna racket still innan boll träffar - vill ej funka  nofStepsStillRacket
 straffa direkt från vänster till höger och vice versa  x
 ngt mer test på - racket ball x pos nära
-testSearchBallMiddleAndRacketRight buggar
+testSearchBallMiddleAndRacketRight buggar x
 calcRewardNotTerminal - basera på speed
+Time som ävan kan pause
+Finna fördelning step, DP och calcEf med ovan
 
-testSearchBallMiddleAndRacketRight borde hitta mer optimal lösning
+testSearchBallMiddleAndRacketRight borde hitta mer optimal lösning x
 testGameOver
+
+statesAtDepth vsb = {0=1, 1=3, 2=5, 3=5, 4=9, 5=23, 6=41, 7=63, 8=65, 9=61, 10=15, 11=0, 12=0, 13=0, 14=0, 15=0}
 
 ava.lang.ClassCastException: class java_ai_gym.models_common.NullState cannot be cast to class java_ai_g
 takeStepAndSaveExperience(nofActions, (StateForSearch) selectedState);

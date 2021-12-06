@@ -100,7 +100,7 @@ public class TestSinglePongEnvironment extends TestSearchBase {
             state.copyState(stepReturn.state);
         }
 
-        for (int i = 0; i <10 ; i++) {
+        while (state.getDiscreteVariable("nofSteps")<10) {
             StepReturn stepReturn=env.step(moves.get("still"),state);
             sumReward =printSomeVariablesAndIncreaseSumReward(stepReturn, sumReward);
             state.copyState(stepReturn.state);

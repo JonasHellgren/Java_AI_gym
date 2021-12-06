@@ -16,7 +16,6 @@ import java.util.concurrent.TimeUnit;
 
 
 public class TestPongAgentDPSearch extends TestSearchBase {
-    final long TIME_BUDGET = 100;
 
     @Before
     public void setup() {
@@ -107,7 +106,6 @@ public class TestPongAgentDPSearch extends TestSearchBase {
         final int MAX_DEPTH = 5; //agent.getVsb().getMaxDepth();
         setBallAndRacketInMiddleBallFallingDown();
 
-        agent.setTimeBudgetMillis(TIME_BUDGET);
         AgentSearch.SearchResults searchResults=agent.search(state);
         copyVSBsToFrame(agent.getVsb());
         printSummary(searchResults);
@@ -123,7 +121,6 @@ public class TestPongAgentDPSearch extends TestSearchBase {
     //@Ignore
     public void testSearchBallMiddleAndRacketRight() {
         setBallInMiddleAndRacketInRightBallFallingDown();
-        agent.setTimeBudgetMillis(TIME_BUDGET);
         AgentSearch.SearchResults searchResults=agent.search(state);
         copyVSBsToFrame(agent.getVsb());
         printSummary(searchResults);
@@ -133,7 +130,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
         }
 
 
-        TimeUnit.MILLISECONDS.sleep(3000);
+        TimeUnit.MILLISECONDS.sleep(30000);
         Assert.assertTrue(searchResults.bestActionSequence.contains(0));
         Assert.assertFalse(agent.wasSearchFailing());
     }
@@ -143,7 +140,6 @@ public class TestPongAgentDPSearch extends TestSearchBase {
     @Ignore
     public void testSearchBallLeftAndRacketRightHasNoSolution() {
         setBallLeftAndRacketRightHasNoSolution();
-        agent.setTimeBudgetMillis(TIME_BUDGET);
         AgentSearch.SearchResults searchResults=agent.search(state);
         copyVSBsToFrame(agent.getVsb());
         printSummary(searchResults);
@@ -162,7 +158,6 @@ public class TestPongAgentDPSearch extends TestSearchBase {
 
         env.setRandomStateValuesStart(state);
         //setBallInMiddleAndRacketInRightBallFallingDown();
-        agent.setTimeBudgetMillis(TIME_BUDGET);
 
         StepReturn stepReturn;
         for (int i = 0; i <2000 ; i++) {
@@ -226,6 +221,9 @@ public class TestPongAgentDPSearch extends TestSearchBase {
 
     private void printSummary(AgentSearch.SearchResults searchResults) {
         System.out.println(searchResults.bestActionSequence+", depth = "+ searchResults.bestActionSequence.size()+", evaluatedSearchDepths = "+agent.getEvaluatedSearchDepths());
+
+        System.out.println("bestReturn = "+ searchResults.bestReturn);
+
     }
 
 

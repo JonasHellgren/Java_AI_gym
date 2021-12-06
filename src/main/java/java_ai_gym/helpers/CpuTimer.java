@@ -1,6 +1,13 @@
 package java_ai_gym.helpers;
 
+import lombok.Getter;
+
+import java.util.logging.Logger;
+
+@Getter
 public class CpuTimer {
+
+    static final Logger logger = Logger.getLogger(CpuTimer.class.getName());
 
     long startTimeMillis;  //starting time, long <=> minimum value of 0
     long startTimeNanos;
@@ -21,7 +28,7 @@ public class CpuTimer {
     }
 
     public long getTimeInMillis() {
-        return ((System.nanoTime()- startTimeNanos)/1000000);
+        return (System.currentTimeMillis() - startTimeMillis);
     }
 
     public long getTimeInNanoSeconds() {
