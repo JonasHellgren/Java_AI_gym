@@ -17,7 +17,7 @@ public abstract class AgentDPSearch extends AgentSearch {
     double DISCOUNT_FACTOR = 0.99;
 
     final int MAX_NOF_SELECTION_TRIES = 1000;
-    double K = 5.0;
+    double VSB_SIZE_INCREASE_FACTOR = 5.0;
     final double PROB_SELECT_STATE_FROM_NEW_DEPTH_STEP = 0.9;  //0.5
     final double PROB_SELECT_FROM_OPTIMAL_PATH = 0.5;
 
@@ -187,7 +187,7 @@ public abstract class AgentDPSearch extends AgentSearch {
     }
 
     private boolean hasVsbSizeIncreasedSignificantly() {
-        return (double) vsbForNewDepthSet.size() / (double) nofStatesVsbForNewDepthSetPrev > K;
+        return (double) vsbForNewDepthSet.size() / (double) nofStatesVsbForNewDepthSetPrev > VSB_SIZE_INCREASE_FACTOR;
     }
 
     private void ifMotivatedShowLogs(StateForSearch selectedState) {

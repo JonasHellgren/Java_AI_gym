@@ -68,18 +68,16 @@ belöna racket still innan boll träffar - vill ej funka  nofStepsStillRacket
 straffa direkt från vänster till höger och vice versa  x
 ngt mer test på - racket ball x pos nära
 testSearchBallMiddleAndRacketRight buggar x
+findStateWithNotAllActionsTested -> findStateWithNotAllActionsTestedAndNotTerminal  x
+rapidRacketChange påverka isFailsState  x
+
+omdef exploratin factor  x
+explorationFactorLimit som hög ger strul - kasnke fel på caclExpFactor
 calcRewardNotTerminal - basera på speed
+MAX_NOF_SELECTION_TRIES vad händer egentgliten
 Time som ävan kan pause
 Finna fördelning step, DP och calcEf med ovan
-
-findStateWithNotAllActionsTested -> findStateWithNotAllActionsTestedAndNotTerminal  x
-isExperienceOfStateTerminal =true
-
-calcExplorationFactor strular - blir stor snabbt
-explorationFactorLimit som hög ger strul - kasnke fel på caclExpFactor  x
-snabbare boll
-omdef exploratin factor
-rapidRacketChange påverka isFailsState
+calcExplorationFactor strular - blir stor snabbt x
 searchDepth<=10 snygga till
 testSearchBallLeftAndRacketRightHasNoSolution strular
 prob välja state från depth med lägst exp factor
@@ -95,6 +93,7 @@ clean up
 - fler undermetoder PongAgentDPSearch x
 - PongAgentDPSearch sub class till AgentDPSearch  x
 - StateVisitsDAO idList: farligt ej uppdatera etc med stateBuffer
+- färre tester i  TestPongAgentDPSearch
 - dela upp VisitedStatesBuffer - stor
 - dela upp PongAgentDPSearch - stor
 

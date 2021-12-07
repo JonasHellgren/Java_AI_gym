@@ -17,6 +17,8 @@ import java.util.concurrent.TimeUnit;
 
 public class TestPongAgentDPSearch extends TestSearchBase {
 
+    final int SLEEP_TIME=1000;
+
     @Before
     public void setup() {
         super.setupMoves();
@@ -100,17 +102,19 @@ public class TestPongAgentDPSearch extends TestSearchBase {
 
     @SneakyThrows
     @Test
-    @Ignore
+   // @Ignore
     public void testSearchBallAndRacketInMiddle() {
         setBallAndRacketInMiddleBallFallingDown();
 
         AgentSearch.SearchResults searchResults=agent.search(state);
         copyVSBsToFrame(agent.getVsb());
         printSummary(searchResults);
-        TimeUnit.MILLISECONDS.sleep(3000);
+
 
         Assert.assertEquals(1,searchResults.firstAction());
         Assert.assertFalse(agent.wasSearchFailing());
+
+        TimeUnit.MILLISECONDS.sleep(SLEEP_TIME);
     }
 
 
@@ -131,28 +135,28 @@ public class TestPongAgentDPSearch extends TestSearchBase {
         Assert.assertFalse(agent.wasSearchFailing());
 
 
-        TimeUnit.MILLISECONDS.sleep(10000);
+        TimeUnit.MILLISECONDS.sleep(SLEEP_TIME);
     }
 
     @SneakyThrows
     @Test
-    @Ignore
+   // @Ignore
     public void testSearchBallLeftAndRacketRightHasNoSolution() {
         setBallLeftAndRacketRightHasNoSolution();
         AgentSearch.SearchResults searchResults=agent.search(state);
         copyVSBsToFrame(agent.getVsb());
         printSummary(searchResults);
 
-
-        TimeUnit.MILLISECONDS.sleep(3000);
-        //System.out.println(searchResults.getBestStepReturnSequence());
         Assert.assertTrue(agent.wasSearchFailing());
+        TimeUnit.MILLISECONDS.sleep(SLEEP_TIME);
+        //System.out.println(searchResults.getBestStepReturnSequence());
+
     }
 
 
     @SneakyThrows
     @Test
-   // @Ignore("Takes time")
+    @Ignore("Takes time")
     public void testAnimate() {
 
         env.setRandomStateValuesStart(state);
@@ -171,7 +175,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
         }
 
 
-        TimeUnit.MILLISECONDS.sleep(5000);
+        TimeUnit.MILLISECONDS.sleep(SLEEP_TIME);
     }
 
 
