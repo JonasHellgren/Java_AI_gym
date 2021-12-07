@@ -1,5 +1,7 @@
 package java_ai_gym.models_pong;
 
+import java_ai_gym.models_common.StateForSearch;
+
 import java.util.List;
 
 public class PongAgentDPSearch extends AgentDPSearch {
@@ -14,11 +16,13 @@ public class PongAgentDPSearch extends AgentDPSearch {
         super(env, timeBudget,searchStepUpper, searchDepthStep, explorationFactorLimit, discountFactorReward,discountFactorExpFactor);
     }
 
-    public int getActionDefault() {
+    @Override
+    public int getActionDefault(StateForSearch selectState) {
         return ACTION_DEFAULT;
     }
 
-    public List<Integer> getActionSet () {
+    @Override
+    public List<Integer> getActionSet (StateForSearch selectState) {
         return envParams.discreteActionsSpace;
     }
 

@@ -49,9 +49,7 @@ public abstract class AgentDPSearch extends AgentSearch {
     protected CpuTimeAccumulator timeAccumulatorExpFactor;
 
 
-    public abstract int getActionDefault();
 
-    public abstract List<Integer> getActionSet();
 
     public AgentDPSearch(SinglePong env,
                          long timeBudget,
@@ -97,7 +95,7 @@ public abstract class AgentDPSearch extends AgentSearch {
 
         while (!timeBudgetChecker.isTimeExceeded() && searchDepth <= searchDepthUpper && !wasSearchFailing()) {
             StateForSearch selectedState = this.selectState();  //can be of type NullState
-            int nofActions = getActionSet().size();
+            int nofActions = getActionSet(selectedState).size();
             takeStepAndSaveExperience(nofActions, selectedState);
 
             if (hasVsbSizeIncreasedSignificantly()) {
@@ -152,7 +150,7 @@ public abstract class AgentDPSearch extends AgentSearch {
             logger.warning("Cant step when failed or null state selection");
         } else {
             timeAccumulatorStep.play();
-            int action = this.chooseAction(selectedState);
+            int action = this.chooseAction(selectedState,vsb);
             StepReturn stepReturn = env.step(action, selectedState);
             StateForSearch stateNew = (StateForSearch) stepReturn.state;
             stateNew.setDepthNofActions(selectedState.depth + 1, nofActions);
@@ -229,7 +227,7 @@ public abstract class AgentDPSearch extends AgentSearch {
 
     public void initInstanceVariables(StateForSearch startState) {
         this.startState = new StateForSearch(startState);
-        int nofActions = getActionSet().size();
+        int nofActions = getActionSet(startState).size();
         this.startState.setIdDepthNofActions(this.startState.START_STATE_ID, 0, nofActions);
         this.vsb = new VisitedStatesBuffer(this.startState);
         this.startTime = System.currentTimeMillis();  //starting time, long <=> minimum value of 0
@@ -244,24 +242,6 @@ public abstract class AgentDPSearch extends AgentSearch {
 
     public void addEvaluatedSearchDepth(int searchDepth) {
         evaluatedSearchDepths.add(searchDepth);
-    }
-
-    public int chooseAction(StateForSearch selectState) {
-        int action;
-        if (vsb.nofActionsTested(selectState.id) == 0) {
-            action = getActionDefault();
-        } else {
-            List<Integer> grossActions = getActionSet();
-            List<Integer> testedActions = vsb.testedActions(selectState.id);
-            List<Integer> nonTestedActions = MathUtils.getDifferenceBetweenLists(grossActions, testedActions);
-            if (nonTestedActions.isEmpty()) {
-                action = getActionDefault();
-                logger.warning("nonTestedActions is empty");
-            } else {
-                action = chooseRandomAction(nonTestedActions);
-            }
-        }
-        return action;
     }
 
 

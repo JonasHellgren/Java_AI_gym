@@ -6,6 +6,8 @@ import java.util.List;
 
 public class PongAgentRandomSearch extends AgentSearch {
 
+    final int ACTION_DEFAULT = 1;
+
     int searchDepth;
     List<StepReturn> stepReturnSequence;
     List<Integer> actionSequence;
@@ -33,6 +35,15 @@ public class PongAgentRandomSearch extends AgentSearch {
         return searchResults;
     }
 
+    @Override
+    public int getActionDefault(StateForSearch selectState) {
+        return ACTION_DEFAULT;
+    }
+
+    @Override
+    public List<Integer> getActionSet (StateForSearch selectState) {
+        return envParams.discreteActionsSpace;
+    }
 
 
     private void runEpisode() {

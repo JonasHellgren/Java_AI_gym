@@ -1,6 +1,8 @@
 package java_ai_gym.models_common;
 
 import java_ai_gym.helpers.CpuTimer;
+import java_ai_gym.helpers.MathUtils;
+import java_ai_gym.models_pong.VisitedStatesBuffer;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -62,6 +64,8 @@ public abstract class AgentSearch {
     protected final Random random;
     protected CpuTimer timeBudgetChecker;
 
+    public abstract int getActionDefault(StateForSearch selectState);
+    public abstract List<Integer> getActionSet(StateForSearch selectState);
 
     public AgentSearch(long timeBudget, Environment env, EnvironmentParametersAbstract envParams) {
         this.timeBudget = timeBudget;
@@ -90,6 +94,26 @@ public abstract class AgentSearch {
     public int chooseRandomAction(List<Integer> actions) {
         return actions.get(random.nextInt(actions.size()));
     }
+
+
+    public int chooseAction(StateForSearch selectState, VisitedStatesBuffer vsb) {
+        int action;
+        if (vsb.nofActionsTested(selectState.id) == 0) {
+            action = getActionDefault(selectState);
+        } else {
+            List<Integer> grossActions = getActionSet(selectState);
+            List<Integer> testedActions = vsb.testedActions(selectState.id);
+            List<Integer> nonTestedActions = MathUtils.getDifferenceBetweenLists(grossActions, testedActions);
+            if (nonTestedActions.isEmpty()) {
+                action = getActionDefault(selectState);
+                logger.warning("nonTestedActions is empty");
+            } else {
+                action = chooseRandomAction(nonTestedActions);
+            }
+        }
+        return action;
+    }
+
 
     public boolean timeExceeded() {
         return timeBudgetChecker.isTimeExceeded();
