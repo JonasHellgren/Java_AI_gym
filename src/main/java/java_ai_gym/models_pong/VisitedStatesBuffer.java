@@ -17,6 +17,7 @@ public class VisitedStatesBuffer {
     protected final static Logger logger = Logger.getLogger(VisitedStatesBuffer.class.getName());
     final double PROB_SELECTING_STATE_FOR_EXPLORATION_FACTOR_CALCULATION = 0.2;  //for speeding up
     final int MIN_LENGTH_EXP_FACTOR_LIST=100; //only regard PROB_SELECTING_STATE.. above this length
+    final double EXPLORATION_FACTOR_IF_NO_STATE_FOUND=0.0;
 
     StateVisitsDAO stateVisitsDAO;
     ExperiencesDAO experiencesDAO;
@@ -264,7 +265,7 @@ public class VisitedStatesBuffer {
 
         if (explorationFactorList.size() == 0) {
             logger.warning("No state fulfills criteria for exploration factor calculation");
-            return 1.0;
+            return EXPLORATION_FACTOR_IF_NO_STATE_FOUND;
         }
 
         DoubleSummaryStatistics stats = explorationFactorList.stream().mapToDouble(a -> a).summaryStatistics();

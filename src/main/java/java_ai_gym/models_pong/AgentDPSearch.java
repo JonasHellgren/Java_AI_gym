@@ -73,7 +73,7 @@ public abstract class AgentDPSearch extends AgentSearch {
 
 
       //  int maxEval=evaluatedSearchDepths.stream().collect(Collectors.summarizingInt(Integer::intValue)).getMax();
-        while (!cpuTimer.isTimeExceeded() && searchDepth<=10) {
+        while (!cpuTimer.isTimeExceeded() && searchDepth<=10 && !wasSearchFailing()) {
             StateForSearch selectedState = this.selectState();  //can be of type NullState
             int nofActions = getActionSet().size();
             takeStepAndSaveExperience(nofActions, selectedState);
@@ -86,7 +86,7 @@ public abstract class AgentDPSearch extends AgentSearch {
             }
 
             if (isAnyStateAtSearchDepth() && areManyActionsTested()) {
-                increaseSearchDepthClearVsbNewDepthSetResetExplorationFactor();
+                increaseSearchDepthDoResets();
                 performDynamicProgramming();
             }
         }
@@ -114,13 +114,14 @@ public abstract class AgentDPSearch extends AgentSearch {
                 }
             }
 
-            if (!isNullOrTerminalStateOrAllActionsTestedOrIsAtSearchDepth((StateForSearch) selectedState)) {
+            if (!isNullOrTerminalStateOrAllActionsTestedOrIsAtSearchDepth(selectedState)) {
                 isSelectFailed = false;
                 isMaxNofSelectionsExceeded = false;
                 return selectedState;
             }
         }
 
+        isMaxNofSelectionsExceeded = true;
         return getStateForSearchIfFailedToFind(selectedState);
     }
 
@@ -140,16 +141,18 @@ public abstract class AgentDPSearch extends AgentSearch {
         }
     }
 
-    private void increaseSearchDepthClearVsbNewDepthSetResetExplorationFactor() {
+    private void increaseSearchDepthDoResets() {
         if (vsb.getDepthMax() > searchDepth) {
             logger.warning("vsb.getMaxDepth() > searchDept");
         }
+        logger.info("increaseSearchDepthDoResets"+", getDepthMax ="+vsb.getDepthMax()+ ", searchDepth =" + searchDepth);
         addEvaluatedSearchDepth(searchDepth);
         searchDepthPrev = searchDepth;
         searchDepth = searchDepth + searchDepthStep;
         vsbForNewDepthSet.clear();
         nofStatesVsbForNewDepthSetPrev=1;
         explorationFactor = 0;
+        isMaxNofSelectionsExceeded=false;  isSelectFailed=false;
         logger.fine("searchDept increased to = " + searchDepth + ". VSB size = " + vsb.size());
     }
 
@@ -175,7 +178,7 @@ public abstract class AgentDPSearch extends AgentSearch {
     }
 
     private boolean areManyActionsTested() {
-        return explorationFactor >= EF_LIMIT || isSelectFailed;  //isMaxNofSelectionsExceeded
+        return explorationFactor >= EF_LIMIT || isMaxNofSelectionsExceeded; //isSelectFailed
     }
 
     private boolean isAnyStateAtSearchDepth() {
@@ -183,7 +186,7 @@ public abstract class AgentDPSearch extends AgentSearch {
     }
 
     public boolean wasSearchFailing() {
-        return !isAnyStateAtSearchDepth() && areManyActionsTested();
+        return !isAnyStateAtSearchDepth() && isMaxNofSelectionsExceeded;
     }
 
     private boolean hasVsbSizeIncreasedSignificantly() {
@@ -218,7 +221,7 @@ public abstract class AgentDPSearch extends AgentSearch {
         System.out.println("searchDepth = " + searchDepth + ", searchDepthPrev = " + searchDepthPrev + ", explorationFactor = " + vsbForNewDepthSet.calcExplorationFactor(searchDepth));
         System.out.println("evaluatedSearchDepths = " + evaluatedSearchDepths);
         System.out.println("maxDepth  = " + vsb.getDepthMax());
-        System.out.println("isAnyStateAtSearchDepth() = " + isAnyStateAtSearchDepth() + ", areManyActionsTested() = " + areManyActionsTested());
+        System.out.println("isAnyStateAtSearchDepth() = " + isAnyStateAtSearchDepth() + ", areManyActionsTested() = " + areManyActionsTested()+ ", isMaxNofSelectionsExceeded = " + isMaxNofSelectionsExceeded);
         if (wasSearchFailing()) {
             logger.warning("Failed search, despite many steps there is no state at search depth, i.e end of search horizon");
         }
