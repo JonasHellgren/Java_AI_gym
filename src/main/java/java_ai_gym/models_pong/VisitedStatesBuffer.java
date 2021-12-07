@@ -63,11 +63,11 @@ public class VisitedStatesBuffer {
     }
 
     public StateForSearch selectRandomState() {
-        return getState(stateVisitsDAO.selectRandomStateId2());
+        return getState(selectRandomStateId());
     }
 
     public String selectRandomStateId() {
-        return stateVisitsDAO.selectRandomStateId2();
+        return MathUtils.getRandomItemFromList(stateVisitsDAO.idList);
     }
 
     public int nofStates() {

@@ -1,11 +1,14 @@
 package java_ai_gym.models_pong;
 
 import java_ai_gym.models_common.StepReturn;
+import lombok.Getter;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
+@Getter
 public class SetOfTerminalStatesDAO {
 
     protected final static Logger logger = Logger.getLogger(StateVisitsDAO.class.getName());
@@ -14,6 +17,10 @@ public class SetOfTerminalStatesDAO {
 
     public SetOfTerminalStatesDAO() {
         stateIds = new HashSet<>();
+    }
+
+    public List<String> getStateIdsAsList () {
+        return List.copyOf(stateIds);
     }
 
     public void clear() {

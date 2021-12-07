@@ -87,8 +87,8 @@ public class StateVisitsDAO implements  DAO<StateForSearch> {
             logger.warning("Empty buffer");
             return "";
         } else {
-            //MathUtils.randInt(0,idList.size());
-            return idList.get(MathUtils.randInt(0,idList.size()-1));
+            return MathUtils.getRandomItemFromList(idList);
+            //return idList.get(MathUtils.randInt(0,idList.size()-1));
         }
     }
 

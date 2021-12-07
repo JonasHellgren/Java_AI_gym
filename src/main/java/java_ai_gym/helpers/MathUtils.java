@@ -79,4 +79,8 @@ public class MathUtils {
         return rand.nextInt((max - min) + 1) + min;
     }
 
+    public static <T> T getRandomItemFromList(List<T> list) {
+       return list.get(randInt(0,list.size()-1));
+    }
+
 }
