@@ -14,9 +14,9 @@ public class TestSearchBase {
     static final Logger logger = Logger.getLogger(TestSearchBase.class.getName());
 
     final int NOF_ACTIONS=3;
-    final int TIME_BUDGET_MS=250;
+    final int TIME_BUDGET_MS=200;
     final int SEARCH_DEPTH_STEP=5;
-    final double explorationFactorLimit=0.99;
+    final double explorationFactorLimit=0.8;
     final double discountFactor=0.95;
     SinglePong env=new SinglePong();
     StateForSearch state = new StateForSearch((StateForSearch) env.getTemplateState());
@@ -50,7 +50,7 @@ public class TestSearchBase {
 
     public void setBallLeftAndRacketRightHasNoSolution() {
         setBallAndRacketInMiddleBallFallingDown();
-        state.setVariable("yPosBall", env.parameters.SPEED_BALL*8);
+        state.setVariable("yPosBall", env.parameters.SPEED_BALL*4);
         state.setVariable("xPosBall", 0.0);
         state.setVariable("xPosRacket", env.parameters.MAX_X_POSITION*1);
     }

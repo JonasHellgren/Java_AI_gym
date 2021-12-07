@@ -104,12 +104,5 @@ EnvironmentParametersAbstract, sub för tabular
 textBallStates
 textRacketStates
 
-
-statesAtDepth vsb = {0=1, 1=3, 2=9, 3=21, 4=51, 5=123, 6=95, 7=243, 8=580, 9=1256, 10=2838}
-statesAtDepth vsbForSpecificDepthStep= {0=0, 1=0, 2=0, 3=0, 4=0, 5=0, 6=95, 7=243, 8=580, 9=1256, 10=2838}
-searchDepth = 10, searchDepthPrev = 5, explorationFactor = 0.9051918735891648
-evaluatedSearchDepths = [5]
-maxDepth  = 10
-isAnyStateAtSearchDepth() = true, areManyActionsTested() = false
-[1, 1, 1, 1, 1], depth = 5, evaluatedSearchDepths = [5]
-bestReturn = 0.0
+statesAtDepth vsb = {0=1, 1=3, 2=9, 3=21, 4=45, 5=92, 6=110, 7=287, 8=716, 9=1635, 10=1149, 11=0, 12=0, 13=0, 14=0, 15=0}
+statesAtDepth vsbForSpecificDepthStep= {0=0, 1=0, 2=0, 3=0, 4=0, 5=0, 6=0, 7=0, 8=0, 9=0, 10=0, 11=0, 12=0, 13=0, 14=0, 15=0}
