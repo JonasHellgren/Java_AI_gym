@@ -8,10 +8,9 @@ import java.util.logging.Logger;
 public class CpuTimer {
 
     static final Logger logger = Logger.getLogger(CpuTimer.class.getName());
-
     long startTimeMillis;  //starting time, long <=> minimum value of 0
-    long startTimeNanos;
     protected long timeBudgetMillis;
+
 
     public CpuTimer(long timeBudgetMillis) {
         this.timeBudgetMillis=timeBudgetMillis;
@@ -23,20 +22,18 @@ public class CpuTimer {
     }
 
     public void reset() {
-        startTimeNanos = System.nanoTime();
         startTimeMillis = System.currentTimeMillis();
-    }
+   }
 
-    public long getTimeInMillis() {
+
+    public long getTimeSinceStartInMillis() {
         return (System.currentTimeMillis() - startTimeMillis);
     }
 
-    public long getTimeInNanoSeconds() {
-        return ((System.nanoTime()- startTimeNanos));
-    }
 
     public boolean isTimeExceeded() {
         return System.currentTimeMillis() > startTimeMillis + timeBudgetMillis;
+
     }
 
 }

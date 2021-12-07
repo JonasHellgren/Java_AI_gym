@@ -60,8 +60,8 @@ public abstract class AgentSearch {
     protected EnvironmentParametersAbstract envParams;
     protected SearchResults searchResults;
     protected final Random random;
-    protected CpuTimer cpuTimer;
-    protected CpuTimer timeChecker;
+    protected CpuTimer timeBudgetChecker;
+
 
     public AgentSearch(long timeBudget, Environment env, EnvironmentParametersAbstract envParams) {
         this.timeBudget = timeBudget;
@@ -70,13 +70,13 @@ public abstract class AgentSearch {
         this.envParams = envParams;
         this.searchResults = new SearchResults(-Double.MAX_VALUE, envParams.discreteActionsSpace);
         this.random = new Random();
-        this.cpuTimer=new CpuTimer(timeBudget);  //time budget defined in sub class
-        this.timeChecker = new CpuTimer(0);
+        this.timeBudgetChecker =new CpuTimer(timeBudget);  //time budget defined in sub class
+
     }
 
     public void setTimeBudgetMillis(long time) {
         this.timeBudget=time;
-        cpuTimer.setTimeBudgetMillis(time);
+        timeBudgetChecker.setTimeBudgetMillis(time);
     }
 
     public abstract SearchResults search(final StateForSearch startState);
@@ -92,7 +92,7 @@ public abstract class AgentSearch {
     }
 
     public boolean timeExceeded() {
-        return cpuTimer.isTimeExceeded();
+        return timeBudgetChecker.isTimeExceeded();
     }
 
     protected boolean depthNotExceedAndFailStateNotEncountered(int depth, int searchDepth, StepReturn stepReturn) {

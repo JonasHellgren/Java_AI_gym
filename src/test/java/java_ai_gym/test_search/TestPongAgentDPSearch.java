@@ -4,7 +4,6 @@ import java_ai_gym.models_common.AgentSearch;
 import java_ai_gym.models_common.StateForSearch;
 import java_ai_gym.models_common.StepReturn;
 import java_ai_gym.models_pong.HistogramDataSetGenerator;
-import java_ai_gym.models_pong.PongAgentRandomSearch;
 import java_ai_gym.models_pong.VisitedStatesBuffer;
 import lombok.SneakyThrows;
 import org.junit.Assert;
@@ -61,7 +60,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
 
         createVSB(NOF_STEPS,MAX_DEPTH);
         logger.info("VSB size = " + agent.getVsb().size());
-        VisitedStatesBuffer trimmedVSB = agent.getVsb().createNewVSBWithNoLooseNodesBelowDepth(MAX_DEPTH,agent.getCpuTimer());   //agent.getVsb().getMaxDepth()
+        VisitedStatesBuffer trimmedVSB = agent.getVsb().createNewVSBWithNoLooseNodesBelowDepth(MAX_DEPTH,agent.getTimeBudgetChecker());   //agent.getVsb().getMaxDepth()
         printVSBs(agent.getVsb(), trimmedVSB);
         copyVSBsToFrame(agent.getVsb());
         TimeUnit.MILLISECONDS.sleep(15000);
@@ -83,7 +82,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
             createVSB(NOF_STEPS,MAX_DEPTH);
             logger.info("VSB size = " + agent.getVsb().size());
 
-            VisitedStatesBuffer trimmedVSB = agent.getVsb().createNewVSBWithNoLooseNodesBelowDepth(MAX_DEPTH,agent.getCpuTimer());   //agent.getVsb().getMaxDepth()
+            VisitedStatesBuffer trimmedVSB = agent.getVsb().createNewVSBWithNoLooseNodesBelowDepth(MAX_DEPTH,agent.getTimeBudgetChecker());   //agent.getVsb().getMaxDepth()
             printVSBs(agent.getVsb(), trimmedVSB);
 
             if (trimmedVSB.anyLooseNodeBelowDepth(trimmedVSB, MAX_DEPTH)) {
