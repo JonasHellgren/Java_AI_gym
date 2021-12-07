@@ -89,10 +89,11 @@ testGameOver
 clean up
 - fler undermetoder PongAgentDPSearch x
 - PongAgentDPSearch sub class till AgentDPSearch  x
+- dela upp PongAgentDPSearch - stor  x
 - StateVisitsDAO idList: farligt ej uppdatera etc med stateBuffer
 - färre tester i  TestPongAgentDPSearch
 - dela upp VisitedStatesBuffer - stor
-- dela upp PongAgentDPSearch - stor
+
 
 när tid:
 removeExpItemWithNewStateId är inte effektiv
