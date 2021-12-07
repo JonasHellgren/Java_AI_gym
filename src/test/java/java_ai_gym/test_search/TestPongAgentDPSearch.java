@@ -1,5 +1,6 @@
 package java_ai_gym.test_search;
 
+import java_ai_gym.helpers.MathUtils;
 import java_ai_gym.models_common.AgentSearch;
 import java_ai_gym.models_common.StateForSearch;
 import java_ai_gym.models_common.StepReturn;
@@ -162,14 +163,16 @@ public class TestPongAgentDPSearch extends TestSearchBase {
         //setBallInMiddleAndRacketInRightBallFallingDown();
 
         StepReturn stepReturn;
-        for (int i = 0; i <2000 ; i++) {
+        for (int i = 0; i <1000 ; i++) {
             System.out.println("i = "+i);
             AgentSearch.SearchResults sr=agent.search(state);
             stepReturn=env.step(sr.firstAction(),state);
            // copyVSBsToFrame(agent.getVsb());
 
             state.copyState(stepReturn.state);
-            env.render(state,sr.bestReturn,sr.firstAction());
+            if (MathUtils.calcRandomFromIntervall(0, 1)<1.0) {
+                env.render(state, sr.bestReturn, sr.firstAction());
+            }
 
         }
 

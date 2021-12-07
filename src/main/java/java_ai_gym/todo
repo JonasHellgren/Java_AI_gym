@@ -77,9 +77,7 @@ calcRewardNotTerminal - basera på speed  x
 MAX_NOF_SELECTION_TRIES vad händer egentgliten  x
 Timer som ävan kan pause - Finna fördelning step, DP och calcEf x
 calcExplorationFactor strular - blir stor snabbt x
-discount factor exp factor - färre andel testade actions längre fram i horisont
-searchDepth<=10 snygga till
-testSearchBallLeftAndRacketRightHasNoSolution strular
+discount factor exp factor - färre andel testade actions längre fram i horisont x
 minska REWARD_PER_STILL_STEP
 
 flödesdiagram search

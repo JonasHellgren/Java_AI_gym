@@ -20,15 +20,15 @@ public abstract class AgentDPSearch extends AgentSearch {
     final int SEARCH_DEPTH_UPPER_DEFAULT=100;
 
     final int MAX_NOF_SELECTION_TRIES = 1000;
-    double VSB_SIZE_INCREASE_FACTOR = 5.0;
+    double VSB_SIZE_INCREASE_FACTOR = 2.0;
     final double PROB_SELECT_STATE_FROM_NEW_DEPTH_STEP = 0.9;  //0.5
     final double PROB_SELECT_FROM_OPTIMAL_PATH = 0.5;
 
-    int searchDepthUpper;
     double explorationFactorLimitStart;
     double explorationFactorLimit;
     double discountFactorReward;
     double discountFactorExpFactor;
+    int searchDepthUpper;
     int searchDepthStep;
 
     int searchDepthPrev;
@@ -43,7 +43,7 @@ public abstract class AgentDPSearch extends AgentSearch {
     boolean wasSelectStateFailing;
 
     BellmanCalculator bellmanCalculator;
-    protected CpuTimeAccumulator timeSelectState;
+    protected CpuTimeAccumulator timeAccumulatorSelectState;
     protected CpuTimeAccumulator timeAccumulatorStep;
     protected CpuTimeAccumulator timeAccumulatorBellman;
     protected CpuTimeAccumulator timeAccumulatorExpFactor;
@@ -62,7 +62,7 @@ public abstract class AgentDPSearch extends AgentSearch {
         super.timeBudgetChecker = new CpuTimer(timeBudget);
         this.wasSelectStateFailing = false;
         this.optimalStateSequence = new ArrayList<>();
-        this.timeSelectState = new CpuTimeAccumulator();
+        this.timeAccumulatorSelectState = new CpuTimeAccumulator();
         this.timeAccumulatorStep = new CpuTimeAccumulator();
         this.timeAccumulatorBellman = new CpuTimeAccumulator();
         this.timeAccumulatorExpFactor = new CpuTimeAccumulator();
@@ -71,7 +71,6 @@ public abstract class AgentDPSearch extends AgentSearch {
         this.explorationFactorLimitStart = explorationFactorLimit;
         this.discountFactorReward = DISCOUNT_FACTOR_REWARD_DEFAULT;
         this.discountFactorExpFactor = DISCOUNT_FACTOR_EXP_FACTOR_DEFAULT;
-        ;
     }
 
     public AgentDPSearch(SinglePong env,
@@ -99,14 +98,14 @@ public abstract class AgentDPSearch extends AgentSearch {
             StateForSearch selectedState = this.selectState();  //can be of type NullState
             int nofActions = getActionSet().size();
             takeStepAndSaveExperience(nofActions, selectedState);
-            ifMotivatedShowLogs( selectedState);
+           // ifMotivatedShowLogs( selectedState);
 
             if (hasVsbSizeIncreasedSignificantly()) {
                 nofStatesVsbForNewDepthSetPrev = vsbForNewDepthSet.size();
                 timeAccumulatorExpFactor.play();
                 explorationFactor = vsbForNewDepthSet.calcExplorationFactor(searchDepth);
                 timeAccumulatorExpFactor.pause();
-                logProgress();
+              //  logProgress();
             }
 
             if (isAnyStateAtSearchDepth() && areManyActionsTested()) {
@@ -117,7 +116,6 @@ public abstract class AgentDPSearch extends AgentSearch {
 
         SearchResults searchResults = super.defineSearchResults(bellmanCalculator.actionsOptPath, this.startState);
         printResultInfo();
-       // reset();
         return searchResults;
     }
 
@@ -125,7 +123,7 @@ public abstract class AgentDPSearch extends AgentSearch {
 
     public StateForSearch selectState() {
         StateForSearch selectedState=null;  //hopefullt will change type later
-        timeSelectState.play();
+        timeAccumulatorSelectState.play();
         for (int j = 0; j < MAX_NOF_SELECTION_TRIES; j++) {
             if (MathUtils.calcRandomFromIntervall(0, 1) < PROB_SELECT_STATE_FROM_NEW_DEPTH_STEP && vsbForNewDepthSet.size() > 0) {
                 selectedState = vsbForNewDepthSet.selectRandomState();
@@ -139,12 +137,12 @@ public abstract class AgentDPSearch extends AgentSearch {
 
             if (!isTerminalStateOrAllActionsTestedOrIsAtSearchDepthOrNull(selectedState)) {
                 wasSelectStateFailing = false;
-                timeSelectState.pause();
+                timeAccumulatorSelectState.pause();
                 return selectedState;
             }
         }
 
-        timeSelectState.pause();
+        timeAccumulatorSelectState.pause();
         wasSelectStateFailing = true;
         logsForFailedToFindState(selectedState);
         return  null; //getStateForSearchIfFailedToFind(selectedState);
@@ -160,11 +158,13 @@ public abstract class AgentDPSearch extends AgentSearch {
             StateForSearch stateNew = (StateForSearch) stepReturn.state;
             stateNew.setDepthNofActions(selectedState.depth + 1, nofActions);
             vsb.addNewStateAndExperienceFromStep(selectedState.id, action, stepReturn);
-            timeAccumulatorStep.pause();
 
             if (stateNew.depth >= searchDepthPrev) {
                 vsbForNewDepthSet.addNewStateAndExperienceFromStep(selectedState.id, action, stepReturn);
             }
+
+            timeAccumulatorStep.pause();
+
         }
     }
 
@@ -204,6 +204,10 @@ public abstract class AgentDPSearch extends AgentSearch {
         evaluatedSearchDepths.clear();
         optimalStateSequence.clear();
         timeBudgetChecker.reset();
+        timeAccumulatorSelectState.reset();
+        timeAccumulatorStep.reset();
+        timeAccumulatorBellman.reset();
+        timeAccumulatorExpFactor.reset();
 
     }
 
@@ -248,7 +252,7 @@ public abstract class AgentDPSearch extends AgentSearch {
         logger.info("search finished, vsb size = " + vsb.size());
         System.out.println("statesAtDepth vsb = " + vsb.calcStatesAtDepth(searchDepth));
         System.out.println("statesAtDepth vsbForSpecificDepthStep= " + vsbForNewDepthSet.calcStatesAtDepth(searchDepth));
-        System.out.println("searchDepth = " + searchDepth + ", searchDepthPrev = " + searchDepthPrev + ", explorationFactor = " + vsbForNewDepthSet.calcExplorationFactor(searchDepth));
+        System.out.println("searchDepth = " + searchDepth + ", searchDepthPrev = " + searchDepthPrev); // + ", explorationFactor = " + vsbForNewDepthSet.calcExplorationFactor(searchDepth));
         System.out.println("evaluatedSearchDepths = " + evaluatedSearchDepths);
         System.out.println("maxDepth  = " + vsb.getDepthMax());
         System.out.println("isAnyStateAtSearchDepth() = " + isAnyStateAtSearchDepth() + ", areManyActionsTested() = " + areManyActionsTested()+ ", wasSelectStateFailing = " + wasSelectStateFailing);
@@ -260,7 +264,7 @@ public abstract class AgentDPSearch extends AgentSearch {
                 ", timeStep accum = "+timeAccumulatorStep.getAccumulatedTimeMillis()+
                 ", timeBellman accum = "+timeAccumulatorBellman.getAccumulatedTimeMillis()+
                 ", timeExpFactor accum = "+timeAccumulatorExpFactor.getAccumulatedTimeMillis()+
-                ", timeSelect accum = "+timeSelectState.getAccumulatedTimeMillis());
+                ", timeSelect accum = "+ timeAccumulatorSelectState.getAccumulatedTimeMillis());
 
     }
 

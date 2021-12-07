@@ -50,7 +50,7 @@ public class SinglePong extends EnvironmentForSearchAgent {
         public  double TERMINAL_REWARD = -10.0;  //1.0
         public  double NON_TERMINAL_REWARD_MOTION = -.01;  //1.0
         public  double NON_TERMINAL_REWARD_STILL = 0.0;  //1.0
-        public double REWARD_PER_STILL_STEP =1;
+        public double REWARD_PER_STILL_STEP =0.1;
 
         public int NOF_ACTIONS;
         public int MIN_ACTION;
