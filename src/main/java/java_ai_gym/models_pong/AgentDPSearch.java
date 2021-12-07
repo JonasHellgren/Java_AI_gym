@@ -14,17 +14,23 @@ import java.util.List;
 @Setter
 public abstract class AgentDPSearch extends AgentSearch {
 
-    final double EF_LIMIT_DEFAULT = 0.4;
-    final double DISCOUNT_FACTOR_DEFAULT = 0.99;
+    final double EF_LIMIT_DEFAULT = 0.7;
+    final double DISCOUNT_FACTOR_REWARD_DEFAULT = 0.9;
+    final double DISCOUNT_FACTOR_EXP_FACTOR_DEFAULT = 0.99;
+    final int SEARCH_DEPTH_UPPER_DEFAULT=100;
 
     final int MAX_NOF_SELECTION_TRIES = 1000;
     double VSB_SIZE_INCREASE_FACTOR = 5.0;
     final double PROB_SELECT_STATE_FROM_NEW_DEPTH_STEP = 0.9;  //0.5
     final double PROB_SELECT_FROM_OPTIMAL_PATH = 0.5;
 
+    int searchDepthUpper;
+    double explorationFactorLimitStart;
     double explorationFactorLimit;
-    double discountFactor;
+    double discountFactorReward;
+    double discountFactorExpFactor;
     int searchDepthStep;
+
     int searchDepthPrev;
     int searchDepth;
     double explorationFactor;
@@ -60,18 +66,27 @@ public abstract class AgentDPSearch extends AgentSearch {
         this.timeAccumulatorStep = new CpuTimeAccumulator();
         this.timeAccumulatorBellman = new CpuTimeAccumulator();
         this.timeAccumulatorExpFactor = new CpuTimeAccumulator();
+        this.searchDepthUpper =SEARCH_DEPTH_UPPER_DEFAULT;
         this.explorationFactorLimit = EF_LIMIT_DEFAULT;
-        this.discountFactor = DISCOUNT_FACTOR_DEFAULT;
+        this.explorationFactorLimitStart = explorationFactorLimit;
+        this.discountFactorReward = DISCOUNT_FACTOR_REWARD_DEFAULT;
+        this.discountFactorExpFactor = DISCOUNT_FACTOR_EXP_FACTOR_DEFAULT;
+        ;
     }
 
     public AgentDPSearch(SinglePong env,
                          long timeBudget,
+                         int searchStepUpper,
                          int searchDepthStep,
                          double explorationFactorLimit,
-                         double discountFactor) {
+                         double discountFactorReward,
+                         double discountFactorExpFactor) {
         this(env, timeBudget, searchDepthStep);
+        this.searchDepthUpper = searchStepUpper;
         this.explorationFactorLimit = explorationFactorLimit;
-        this.discountFactor = discountFactor;
+        this.explorationFactorLimitStart = explorationFactorLimit;
+        this.discountFactorReward = discountFactorReward;
+        this.discountFactorExpFactor = discountFactorExpFactor;
     }
 
     @Override
@@ -80,7 +95,7 @@ public abstract class AgentDPSearch extends AgentSearch {
         initInstanceVariables(startState);
         reset();
 
-        while (!timeBudgetChecker.isTimeExceeded() && searchDepth<=10 && !wasSearchFailing()) {
+        while (!timeBudgetChecker.isTimeExceeded() && searchDepth<=searchDepthUpper && !wasSearchFailing()) {
             StateForSearch selectedState = this.selectState();  //can be of type NullState
             int nofActions = getActionSet().size();
             takeStepAndSaveExperience(nofActions, selectedState);
@@ -122,7 +137,7 @@ public abstract class AgentDPSearch extends AgentSearch {
                 }
             }
 
-            if (!isNullOrTerminalStateOrAllActionsTestedOrIsAtSearchDepth(selectedState)) {
+            if (!isTerminalStateOrAllActionsTestedOrIsAtSearchDepthOrNull(selectedState)) {
                 wasSelectStateFailing = false;
                 timeSelectState.pause();
                 return selectedState;
@@ -162,6 +177,7 @@ public abstract class AgentDPSearch extends AgentSearch {
         searchDepthPrev = searchDepth;
         searchDepth = searchDepth + searchDepthStep;
         vsbForNewDepthSet.clear();
+        explorationFactorLimit=this.explorationFactorLimitStart*Math.pow(discountFactorExpFactor,searchDepthPrev);
         nofStatesVsbForNewDepthSetPrev=1;
         explorationFactor = 0;
         wasSelectStateFailing =false;
@@ -169,7 +185,7 @@ public abstract class AgentDPSearch extends AgentSearch {
     }
 
     private void performDynamicProgramming() {
-        BellmanCalculator bellmanCalculator = new BellmanCalculator(vsb, new FindMax(), searchDepthPrev, discountFactor, timeBudgetChecker);
+        BellmanCalculator bellmanCalculator = new BellmanCalculator(vsb, new FindMax(), searchDepthPrev, discountFactorReward, timeBudgetChecker);
         if (!bellmanCalculator.timeExceed) {
             this.timeAccumulatorBellman.play();
             bellmanCalculator.setNodeValues();
@@ -249,7 +265,7 @@ public abstract class AgentDPSearch extends AgentSearch {
     }
 
     private void logProgress() {
-        logger.info("searchDepth ="+searchDepth+", explorationFactor ="+explorationFactor+", time ="+ timeBudgetChecker.getTimeSinceStartInMillis()+", vsbForNewDepthSet size ="+vsbForNewDepthSet.size());
+        logger.info("searchDepth ="+searchDepth+", explorationFactor ="+explorationFactor+", explorationFactorLimit ="+explorationFactorLimit+", time ="+ timeBudgetChecker.getTimeSinceStartInMillis()+", vsbForNewDepthSet size ="+vsbForNewDepthSet.size());
     }
 
     public void initInstanceVariables(StateForSearch startState) {
@@ -263,7 +279,8 @@ public abstract class AgentDPSearch extends AgentSearch {
         this.searchDepth = searchDepthStep;
         this.searchDepthPrev = 0;
         this.explorationFactor = 0;
-        this.bellmanCalculator = new BellmanCalculator(vsb, new FindMax(), searchDepthPrev, discountFactor, timeBudgetChecker);
+        this.explorationFactorLimit = explorationFactorLimitStart;
+        this.bellmanCalculator = new BellmanCalculator(vsb, new FindMax(), searchDepthPrev, discountFactorReward, timeBudgetChecker);
     }
 
     public void addEvaluatedSearchDepth(int searchDepth) {
@@ -299,13 +316,9 @@ public abstract class AgentDPSearch extends AgentSearch {
                 ",isExperienceOfStateTerminal =" + vsb.isExperienceOfStateTerminal(selectedState.id));
     }
 
-    public boolean isNullOrTerminalStateOrAllActionsTestedOrIsAtSearchDepth(StateForSearch state) {
+    public boolean isTerminalStateOrAllActionsTestedOrIsAtSearchDepthOrNull(StateForSearch state) {
 
         //fail fast => speeding up
-        if (state == null) {
-            return true;
-        }
-
         if (state.depth == searchDepth) {
             return true;
         }
@@ -315,6 +328,10 @@ public abstract class AgentDPSearch extends AgentSearch {
         }
 
         if (vsb.isExperienceOfStateTerminal(state.id)) {
+            return true;
+        }
+
+        if (state == null) {
             return true;
         }
 

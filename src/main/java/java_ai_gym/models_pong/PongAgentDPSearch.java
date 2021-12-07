@@ -10,8 +10,8 @@ public class PongAgentDPSearch extends AgentDPSearch {
         super(env, timeBudget, searchDepthStep);
     }
 
-    public PongAgentDPSearch(SinglePong env, long timeBudget, int searchDepthStep, double explorationFactorLimit, double discountFactor) {
-        super(env, timeBudget, searchDepthStep, explorationFactorLimit, discountFactor);
+    public PongAgentDPSearch(SinglePong env, long timeBudget, int searchStepUpper, int searchDepthStep, double explorationFactorLimit, double discountFactorReward,double discountFactorExpFactor) {
+        super(env, timeBudget,searchStepUpper, searchDepthStep, explorationFactorLimit, discountFactorReward,discountFactorExpFactor);
     }
 
     public int getActionDefault() {

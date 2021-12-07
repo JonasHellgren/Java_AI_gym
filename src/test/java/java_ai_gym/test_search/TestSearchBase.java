@@ -1,7 +1,6 @@
 package java_ai_gym.test_search;
 
 import java_ai_gym.models_common.StateForSearch;
-import java_ai_gym.models_pong.AgentDPSearch;
 import java_ai_gym.models_pong.PongAgentDPSearch;
 import java_ai_gym.models_pong.SinglePong;
 
@@ -16,13 +15,15 @@ public class TestSearchBase {
     final int NOF_ACTIONS=3;
     final int TIME_BUDGET_MS=200;
     final int SEARCH_DEPTH_STEP=5;
+    final int SEARCH_DEPTH_UPPER =15;
     final double explorationFactorLimit=0.8;
-    final double discountFactor=0.95;
+    final double discountFactorReward=0.95;
+    final double discountFactorExpFactor=.98;
     SinglePong env=new SinglePong();
     StateForSearch state = new StateForSearch((StateForSearch) env.getTemplateState());
     SinglePong.EnvironmentParameters p=env.parameters;
     Map<String,Integer> moves=new HashMap();
-    PongAgentDPSearch agent= new PongAgentDPSearch(env,TIME_BUDGET_MS,SEARCH_DEPTH_STEP,explorationFactorLimit,discountFactor);
+    PongAgentDPSearch agent= new PongAgentDPSearch(env,TIME_BUDGET_MS, SEARCH_DEPTH_UPPER,SEARCH_DEPTH_STEP,explorationFactorLimit,discountFactorReward,discountFactorExpFactor);
 
     public void setupMoves() {
 
