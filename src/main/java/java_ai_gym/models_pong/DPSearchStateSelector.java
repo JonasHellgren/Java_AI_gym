@@ -19,7 +19,7 @@ public class DPSearchStateSelector {
         StateForSearch selectedState = null;  //hopefully will change type later
         agent.timeAccumulatorSelectState.play();
         for (int j = 0; j < agent.MAX_NOF_SELECTION_TRIES; j++) {
-            if (MathUtils.calcRandomFromIntervall(0, 1) < agent.PROB_SELECT_STATE_FROM_NEW_DEPTH_STEP && agent.vsbForNewDepthSet.size() > 0) {
+            if (MathUtils.calcRandomFromIntervall(0, 1) < agent.PROB_SELECT_STATE_FROM_NEW_DEPTH_SET && agent.vsbForNewDepthSet.size() > 0) {
                 selectedState = agent.vsbForNewDepthSet.selectRandomState();
             } else {
                 if (MathUtils.calcRandomFromIntervall(0, 1) < agent.PROB_SELECT_FROM_OPTIMAL_PATH && agent.optimalStateSequence.size() > 0) {

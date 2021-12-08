@@ -64,20 +64,27 @@ public class HistogramDataSetGenerator {
         int prevDepth=0;
         for (int searchDepth:evaluatedSearchDepths) {
             String depthSet=prevDepth+"-"+searchDepth;
-            depthStatistics=new DepthStatistics();
-            for(int depth=prevDepth;depth<=searchDepth;depth++) {
-                List<StateForSearch> states=vsb.getAllStatesAtDepth(depth);
-                updateDepthStatistics(states,searchDepth);
-            }
+            depthStatistics=createDepthStatistics(vsb, prevDepth, searchDepth);
             logger.fine("searchDepth ="+searchDepth+", depthStatistics = "+depthStatistics);
             dataset.addValue(depthStatistics.nofFailStates, "fail", depthSet);
             dataset.addValue(depthStatistics.nofNoActionTestedStates, "no action tested", depthSet);
             dataset.addValue(depthStatistics.nofReachedDepth, "reached depth", depthSet);
             dataset.addValue(depthStatistics.nofSomeActionTestedStates, "action tested", depthSet);
+
+            prevDepth=searchDepth;
         }
     }
 
-    private void updateDepthStatistics(List<StateForSearch> states, int searchDepth) {
+    private DepthStatistics createDepthStatistics(VisitedStatesBuffer vsb, int prevDepth, int searchDepth) {
+        DepthStatistics depthStatistics=new DepthStatistics();
+        for(int depth = prevDepth; depth<= searchDepth; depth++) {
+            List<StateForSearch> states= vsb.getAllStatesAtDepth(depth);
+            updateDepthStatistics(depthStatistics,states, searchDepth);
+        }
+        return depthStatistics;
+    }
+
+    private void updateDepthStatistics(DepthStatistics depthStatistics, List<StateForSearch> states, int searchDepth) {
 
         if (vsb==null) {
             logger.warning("VisitedStatesBuffer not defined");

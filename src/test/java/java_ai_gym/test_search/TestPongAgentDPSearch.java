@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 public class TestPongAgentDPSearch extends TestSearchBase {
 
-    final int SLEEP_TIME = 1000;
+    final int SLEEP_TIME = 5000;
 
     @Before
     public void setup() {

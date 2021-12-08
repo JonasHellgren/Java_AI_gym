@@ -44,6 +44,7 @@ public class VisitedStatesBuffer {
         experiencesDAO.copy(vsb.getExperiencesDAO());
         setOfTerminalStatesDAO.copy(vsb.getSetOfTerminalStatesDAO());
         depthMax = vsb.depthMax;
+        explorationFactorCalculator=vsb.explorationFactorCalculator;
     }
 
     public void clear() {

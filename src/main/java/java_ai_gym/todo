@@ -95,10 +95,12 @@ clean up
 - dela upp VisitedStatesBuffer - stor -fimpa CutLooseNodes  x
 - snygga till swing plot x
 - kommentera klasser överst  x
-- kolla varningar
+- kolla varningar  x
 
-flödesdiagram search
+flödesdiagram search  x
+explorationFactor blir stor väl snabbt för större djup
 plantuml pong
+placera klasser mer logiskt
 pusha
 
 när tid:
