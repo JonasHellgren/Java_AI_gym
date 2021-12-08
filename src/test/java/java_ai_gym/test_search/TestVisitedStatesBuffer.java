@@ -67,6 +67,7 @@ public class TestVisitedStatesBuffer extends TestSearchBase {
 
         vsb.addNewStateAndExperienceFromStep(state.id,action,stepReturn);
         System.out.println(vsb);
+        System.out.println("stateVisitsDAO="+vsb.getStateVisitsDAO());
         Assert.assertEquals(2,vsb.nofStates());
     }
 

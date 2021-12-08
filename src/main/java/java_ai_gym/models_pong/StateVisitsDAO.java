@@ -2,6 +2,7 @@ package java_ai_gym.models_pong;
 
 import java_ai_gym.helpers.MathUtils;
 import java_ai_gym.models_common.StateForSearch;
+import lombok.ToString;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -60,36 +61,12 @@ public class StateVisitsDAO implements  DAO<StateForSearch> {
             logger.warning("Id not present = " +id);
         } else {
             stateBuffer.remove(id);
+            idList.remove(id);
         }
     }
 
     public boolean contains(String id) {
         return stateBuffer.containsKey(id);
-    }
-
-    public String selectRandomStateIdSLOW() {
-
-        if (stateBuffer.size() == 0) {
-            logger.warning("Empty buffer");
-            return "";
-        } else {
-            return getRandomSetElement(stateBuffer.keySet());
-        }
-    }
-
-    static <E> E getRandomSetElement(Set<E> set) {
-        return set.stream().skip(new Random().nextInt(set.size())).findFirst().orElse(null);
-    }
-
-    public String selectRandomStateId2() {
-
-        if (stateBuffer.size() == 0) {
-            logger.warning("Empty buffer");
-            return "";
-        } else {
-            return MathUtils.getRandomItemFromList(idList);
-            //return idList.get(MathUtils.randInt(0,idList.size()-1));
-        }
     }
 
 
@@ -98,4 +75,25 @@ public class StateVisitsDAO implements  DAO<StateForSearch> {
             this.add(id,stateVisitsDAO.get(id));
         }
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sbBuffer = new StringBuilder();
+        sbBuffer.append(System.getProperty("line.separator"));
+        sbBuffer.append("sbBuffer =");
+        for (String id:stateBuffer.keySet()) {
+            sbBuffer.append(id+", ");
+        }
+        sbBuffer.append(System.getProperty("line.separator"));
+
+        StringBuilder sbIdList = new StringBuilder();
+        sbBuffer.append("sbIdList =");
+        for (String id:idList) {
+            sbIdList.append(id+", ");
+        }
+        return  sbBuffer.toString()+ sbIdList.toString();
+
+    }
+
+
 }

@@ -90,13 +90,13 @@ clean up
 - PongAgentDPSearch sub class till AgentDPSearch  x
 - dela upp PongAgentDPSearch - stor  x
 - performDynamicProgramming - inte behöva använda new - reset istället  x
-- rensa bland tester
-- StateVisitsDAO idList: farligt ej uppdatera etc med stateBuffer
-- färre tester i  TestPongAgentDPSearch
+- rensa bland tester  x
+- StateVisitsDAO saknade idList i remove
 - dela upp VisitedStatesBuffer - stor
 -fimpa CutLooseNodes
 -snygga till swing plot
 -kommentera klasser överst
+-kollar varningar
 
 flödesdiagram search
 plantuml pong
