@@ -5,6 +5,7 @@ import java_ai_gym.models_pong.PongAgentRandomSearch;
 import lombok.SneakyThrows;
 import org.jcodec.common.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 
@@ -35,6 +36,7 @@ public class TestPongAgentRandomSearch extends TestSearchBase {
 
     @SneakyThrows
     @Test
+    @Ignore("Uncertain")
     public void RacketInMiddleBallDownShallGiveNoMove() {
 
         AgentSearch agent=new PongAgentRandomSearch(env,TIME_BUDGET,SEARCH_DEPTH);
@@ -47,6 +49,7 @@ public class TestPongAgentRandomSearch extends TestSearchBase {
 
     @SneakyThrows
     @Test
+    @Ignore("Uncertain")
     public void RacketAtRightBallDownShallGiveLeftMove() {
 
         state.setVariable("xPosRacket", p.MAX_X_POSITION);
@@ -67,7 +70,7 @@ public class TestPongAgentRandomSearch extends TestSearchBase {
 
     @SneakyThrows
     @Test
-    //@Ignore("Takes time")
+    @Ignore("Takes time")
     public void testAnimate() {
 
         env.setRandomStateValuesStart(state);

@@ -73,11 +73,9 @@ public class TestVisitedStatesBuffer extends TestSearchBase {
     @Test
     public void addFromTrial() {
         defineInitVSB(new StateForSearch(state));
-        int max_depth = doTrial(state);
-
+        int maxDepth = doTrial(state);
         System.out.println(vsb);
-
-        Assert.assertEquals(max_depth+1,vsb.nofStates());
+        Assert.assertEquals(maxDepth+1,vsb.nofStates());
     }
 
 

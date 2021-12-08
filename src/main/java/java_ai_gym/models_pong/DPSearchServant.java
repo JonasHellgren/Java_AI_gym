@@ -1,19 +1,18 @@
 package java_ai_gym.models_pong;
 
-import java_ai_gym.models_common.AgentSearch;
 import java_ai_gym.models_common.StateForSearch;
 
 import java.util.logging.Logger;
 
 /**--------------- below are methods of more dummy/supporting nature ------------------
 **/
-public class DPSearchServants {
+public class DPSearchServant {
 
-    protected final static Logger logger = Logger.getLogger(DPSearchServants.class.getName());
+    protected final static Logger logger = Logger.getLogger(DPSearchServant.class.getName());
 
     AgentDPSearch agent;
 
-    public DPSearchServants(AgentDPSearch agentDPSearch) {
+    public DPSearchServant(AgentDPSearch agentDPSearch) {
         this.agent=agentDPSearch;
     }
 

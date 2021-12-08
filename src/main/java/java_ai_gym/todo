@@ -94,11 +94,13 @@ clean up
 - StateVisitsDAO idList: farligt ej uppdatera etc med stateBuffer
 - färre tester i  TestPongAgentDPSearch
 - dela upp VisitedStatesBuffer - stor
+-fimpa CutLooseNodes
 -snygga till swing plot
 -kommentera klasser överst
 
 flödesdiagram search
 plantuml pong
+pusha
 
 när tid:
 removeExpItemWithNewStateId är inte effektiv

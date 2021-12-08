@@ -22,22 +22,14 @@ public class TestPongAgentDPSearch extends TestSearchBase {
     @Before
     public void setup() {
         super.setupMoves();
-       // p.MAX_SPEED_RACKET = .1;
         env.setRandomStateValuesStart(state);
         state.setIdDepthNofActions(state.START_STATE_ID, 0, 0);
     }
 
 
-    @Test
-    @Ignore
-    public void ShowInit() {
-        System.out.println(agent.getVsb());
-
-    }
-
     @SneakyThrows
     @Test
-    @Ignore
+    //@Ignore
     public void CreateVSBSize10() {
 
         final int NOF_STEPS = 10;
@@ -49,54 +41,6 @@ public class TestPongAgentDPSearch extends TestSearchBase {
         env.leftTreePanel.expandTree();
         Assert.assertEquals(NOF_STEPS + 1, agent.getVsb().nofStates());
         TimeUnit.MILLISECONDS.sleep(25000);
-
-    }
-
-    @SneakyThrows
-    @Test
-    @Ignore
-    public void CreateSingleVSBSize100AndCutLooseNodes() {
-        final int NOF_STEPS = 100;
-        final int MAX_DEPTH = 5; //agent.getVsb().getMaxDepth();
-
-        createVSB(NOF_STEPS,MAX_DEPTH);
-        logger.info("VSB size = " + agent.getVsb().size());
-        VisitedStatesBuffer trimmedVSB = agent.getVsb().createNewVSBWithNoLooseNodesBelowDepth(MAX_DEPTH,agent.getTimeBudgetChecker());   //agent.getVsb().getMaxDepth()
-        printVSBs(agent.getVsb(), trimmedVSB);
-        copyVSBsToFrame(agent.getVsb());
-        TimeUnit.MILLISECONDS.sleep(15000);
-
-        Assert.assertTrue(trimmedVSB.nofStates() <= agent.getVsb().nofStates());
-        Assert.assertFalse(trimmedVSB.anyLooseNodeBelowDepth(trimmedVSB, MAX_DEPTH));
-
-        agent.getVsb().clear();
-    }
-
-    @SneakyThrows
-    @Test
-    @Ignore
-    public void CreateManyVSBSize100AndCutLooseNodes() {
-        final int NOF_STEPS = 100;
-        final int MAX_DEPTH = 5; //agent.getVsb().getMaxDepth();
-
-        for (int i = 0; i < 10; i++) {
-            createVSB(NOF_STEPS,MAX_DEPTH);
-            logger.info("VSB size = " + agent.getVsb().size());
-
-            VisitedStatesBuffer trimmedVSB = agent.getVsb().createNewVSBWithNoLooseNodesBelowDepth(MAX_DEPTH,agent.getTimeBudgetChecker());   //agent.getVsb().getMaxDepth()
-            printVSBs(agent.getVsb(), trimmedVSB);
-
-            if (trimmedVSB.anyLooseNodeBelowDepth(trimmedVSB, MAX_DEPTH)) {
-                TimeUnit.MILLISECONDS.sleep(15000);
-                copyVSBsToFrame(agent.getVsb());
-            }
-            Assert.assertTrue(trimmedVSB.nofStates() <= agent.getVsb().nofStates());
-            Assert.assertFalse(trimmedVSB.anyLooseNodeBelowDepth(trimmedVSB, MAX_DEPTH));
-
-            agent.getVsb().clear();
-        }
-
-        //TimeUnit.MILLISECONDS.sleep(10000);
 
     }
 

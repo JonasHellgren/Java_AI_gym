@@ -67,6 +67,10 @@ public class VisitedStatesBuffer {
     }
 
     public String selectRandomStateId() {
+        if (stateVisitsDAO.idList.size()==0) {
+            logger.warning("No state visits");
+            return "";
+        }
         return MathUtils.getRandomItemFromList(stateVisitsDAO.idList);
     }
 
@@ -144,18 +148,7 @@ public class VisitedStatesBuffer {
     }
 
     public int getDepthMax() {
- /*
-        if (stateVisitsDAO.size() == 0) {
-            logger.warning("Depth not defined for zero size buffer");
-            return 0;
-        }
-
-
-        int depthMax=0;
-        for (StateForSearch state:stateVisitsDAO.getAll()) {
-            depthMax=Math.max(depthMax,state.depth);
-        }  */
-        return depthMax;
+         return depthMax;
     }
 
     public VisitedStatesBuffer createNewVSBWithNoLooseNodesBelowDepth(int searchDepth, CpuTimer cpuTimer) {

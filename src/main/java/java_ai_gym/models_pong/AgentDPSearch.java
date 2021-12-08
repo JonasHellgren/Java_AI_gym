@@ -9,7 +9,6 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Getter
 @Setter
@@ -45,7 +44,7 @@ public abstract class AgentDPSearch extends AgentSearch {
 
     BellmanCalculator bellmanCalculator;
     DPSearchStateSelector dpSearchStateSelector;
-    DPSearchServants dpSearchServants;
+    DPSearchServant dpSearchServants;
     protected CpuTimeAccumulator timeAccumulatorSelectState;
     protected CpuTimeAccumulator timeAccumulatorStep;
     protected CpuTimeAccumulator timeAccumulatorBellman;
@@ -71,7 +70,7 @@ public abstract class AgentDPSearch extends AgentSearch {
         this.discountFactorReward = DISCOUNT_FACTOR_REWARD_DEFAULT;
         this.discountFactorExpFactor = DISCOUNT_FACTOR_EXP_FACTOR_DEFAULT;
         this.dpSearchStateSelector=new DPSearchStateSelector(this);
-        this.dpSearchServants= new DPSearchServants(this);
+        this.dpSearchServants= new DPSearchServant(this);
     }
 
     public AgentDPSearch(SinglePong env,
@@ -104,7 +103,7 @@ public abstract class AgentDPSearch extends AgentSearch {
                 timeAccumulatorExpFactor.play();
                 explorationFactor = vsbForNewDepthSet.calcExplorationFactor(searchDepth);
                 timeAccumulatorExpFactor.pause();
-                // logProgress();
+                //this.dpSearchServants.logProgress();
             }
 
             if (isAnyStateAtSearchDepth() && areManyActionsTested()) {

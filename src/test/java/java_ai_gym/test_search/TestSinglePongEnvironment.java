@@ -15,7 +15,6 @@ public class TestSinglePongEnvironment extends TestSearchBase {
     @Before
     public void setup() {
         super.setupMoves();
-      //  p.MAX_SPEED_RACKET=.1;
         env.setRandomStateValuesStart(state);
 
     }
@@ -30,6 +29,7 @@ public class TestSinglePongEnvironment extends TestSearchBase {
 
     @Test
     public void testRacketMoveS() {
+        state.setVariable("xPosRacket",env.parameters.MAX_X_POSITION/2);  //put racket in middle
         StepReturn stepReturn=env.step(moves.get("left"),state);
         System.out.println(stepReturn.state);
         Assert.assertTrue(state.getContinuousVariable("xPosRacket")>stepReturn.state.getContinuousVariable("xPosRacket"));
