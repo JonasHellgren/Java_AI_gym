@@ -21,7 +21,7 @@ public class SinglePong extends EnvironmentForSearchAgent {
     public SinglePong.EnvironmentParameters parameters = this.new EnvironmentParameters();
 
     final int plotFrameWidth=gfxSettings.FRAME_WEIGHT*2;
-    final int plotFrameHeight=gfxSettings.FRAME_HEIGHT*3;
+    final int plotFrameHeight= (int) (gfxSettings.FRAME_HEIGHT*1.5);
     public PanelPongAnimation animationPanel;
 
     public SearchTreePanel leftTreePanel;
@@ -140,20 +140,8 @@ public class SinglePong extends EnvironmentForSearchAgent {
                 parameters.NON_TERMINAL_REWARD_STILL:
                 parameters.NON_TERMINAL_REWARD_MOTION;
         int collision= state.getDiscreteVariable("collision");
-
-
-
         int nofStepsStillBeforeCollision= state.getDiscreteVariable("nofStepsStillBeforeCollision");
         double r2=(collision==1)?parameters.REWARD_PER_STILL_STEP*nofStepsStillBeforeCollision:0;
-
-        /*
-        if (collision==1) {
-            System.out.println(state);
-            System.out.println(stepReturnState);
-            System.out.println(nofStepsStillBeforeCollision);
-        }
-         */
-
         return r1+r2;
     }
 
@@ -271,13 +259,7 @@ public class SinglePong extends EnvironmentForSearchAgent {
         animationPanel.setLayout(null);  //to enable tailor made position
         animationFrame.add(animationPanel);
         animationFrame.setVisible(true);
-
         plotFrame =new FrameEnvironment(plotFrameWidth, plotFrameHeight,"SinglePong plots");
-
-        leftTreePanel =new SearchTreePanel();
-        defineTreePanel(leftTreePanel, "upperPLotPanel");
-        rightTreePanel =new SearchTreePanel();
-        defineTreePanel(rightTreePanel, "middlePLotPanel");
 
         histogramDataSetGenerator =new HistogramDataSetGenerator();
         leftChartPanel = new HistogramPanel();
@@ -287,11 +269,9 @@ public class SinglePong extends EnvironmentForSearchAgent {
         DefaultCategoryDataset dataset2 = rightChartPanel.getDataset();
         histogramDataSetGenerator.defineDummyDataset(dataset2);
 
-        plotFrame.add(leftTreePanel);
-        plotFrame.add(rightTreePanel);
         plotFrame.add(leftChartPanel);
         plotFrame.add(rightChartPanel);
-        plotFrame.setLayout(new GridLayout(2,2));
+        plotFrame.setLayout(new GridLayout(1,2));
         plotFrame.setVisible(true);
     }
 

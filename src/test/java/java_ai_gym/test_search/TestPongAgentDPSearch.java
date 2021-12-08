@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 public class TestPongAgentDPSearch extends TestSearchBase {
 
-    final int SLEEP_TIME=1000;
+    final int SLEEP_TIME = 1000;
 
     @Before
     public void setup() {
@@ -34,10 +34,10 @@ public class TestPongAgentDPSearch extends TestSearchBase {
 
         final int NOF_STEPS = 10;
         final int MAX_DEPTH = 3; //agent.getVsb().getMaxDepth();
-        createVSB(NOF_STEPS,MAX_DEPTH);
+        createVSB(NOF_STEPS, MAX_DEPTH);
 
         System.out.println(agent.getVsb());
-        env.leftTreePanel.createTreeFromVisitedStatesBuffer(agent.getVsb(),agent.getSearchDepthPrev());
+        env.leftTreePanel.createTreeFromVisitedStatesBuffer(agent.getVsb(), agent.getSearchDepthPrev());
         env.leftTreePanel.expandTree();
         Assert.assertEquals(NOF_STEPS + 1, agent.getVsb().nofStates());
         TimeUnit.MILLISECONDS.sleep(25000);
@@ -46,16 +46,16 @@ public class TestPongAgentDPSearch extends TestSearchBase {
 
     @SneakyThrows
     @Test
-   // @Ignore
+    // @Ignore
     public void testSearchBallAndRacketInMiddle() {
         setBallAndRacketInMiddleBallFallingDown();
 
-        AgentSearch.SearchResults searchResults=agent.search(state);
+        AgentSearch.SearchResults searchResults = agent.search(state);
         copyVSBsToFrame(agent.getVsb());
         printSummary(searchResults);
 
 
-        Assert.assertEquals(1,searchResults.firstAction());
+        Assert.assertEquals(1, searchResults.firstAction());
         Assert.assertFalse(agent.wasSearchFailing());
 
         TimeUnit.MILLISECONDS.sleep(SLEEP_TIME);
@@ -64,18 +64,18 @@ public class TestPongAgentDPSearch extends TestSearchBase {
 
     @SneakyThrows
     @Test
-   // @Ignore
+    // @Ignore
     public void testSearchBallMiddleAndRacketRight() {
         setBallInMiddleAndRacketInRightBallFallingDown();
-        AgentSearch.SearchResults searchResults=agent.search(state);
+        AgentSearch.SearchResults searchResults = agent.search(state);
         copyVSBsToFrame(agent.getVsb());
         printSummary(searchResults);
 
-        for (StepReturn sr:searchResults.getBestStepReturnSequence()) {
-            System.out.print(sr.reward+", ");
+        for (StepReturn sr : searchResults.getBestStepReturnSequence()) {
+            System.out.print(sr.reward + ", ");
         }
 
-        Assert.assertTrue(searchResults.bestActionSequence.subList(0,3).contains(moves.get("left")));
+        Assert.assertTrue(searchResults.bestActionSequence.subList(0, 3).contains(moves.get("left")));
         Assert.assertFalse(agent.wasSearchFailing());
 
 
@@ -84,10 +84,10 @@ public class TestPongAgentDPSearch extends TestSearchBase {
 
     @SneakyThrows
     @Test
-   // @Ignore
+    // @Ignore
     public void testSearchBallLeftAndRacketRightHasNoSolution() {
         setBallLeftAndRacketRightHasNoSolution();
-        AgentSearch.SearchResults searchResults=agent.search(state);
+        AgentSearch.SearchResults searchResults = agent.search(state);
         copyVSBsToFrame(agent.getVsb());
         printSummary(searchResults);
 
@@ -100,49 +100,38 @@ public class TestPongAgentDPSearch extends TestSearchBase {
 
     @SneakyThrows
     @Test
-    //@Ignore("Takes time")
+   // @Ignore("Takes time")
     public void testAnimate() {
 
         env.setRandomStateValuesStart(state);
+        state.setVariable("xPosRacket",env.parameters.MAX_X_POSITION/2);  //put racket in middle
         //setBallInMiddleAndRacketInRightBallFallingDown();
 
         StepReturn stepReturn;
-        for (int i = 0; i <1000 ; i++) {
-            System.out.println("i = "+i);
-            AgentSearch.SearchResults sr=agent.search(state);
-            stepReturn=env.step(sr.firstAction(),state);
-           // copyVSBsToFrame(agent.getVsb());
+        for (int i = 0; i < 1000; i++) {
+            System.out.println("i = " + i);
+            AgentSearch.SearchResults sr = agent.search(state);
+            stepReturn = env.step(sr.firstAction(), state);
+            copyVSBsToFrame(agent.getVsb());
 
             state.copyState(stepReturn.state);
-            if (MathUtils.calcRandomFromIntervall(0, 1)<1.0) {
+            if (MathUtils.calcRandomFromIntervall(0, 1) < 1.0) {
                 env.render(state, sr.bestReturn, sr.firstAction());
             }
 
         }
-
 
         TimeUnit.MILLISECONDS.sleep(SLEEP_TIME);
     }
 
 
     private void copyVSBsToFrame(VisitedStatesBuffer vsb) {
-
-        HistogramDataSetGenerator histogramDataSetGenerator =new HistogramDataSetGenerator();
-        histogramDataSetGenerator.updateDatasetForDepthStatistics(env.leftChartPanel.getDataset(),vsb,agent.getEvaluatedSearchDepths());
-        histogramDataSetGenerator.updateDatasetForStatesPerDepth(env.rightChartPanel.getDataset(),vsb);
-
-    //    env.leftTreePanel.createTreeFromVisitedStatesBuffer(vsb,vsb.getDepthMax());
-     //   env.leftTreePanel.expandTree();
-      //  env.rightTreePanel.createTreeFromVisitedStatesBuffer(trimmedVSB,agent.getSearchDepthPrev());
-     //   env.rightTreePanel.expandTree();
-
-      //  env.createHistogramsFromVisitedStatesBuffer(vsb,agent.getEvaluatedSearchDepths());
-      /// env.createHistogramFromVisitedStatesBufferFromStatesPerDepth(vsb,agent.getEvaluatedSearchDepths());
+        env.createHistogramsFromVisitedStatesBuffer(vsb,agent.getEvaluatedSearchDepths());
     }
 
     private void printVSBs(VisitedStatesBuffer vsb, VisitedStatesBuffer trimmedVSB) {
-    //    System.out.println(vsb);
-    //    System.out.println("original VSB depth = " + agent.getVsb().getDepthMax() + ", original VSB nof nodes = " + agent.getVsb().getStateVisitsDAO().size());
+        //    System.out.println(vsb);
+        //    System.out.println("original VSB depth = " + agent.getVsb().getDepthMax() + ", original VSB nof nodes = " + agent.getVsb().getStateVisitsDAO().size());
         System.out.println(trimmedVSB);
         System.out.println("trimmedVSB depth = " + trimmedVSB.getDepthMax() + ", trimmed VSB nof nodes = " + trimmedVSB.getStateVisitsDAO().size());
     }
@@ -157,7 +146,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
 
         for (int i = 0; i < nofSteps; i++) {
             StateForSearch selectedState = (StateForSearch) agent.getDpSearchStateSelector().selectState();
-            int action = agent.chooseAction(selectedState,agent.getVsb());
+            int action = agent.chooseAction(selectedState, agent.getVsb());
             StepReturn stepReturn = env.step(action, selectedState);
             StateForSearch stateNew = (StateForSearch) stepReturn.state;
             stateNew.setDepthNofActions(selectedState.depth + 1, nofActions);
@@ -169,9 +158,9 @@ public class TestPongAgentDPSearch extends TestSearchBase {
     }
 
     private void printSummary(AgentSearch.SearchResults searchResults) {
-        System.out.println(searchResults.bestActionSequence+", depth = "+ searchResults.bestActionSequence.size()+", evaluatedSearchDepths = "+agent.getEvaluatedSearchDepths());
+        System.out.println(searchResults.bestActionSequence + ", depth = " + searchResults.bestActionSequence.size() + ", evaluatedSearchDepths = " + agent.getEvaluatedSearchDepths());
 
-        System.out.println("bestReturn = "+ searchResults.bestReturn);
+        System.out.println("bestReturn = " + searchResults.bestReturn);
 
     }
 

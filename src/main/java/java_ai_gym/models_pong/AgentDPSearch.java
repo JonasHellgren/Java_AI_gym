@@ -103,7 +103,7 @@ public abstract class AgentDPSearch extends AgentSearch {
                 timeAccumulatorExpFactor.play();
                 explorationFactor = vsbForNewDepthSet.calcExplorationFactor(searchDepth);
                 timeAccumulatorExpFactor.pause();
-                //this.dpSearchServants.logProgress();
+               // this.dpSearchServants.logProgress();
             }
 
             if (isAnyStateAtSearchDepth() && areManyActionsTested()) {
