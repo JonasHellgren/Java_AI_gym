@@ -5,6 +5,7 @@ import java_ai_gym.models_common.*;
 import java_ai_gym.swing.FrameEnvironment;
 import java_ai_gym.swing.Position2D;
 import java_ai_gym.swing.ScaleLinear;
+import java_ai_gym.trashcan.SearchTreePanel;
 import org.jetbrains.annotations.NotNull;
 import org.jfree.data.category.DefaultCategoryDataset;
 

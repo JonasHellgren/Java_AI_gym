@@ -94,8 +94,8 @@ clean up
 - StateVisitsDAO saknade idList i remove x
 - dela upp VisitedStatesBuffer - stor -fimpa CutLooseNodes  x
 - snygga till swing plot x
-- kommentera klasser överst
-- kollar varningar
+- kommentera klasser överst  x
+- kolla varningar
 
 flödesdiagram search
 plantuml pong

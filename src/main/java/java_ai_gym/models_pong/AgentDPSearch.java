@@ -10,6 +10,13 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
+/***
+ * This class is an abstract class used for dynamic programming based search.
+ * Settings are defined by the constructor and search is the only public method.
+ * The idea is to let the search depth increase stepwise. In increases when a specific
+ * fraction of actions has been tested for the states so far visited.
+ */
+
 @Getter
 @Setter
 public abstract class AgentDPSearch extends AgentSearch {

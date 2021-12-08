@@ -7,6 +7,11 @@ import lombok.Getter;
 import java.util.*;
 import java.util.logging.Logger;
 
+/***
+ * This class can be seen as the memory of the class AgentDPSearch.
+ * It resembles the experience replay buffer in the DQN algorithm.
+ */
+
 @Getter
 public class VisitedStatesBuffer {
 

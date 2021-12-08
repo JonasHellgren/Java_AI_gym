@@ -1,10 +1,10 @@
 package java_ai_gym.models_pong;
 
 public class StateExperience {
-    int action;
-    double reward;
-    boolean termState;
-    String idNewState;
+    public int action;
+    public double reward;
+    public boolean termState;
+    public String idNewState;
 
     public StateExperience(int action, double reward, boolean termState, String idNewState) {
         this.action = action;

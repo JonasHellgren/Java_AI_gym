@@ -3,6 +3,10 @@ package java_ai_gym.models_pong;
 import java_ai_gym.helpers.MathUtils;
 import java_ai_gym.models_common.StateForSearch;
 
+/***
+ * This class is used for state selection of the AgentDPSearch class.
+ */
+
 public class DPSearchStateSelector {
 
     AgentDPSearch agent;
