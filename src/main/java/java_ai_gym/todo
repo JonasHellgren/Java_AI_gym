@@ -91,9 +91,9 @@ clean up
 - dela upp PongAgentDPSearch - stor  x
 - performDynamicProgramming - inte behöva använda new - reset istället  x
 - rensa bland tester  x
-- StateVisitsDAO saknade idList i remove
-- dela upp VisitedStatesBuffer - stor
--fimpa CutLooseNodes
+- StateVisitsDAO saknade idList i remove x
+- dela upp VisitedStatesBuffer - stor  x
+-fimpa CutLooseNodes x
 -snygga till swing plot
 -kommentera klasser överst
 -kollar varningar

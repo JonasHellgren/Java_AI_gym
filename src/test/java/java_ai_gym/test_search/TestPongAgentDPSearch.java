@@ -29,7 +29,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
 
     @SneakyThrows
     @Test
-    //@Ignore
+    @Ignore("Very basic")
     public void CreateVSBSize10() {
 
         final int NOF_STEPS = 10;
@@ -100,7 +100,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
 
     @SneakyThrows
     @Test
-    @Ignore("Takes time")
+    //@Ignore("Takes time")
     public void testAnimate() {
 
         env.setRandomStateValuesStart(state);

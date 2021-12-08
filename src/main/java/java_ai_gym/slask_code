@@ -35,3 +35,71 @@
                             .nIn(NOF_NEURONS_HIDDEN).nOut(NOF_OUTPUTS).build())
                     .backpropType(BackpropType.Standard)
                     .build();
+
+
+
+     public VisitedStatesBuffer createNewVSBWithNoLooseNodesBelowDepth(int searchDepth, CpuTimer cpuTimer) {
+         logger.info("createNewVSBWithNoLooseNodesBelowDepth called"+", searchDepth = "+searchDepth);
+
+         if (getDepthMax() < searchDepth) {
+             logger.warning("removeLooseNodesBelowDepth failed, can't remove below non existing depth: searchDepth= " + searchDepth + ", maxDepth = " + getDepthMax());
+             return new VisitedStatesBuffer(this);
+         }
+         VisitedStatesBuffer vsbTrimmed = new VisitedStatesBuffer(this);
+         vsbTrimmed.removedNodes = 0;
+         vsbTrimmed.timeExceedWhenTrimming=false;  //assume will do it in time
+         boolean nodeRemoved;
+         do {
+             nodeRemoved = false;
+             for (int depth = searchDepth - 1; depth >= 0; depth--) {
+                 List<StateForSearch> statesAtDepth = vsbTrimmed.getAllStatesAtDepth(depth);
+                 if (cpuTimer.isTimeExceeded()) {
+                     logger.warning("Time exceeded in createNewVSBWithNoLooseNodesBelowDepth !");
+                     vsbTrimmed.timeExceedWhenTrimming=true;
+                     break;
+                 }
+                 logger.fine("depth = "+depth+", nof states = "+statesAtDepth.size());
+                 for (StateForSearch state : statesAtDepth) {
+                     logger.fine("state id =" + state.id + ", isNoActionTried =" + isNoActionTriedInStateWithId(state.id));
+                     if (vsbTrimmed.isNoActionTriedInStateWithId(state.id)) {
+                         logger.fine("removing state id = " + state.id + ", size =" + vsbTrimmed.size());
+                         nodeRemoved = true;
+                         vsbTrimmed.removedNodes++;
+                         String idToRemove = state.id;
+                         vsbTrimmed.getStateVisitsDAO().remove(idToRemove);
+                         vsbTrimmed.getExperiencesDAO().removeExpItemWithNewStateId(idToRemove);
+                     }
+                 }
+                 logger.fine("nof states after = "+statesAtDepth.size());
+             }
+         } while (nodeRemoved && !cpuTimer.isTimeExceeded());
+
+         logger.info("Nof removed nodes are = " + vsbTrimmed.removedNodes);
+         return vsbTrimmed;
+     }
+
+     public boolean anyLooseNodeBelowDepth(VisitedStatesBuffer vsb, int depthMax) {
+         for (int depth = depthMax - 1; depth >= 0; depth--) {
+             List<StateForSearch> statesAtDepth = vsb.getAllStatesAtDepth(depth);
+             for (StateForSearch state : statesAtDepth) {
+                 logger.fine("state id =" + state.id + ", isNoActionTried =" + isNoActionTriedInStateWithId(state.id));
+                 if (isNoActionTriedInStateWithId(state.id)) {
+                     logger.warning("Following node is loose and below depth " + state);
+                     return true;
+                 }
+             }
+         }
+         return false;
+     }
+
+        public StateForSearch findStateWithNotAllActionsTestedAndNotTerminal(int searchDepth)  {
+
+             for (StateForSearch state : this.stateVisitsDAO.getAll()) {
+                 if (!areAllActionsTriedInStateWithId(state.id) &&
+                         !isExperienceOfStateTerminal(state.id) &&
+                         state.depth!=searchDepth) {
+                     return stateVisitsDAO.get(state.id);
+                 }
+             }
+             return null;
+         }
