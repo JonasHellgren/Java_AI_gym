@@ -54,18 +54,18 @@ public class DPSearchServants {
         int nofActions = agent.getActionSet(startState).size();
         agent.startState.setIdDepthNofActions(agent.startState.START_STATE_ID, 0, nofActions);
         agent.vsb = new VisitedStatesBuffer(agent.startState);
-       // agent.startTime = System.currentTimeMillis();  //starting time, long <=> minimum value of 0
         agent.vsbForNewDepthSet = new VisitedStatesBuffer();
         agent.nofStatesVsbForNewDepthSetPrev = 1;
         agent.searchDepth = agent.searchDepthStep;
         agent.searchDepthPrev = 0;
         agent.explorationFactor = 0;
         agent.explorationFactorLimit = agent.explorationFactorLimitStart;
-        agent.bellmanCalculator = new BellmanCalculator(agent.vsb, new FindMax(), agent.searchDepthPrev, agent.discountFactorReward, agent.getTimeBudgetChecker());
+        agent.bellmanCalculator = new BellmanCalculator(
+                agent.vsb,
+                new FindMax(),
+                agent.discountFactorReward,
+                agent.getTimeBudgetChecker());
     }
-
-
-
 
     protected void logsForFailedToFindState(StateForSearch selectedState) {
         logger.warning("MAX_NOF_SELECTION_TRIES exceeded !!!");

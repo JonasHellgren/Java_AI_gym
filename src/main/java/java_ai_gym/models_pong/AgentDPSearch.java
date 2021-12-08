@@ -2,12 +2,14 @@ package java_ai_gym.models_pong;
 
 import java_ai_gym.helpers.CpuTimeAccumulator;
 import java_ai_gym.helpers.CpuTimer;
+import java_ai_gym.helpers.MathUtils;
 import java_ai_gym.models_common.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Getter
 @Setter
@@ -137,19 +139,15 @@ public abstract class AgentDPSearch extends AgentSearch {
         }
     }
 
-
-
     private void performDynamicProgramming() {
-        BellmanCalculator bellmanCalculator = new BellmanCalculator(vsb, new FindMax(), searchDepthPrev, discountFactorReward, timeBudgetChecker);
-        if (!bellmanCalculator.timeExceed) {
-            this.timeAccumulatorBellman.play();
-            bellmanCalculator.setNodeValues();
-            //logger.fine("setNodeValues (millis) = " + timeAccumulatorStep.getTimeInMillis() + ", isTimeExceeded = " + bellmanCalculator.isTimeExceeded());
-            this.optimalStateSequence = bellmanCalculator.findNodesOnOptimalPath(this.startState);
-            this.bellmanCalculator = bellmanCalculator;
 
-            this.timeAccumulatorBellman.pause();
+        this.timeAccumulatorBellman.play();
+        int maxEvaluatedDepth = MathUtils.maxInIntegerList(evaluatedSearchDepths);
+        bellmanCalculator.setNodeValues(maxEvaluatedDepth);
+        if (!bellmanCalculator.isTimeExceeded()) {
+            this.optimalStateSequence = bellmanCalculator.findNodesOnOptimalPath(this.startState);
         }
+        this.timeAccumulatorBellman.pause();
     }
 
 
@@ -172,10 +170,5 @@ public abstract class AgentDPSearch extends AgentSearch {
     private boolean hasVsbSizeIncreasedSignificantly() {
         return (double) vsbForNewDepthSet.size() / (double) nofStatesVsbForNewDepthSetPrev > VSB_SIZE_INCREASE_FACTOR;
     }
-
-
-
-
-
 
 }

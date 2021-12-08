@@ -80,20 +80,25 @@ calcExplorationFactor strular - blir stor snabbt x
 discount factor exp factor - färre andel testade actions längre fram i horisont x
 minska REWARD_PER_STILL_STEP x
 
-flödesdiagram search
+
 
 testSearchBallMiddleAndRacketRight borde hitta mer optimal lösning x
 testGameOver
-
 
 clean up
 - fler undermetoder PongAgentDPSearch x
 - PongAgentDPSearch sub class till AgentDPSearch  x
 - dela upp PongAgentDPSearch - stor  x
+- performDynamicProgramming - inte behöva använda new - reset istället  x
+- rensa bland tester
 - StateVisitsDAO idList: farligt ej uppdatera etc med stateBuffer
 - färre tester i  TestPongAgentDPSearch
 - dela upp VisitedStatesBuffer - stor
+-snygga till swing plot
+-kommentera klasser överst
 
+flödesdiagram search
+plantuml pong
 
 när tid:
 removeExpItemWithNewStateId är inte effektiv

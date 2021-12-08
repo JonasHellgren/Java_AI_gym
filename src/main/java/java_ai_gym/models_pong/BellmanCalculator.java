@@ -5,6 +5,7 @@ import java_ai_gym.helpers.CpuTimer;
 import java_ai_gym.models_common.NullState;
 import java_ai_gym.models_common.State;
 import java_ai_gym.models_common.StateForSearch;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.logging.Logger;
  * The constructor parameter strategy defines if min or max shall be applied.
  */
 
+@Setter
 public class BellmanCalculator {
     private static final Logger logger = Logger.getLogger(BellmanCalculator.class.getName());
 
@@ -29,15 +31,16 @@ public class BellmanCalculator {
     CpuTimer timeChecker;
     boolean timeExceed;
 
-    public BellmanCalculator(VisitedStatesBuffer vsb, Strategy strategy, int searchDepth,  double discountFactor,CpuTimer timeChecker) {
+    public BellmanCalculator(VisitedStatesBuffer vsb, Strategy strategy,  double discountFactor,CpuTimer timeBudgetChecker) {
         this.vsb = vsb;
         this.strategy=strategy;
         this.discountFactor = discountFactor;
-        this.maxDepth = searchDepth;
+        this.maxDepth = 0;  //defined then setNodeValues is called
         this.minDepth = 0;
-        this.timeChecker=timeChecker;
+        nodesOnOptPath = new ArrayList<>();
+        actionsOptPath = new ArrayList<>();
+        this.timeChecker=timeBudgetChecker;
         this.timeExceed=false;
-
         logger.fine("BellmanCalculator initiated. maxDepth = "+maxDepth);
     }
 
@@ -53,8 +56,9 @@ public class BellmanCalculator {
         return actionsOptPath;
     }
 
-    public void setNodeValues() {
-
+    public void setNodeValues(int searchDepth) {
+        this.timeExceed=false;
+        this.maxDepth = searchDepth;
         for (int depth = maxDepth - 1; depth >= minDepth; depth--) {
 
             if (timeChecker.isTimeExceeded()) {
@@ -66,7 +70,6 @@ public class BellmanCalculator {
             List<StateForSearch> nodesAtDepth = vsb.getAllStatesAtDepth(depth);
             for (StateForSearch np : nodesAtDepth) {
                 List<Double> costs = findCostCandidatesForNode(np);
-             //   System.out.println("costs = "+costs);
                 np.value=(costs.size()==0)?strategy.badNumber():strategy.findBestInList(costs);
             }
         }
@@ -107,14 +110,14 @@ public class BellmanCalculator {
 
 
     private double calcLongCost(StateForSearch np, StateExperience edge) {
-        double dfpd = calcDiscountFactorPowerDepth(np.depth);
-        return edge.reward + dfpd * vsb.getStateVisitsDAO().get(edge.idNewState).value;
+        double discFactor = calcDiscountFactorPowerDepth(np.depth);
+        return edge.reward + discFactor * vsb.getStateVisitsDAO().get(edge.idNewState).value;
     }
 
 
     public List<StateForSearch> findNodesOnOptimalPath(StateForSearch startNode) {
-        nodesOnOptPath = new ArrayList<>();
-        actionsOptPath = new ArrayList<>();
+        nodesOnOptPath.clear();
+        actionsOptPath.clear();
         addBestNodeAndFindNewBestNodeRecursive(startNode);
         return nodesOnOptPath;
     }

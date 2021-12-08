@@ -156,7 +156,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
 
     @SneakyThrows
     @Test
-    //@Ignore("Takes time")
+    @Ignore("Takes time")
     public void testAnimate() {
 
         env.setRandomStateValuesStart(state);

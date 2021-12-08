@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.text.NumberFormat;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -81,6 +82,14 @@ public class MathUtils {
 
     public static <T> T getRandomItemFromList(List<T> list) {
        return list.get(randInt(0,list.size()-1));
+    }
+
+
+    public static int maxInIntegerList(List<Integer> list)  {
+        return  list
+                .stream()
+                .mapToInt(v -> v)
+                .max().orElseThrow(NoSuchElementException::new);
     }
 
 }
