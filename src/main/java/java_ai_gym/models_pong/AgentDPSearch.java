@@ -25,13 +25,13 @@ public abstract class AgentDPSearch extends AgentSearch {
     final double DISCOUNT_FACTOR_REWARD_DEFAULT = 0.9;
     final double DISCOUNT_FACTOR_EXP_FACTOR_DEFAULT = 0.99;
     final int SEARCH_DEPTH_UPPER_DEFAULT = 100;
-    final double EXP_FACTOR_LIMIT_MIN=0.6;
+    final double EXP_FACTOR_LIMIT_MIN=0.5;
 
     final int MAX_NOF_SELECTION_TRIES = 1000;
-    double VSB_SIZE_INCREASE_FACTOR = 2.0;
-    final double PROB_SELECT_STATE_FROM_NEW_DEPTH_SET = 0.8;  //0.5
-    final double PROB_SELECT_FROM_OPTIMAL_PATH = 0.9;
-    final double PROB_SELECT_FROM_END_OF_OPTIMAL_PATH=0.5;
+    double VSB_SIZE_INCREASE_FACTOR = 5.0;
+    final double PROB_SELECT_STATE_FROM_NEW_DEPTH_SET = 0.90;  //0.5
+    final double PROB_SELECT_FROM_OPTIMAL_PATH = 0.1;
+    final double PROB_SELECT_FROM_PREVIOUS_DEPTH =0.0;
 
     double explorationFactorLimitStart;
     double explorationFactorLimit;
@@ -112,12 +112,12 @@ public abstract class AgentDPSearch extends AgentSearch {
                 timeAccumulatorExpFactor.play();
                 explorationFactor = vsbForNewDepthSet.calcExplorationFactor(searchDepth);
                 timeAccumulatorExpFactor.pause();
-                this.dpSearchServants.logProgress();
+               // this.dpSearchServants.logProgress1();
             }
 
             if (isAnyStateAtSearchDepth() && areManyActionsTested()) {
-            //    this.dpSearchServants.printResultInfo();
-                System.out.println(vsbForNewDepthSet.toStringLight());
+                this.dpSearchServants.logWarningIfMotivated();
+             //   System.out.println(vsbForNewDepthSet.toStringLight());
                 this.dpSearchServants.increaseSearchDepthDoResets();
                 performDynamicProgramming();
 

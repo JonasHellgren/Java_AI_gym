@@ -101,6 +101,8 @@ flödesdiagram search  x
 explorationFactor blir stor väl snabbt för större djup
 välja från slut av opt path  x
 testa vsbForNewDepthSet större än föregående
+ide prob bara välja från föregående sökdjup
+dokumentera selectState
 plantuml pong
 placera klasser mer logiskt
 pusha

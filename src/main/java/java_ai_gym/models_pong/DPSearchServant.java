@@ -1,6 +1,7 @@
 package java_ai_gym.models_pong;
 
 import java_ai_gym.models_common.StateForSearch;
+import org.apache.arrow.flatbuf.Int;
 
 import java.util.logging.Logger;
 
@@ -11,6 +12,7 @@ public class DPSearchServant {
     protected final static Logger logger = Logger.getLogger(DPSearchServant.class.getName());
 
     AgentDPSearch agent;
+    int vsbForNewDepthSetSizePrev;
 
     public DPSearchServant(AgentDPSearch agentDPSearch) {
         this.agent=agentDPSearch;
@@ -25,6 +27,7 @@ public class DPSearchServant {
         agent.timeAccumulatorStep.reset();
         agent.timeAccumulatorBellman.reset();
         agent.timeAccumulatorExpFactor.reset();
+        vsbForNewDepthSetSizePrev= Integer.MAX_VALUE;
     }
 
     public void increaseSearchDepthDoResets() {
@@ -98,8 +101,16 @@ public class DPSearchServant {
 
     }
 
-    protected void logProgress() {
+    protected void logProgress1() {
         logger.info("searchDepth =" + agent.searchDepth + ", explorationFactor =" + agent.explorationFactor + ", explorationFactorLimit =" + agent.explorationFactorLimit + ", time =" + agent.getTimeBudgetChecker().getTimeSinceStartInMillis() + ", vsbForNewDepthSet size =" + agent.vsbForNewDepthSet.size());
     }
+
+    protected void logWarningIfMotivated() {
+
+        if (agent.vsbForNewDepthSet.size()<vsbForNewDepthSetSizePrev) {
+            logger.warning("Size of vsbForNewDepthSet decreased, consider increasing PROB_SELECT_FROM_PREVIOUS_DEPTH and/or decreasing PROB_SELECT_STATE_FROM_NEW_DEPTH_SET  ");
+        }
+        vsbForNewDepthSetSizePrev=agent.vsbForNewDepthSet.size();
+        }
 
 }

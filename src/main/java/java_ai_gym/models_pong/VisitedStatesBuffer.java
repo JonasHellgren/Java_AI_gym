@@ -61,6 +61,20 @@ public class VisitedStatesBuffer {
         return getState(selectRandomStateId());
     }
 
+    public StateForSearch selectRandomStateFromDepth(int depth) {
+        List<StateForSearch> states=getAllStatesAtDepth(depth);
+        List<String> ids=new ArrayList<>();
+        for (StateForSearch state:states) {
+            ids.add(state.id);
+        }
+        if (ids.size()==0) {
+            logger.warning("No state visits at depth = "+depth);
+            return getState("");
+        }
+        return getState(MathUtils.getRandomItemFromList(ids));
+
+    }
+
     public String selectRandomStateId() {
         if (stateVisitsDAO.idList.size()==0) {
             logger.warning("No state visits");

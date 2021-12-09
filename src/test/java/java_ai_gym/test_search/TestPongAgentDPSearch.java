@@ -54,11 +54,11 @@ public class TestPongAgentDPSearch extends TestSearchBase {
         copyVSBsToFrame(agent.getVsb());
         printSummary(searchResults);
 
-
+        TimeUnit.MILLISECONDS.sleep(SLEEP_TIME);
         Assert.assertEquals(1, searchResults.firstAction());
         Assert.assertFalse(agent.wasSearchFailing());
 
-        TimeUnit.MILLISECONDS.sleep(SLEEP_TIME);
+
     }
 
 
@@ -75,11 +75,11 @@ public class TestPongAgentDPSearch extends TestSearchBase {
             System.out.print(sr.reward + ", ");
         }
 
+        TimeUnit.MILLISECONDS.sleep(SLEEP_TIME);
         Assert.assertTrue(searchResults.bestActionSequence.subList(0, 3).contains(moves.get("left")));
         Assert.assertFalse(agent.wasSearchFailing());
 
 
-        TimeUnit.MILLISECONDS.sleep(SLEEP_TIME);
     }
 
     @SneakyThrows
@@ -92,6 +92,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
         printSummary(searchResults);
 
         Assert.assertTrue(agent.wasSearchFailing());
+
         TimeUnit.MILLISECONDS.sleep(SLEEP_TIME);
         //System.out.println(searchResults.getBestStepReturnSequence());
 
@@ -100,7 +101,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
 
     @SneakyThrows
     @Test
-   // @Ignore("Takes time")
+    @Ignore("Takes time")
     public void testAnimate() {
 
         env.setRandomStateValuesStart(state);
@@ -120,6 +121,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
             }
 
         }
+
 
         TimeUnit.MILLISECONDS.sleep(SLEEP_TIME);
     }
