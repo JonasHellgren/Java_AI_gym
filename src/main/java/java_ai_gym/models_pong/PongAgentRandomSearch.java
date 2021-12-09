@@ -1,4 +1,5 @@
 package java_ai_gym.models_pong;
+import java_ai_gym.helpers.CpuTimer;
 import java_ai_gym.models_common.*;
 import java_ai_gym.models_agent_search.AgentSearch;
 
@@ -24,10 +25,10 @@ public class PongAgentRandomSearch extends AgentSearch {
 
     @Override
     public SearchResults search(final StateForSearch startState) {
-        startTime = System.currentTimeMillis();  //starting time, long <=> minimum value of 0  //TODO needed?
+        super.timeBudgetChecker.reset();
         state = new StateForSearch(startState);
 
-        while (!timeExceeded()) {
+        while (!timeBudgetChecker.isTimeExceeded()) {
             state.copyState(startState);
             runEpisode();
             setNewSearchResultsIfBetterCandidateFound();

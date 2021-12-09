@@ -123,7 +123,7 @@ public class TestSinglePongEnvironment extends TestSearchBase {
     @Test
     public void testGameOver() {
 
-        state.setVariable("xPosBall", 0);
+        state.setVariable("xPosBall", 0d);
         state.setVariable("yPosBall", 0d);
         state.setVariable("xSpdBall", 0d);
         state.setVariable("ySpdBall", -env.parameters.SPEED_BALL);

@@ -26,7 +26,6 @@ public abstract class AgentSearch {
         public int nofEpisodes;
         List<Integer> discreteActionsSpace;
 
-
         public SearchResults() {
             this.bestReturn=0;
             this.bestStepReturnSequence = new ArrayList<>();
@@ -59,8 +58,6 @@ public abstract class AgentSearch {
         }
     }
 
-    protected long timeBudget; //long <=> minimum value of 0
-    protected long startTime;
     protected Environment env;
     protected EnvironmentParametersAbstract envParams;
     protected SearchResults searchResults;
@@ -73,8 +70,6 @@ public abstract class AgentSearch {
 
 
     public AgentSearch(long timeBudget, Environment env, EnvironmentParametersAbstract envParams) {
-        this.timeBudget = timeBudget;
-        this.startTime = System.currentTimeMillis();
         this.env = env;
         this.envParams = envParams;
         this.searchResults = new SearchResults(-Double.MAX_VALUE, envParams.discreteActionsSpace);
@@ -84,7 +79,6 @@ public abstract class AgentSearch {
     }
 
     public void setTimeBudgetMillis(long time) {
-        this.timeBudget=time;
         timeBudgetChecker.setTimeBudgetMillis(time);
     }
 

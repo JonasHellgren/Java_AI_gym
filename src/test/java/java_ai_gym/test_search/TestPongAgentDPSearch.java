@@ -107,7 +107,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
         state.setVariable("xPosRacket",env.parameters.MAX_X_POSITION/2);  //put racket in middle
         //setBallInMiddleAndRacketInRightBallFallingDown();
 
-        agent.setTimeBudgetMillis(100);
+        agent.setTimeBudgetMillis(50);
         StepReturn stepReturn;
         for (int i = 0; i < 1000; i++) {
             System.out.println("i = " + i);

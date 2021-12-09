@@ -49,7 +49,7 @@ public class TestPongAgentRandomSearch extends TestSearchBase {
 
     @SneakyThrows
     @Test
-    @Ignore("Uncertain")
+    //@Ignore("Uncertain")
     public void RacketAtRightBallDownShallGiveLeftMove() {
 
         state.setVariable("xPosRacket", p.MAX_X_POSITION);
@@ -70,13 +70,13 @@ public class TestPongAgentRandomSearch extends TestSearchBase {
 
     @SneakyThrows
     @Test
-    @Ignore("Takes time")
+   // @Ignore("Takes time")
     public void testAnimate() {
 
         env.setRandomStateValuesStart(state);
 
         StepReturn stepReturn;
-        for (int i = 0; i <10000 ; i++) {
+        for (int i = 0; i <1000 ; i++) {
 
             AgentSearch agent=new PongAgentRandomSearch(env,TIME_BUDGET,SEARCH_DEPTH);
             AgentSearch.SearchResults sr=agent.search(state);

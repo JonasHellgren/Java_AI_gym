@@ -108,7 +108,7 @@ plantuml pong  x
 placera klasser mer logiskt  x
 fler tester TestVisitedStatesBuffer
 flytta klasser  x
-testGameOver fuckar
+testGameOver fuckar  x
 ta veck timeBudget och startTime från AgentSearch
 pusha
 
