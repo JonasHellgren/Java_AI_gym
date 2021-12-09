@@ -104,9 +104,10 @@ testa vsbForNewDepthSet större än föregående
 ide prob bara välja från föregående sökdjup
 selectRandomStateFromDepth för långsam  x
 dokumentera selectState  x
-plantuml pong
+plantuml pong  x
 placera klasser mer logiskt
 fler tester TestVisitedStatesBuffer
+ta veck timeBudget och startTime från AgentSearch
 pusha
 
 när tid:

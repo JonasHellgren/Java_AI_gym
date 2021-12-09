@@ -66,6 +66,8 @@ public abstract class AgentSearch {
 
     public abstract int getActionDefault(StateForSearch selectState);
     public abstract List<Integer> getActionSet(StateForSearch selectState);
+    public abstract SearchResults search(final StateForSearch startState);
+
 
     public AgentSearch(long timeBudget, Environment env, EnvironmentParametersAbstract envParams) {
         this.timeBudget = timeBudget;
@@ -83,7 +85,6 @@ public abstract class AgentSearch {
         timeBudgetChecker.setTimeBudgetMillis(time);
     }
 
-    public abstract SearchResults search(final StateForSearch startState);
 
     protected double calcSumRewards(List<StepReturn> stepReturnSequence) {
         return stepReturnSequence.stream()

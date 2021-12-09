@@ -1,0 +1,46 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+abstract class AgentSearch {
+     Environment env;
+     EnvironmentParametersAbstract envParams;
+     SearchResults searchResults;
+     CpuTimer timeBudgetChecker;
+     + abstract int getActionDefault(StateForSearch selectState);
+     + abstract List<Integer> getActionSet(StateForSearch selectState);
+     + abstract SearchResults search(final StateForSearch startState);
+     + int chooseRandomAction(actions)
+     + int chooseAction(StateForSearch selectState, VisitedStatesBuffer vsb)
+     + SearchResults defineSearchResults(..)
+}
+
+abstract class AgentDPSearch {
+    int searchDepthPrev;
+    int searchDepth;
+    double explorationFactor;
+    VisitedStatesBuffer vsb;
+    VisitedStatesBuffer vsbForNewDepthSet;
+    BellmanCalculator bellmanCalculator;
+    DPSearchStateSelector dpSearchStateSelector;
+    DPSearchServant dpSearchServants;
+
+    +SearchResults search(StateForSearch startState)
+    +public boolean wasSearchFailing()
+    -takeStepAndSaveExperience(StateForSearch selectedState)
+    -performDynamicProgramming()
+}
+
+class PongAgentDPSearch {
+  Implements abstract methods in AgentSearch
+}
+
+class PongAgentRandomSearch {
+  Implements abstract methods in AgentSearch
+}
+
+AgentSearch  <|-- AgentDPSearch
+AgentDPSearch  <|-- PongAgentDPSearch
+AgentDPSearch  <|-- PongAgentRandomSearch
+
+
+@enduml
