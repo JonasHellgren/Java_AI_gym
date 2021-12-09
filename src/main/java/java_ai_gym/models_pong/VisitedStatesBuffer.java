@@ -174,5 +174,24 @@ public class VisitedStatesBuffer {
 
     }
 
+    public String toStringLight() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("Visited states buffer");
+        sb.append(System.getProperty("line.separator"));
+
+
+        for (int depth=0;depth<=getDepthMax();depth++) {
+            List<StateForSearch> states= getAllStatesAtDepth(depth);
+            sb.append("depth ="+depth+", nof states "+states.size());
+         //   sb.append(state.searchSpecificPropertiesAsString());
+
+
+            sb.append(System.getProperty("line.separator"));
+        }
+        return sb.toString();
+
+    }
+
 
 }

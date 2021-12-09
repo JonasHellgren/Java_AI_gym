@@ -46,13 +46,6 @@ public class HistogramDataSetGenerator {
         dataset.addValue(20, "India", "2010");
         dataset.addValue(25, "China", "2010");
         dataset.addValue(3, "Africa", "2010");
-
-        // Population in 2015
-        dataset.addValue(20, "USA", "2015");
-        dataset.addValue(25, "India", "2015");
-        dataset.addValue(30, "China", "2015");
-        dataset.addValue(6, "Africa", "2015");
-        //return dataset;
     }
 
 
@@ -90,10 +83,7 @@ public class HistogramDataSetGenerator {
             logger.warning("VisitedStatesBuffer not defined");
         }
         else {
-
             for (StateForSearch state : states) {
-              //  StateExperience exp = vsb.searchExperienceOfSteppingToState(state.id);
-                //if (exp.termState) {
                 if (vsb.setOfTerminalStatesDAO.isTerminal(state.id))    {
                     depthStatistics.nofFailStates++;
                 } else if (vsb.nofActionsTested(state.id) == 0 && (state.depth != searchDepth)) {

@@ -115,8 +115,11 @@ public abstract class AgentDPSearch extends AgentSearch {
             }
 
             if (isAnyStateAtSearchDepth() && areManyActionsTested()) {
+                this.dpSearchServants.printResultInfo();
+                System.out.println(vsbForNewDepthSet.toStringLight());
                 this.dpSearchServants.increaseSearchDepthDoResets();
                 performDynamicProgramming();
+
             }
         }
 
