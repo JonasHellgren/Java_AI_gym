@@ -1,4 +1,4 @@
-package java_ai_gym.models_pong;
+package java_ai_gym.models_agent_search;
 
 public class StateExperience {
     public int action;

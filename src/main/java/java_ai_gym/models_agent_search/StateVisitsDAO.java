@@ -1,8 +1,6 @@
-package java_ai_gym.models_pong;
+package java_ai_gym.models_agent_search;
 
-import java_ai_gym.helpers.MathUtils;
 import java_ai_gym.models_common.StateForSearch;
-import lombok.ToString;
 
 import java.util.*;
 import java.util.logging.Logger;

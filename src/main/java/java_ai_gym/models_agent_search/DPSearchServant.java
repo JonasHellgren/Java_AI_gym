@@ -1,7 +1,6 @@
-package java_ai_gym.models_pong;
+package java_ai_gym.models_agent_search;
 
 import java_ai_gym.models_common.StateForSearch;
-import org.apache.arrow.flatbuf.Int;
 
 import java.util.logging.Logger;
 

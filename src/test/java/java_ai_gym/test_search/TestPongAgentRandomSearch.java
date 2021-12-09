@@ -1,5 +1,5 @@
 package java_ai_gym.test_search;
-import java_ai_gym.models_common.AgentSearch;
+import java_ai_gym.models_agent_search.AgentSearch;
 import java_ai_gym.models_common.StepReturn;
 import java_ai_gym.models_pong.PongAgentRandomSearch;
 import lombok.SneakyThrows;

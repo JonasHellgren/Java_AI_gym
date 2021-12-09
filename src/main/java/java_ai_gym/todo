@@ -100,13 +100,15 @@ clean up
 flödesdiagram search  x
 explorationFactor blir stor väl snabbt för större djup
 välja från slut av opt path  x
-testa vsbForNewDepthSet större än föregående
-ide prob bara välja från föregående sökdjup
+testa vsbForNewDepthSet större än föregående - varnar om fallet x
+ide prob bara välja från föregående sökdjup - verkar vara bra ide x
 selectRandomStateFromDepth för långsam  x
 dokumentera selectState  x
 plantuml pong  x
-placera klasser mer logiskt
+placera klasser mer logiskt  x
 fler tester TestVisitedStatesBuffer
+flytta klasser  x
+testGameOver fuckar
 ta veck timeBudget och startTime från AgentSearch
 pusha
 

@@ -1,4 +1,4 @@
-package java_ai_gym.models_pong;
+package java_ai_gym.models_agent_search;
 
 import java_ai_gym.helpers.MathUtils;
 import java_ai_gym.models_common.StateForSearch;
@@ -24,13 +24,13 @@ public class ExplorationFactorCalculator {
     public double calc(int excludedDepth) {
 
         List<Double> explorationFactorList = new ArrayList<>();
-        for (StateForSearch state : vsb.stateVisitsDAO.getAll()) {
+        for (StateForSearch state : vsb.getStateVisitsDAO().getAll()) {
             double probability=explorationFactorList.size()>MIN_LENGTH_EXP_FACTOR_LIST
                     ?PROB_SELECTING_STATE_FOR_EXPLORATION_FACTOR_CALCULATION
                     :1.0;
             if (state.depth != excludedDepth &&
                     MathUtils.calcRandomFromIntervall(0, 1) < probability &&
-                    !vsb.setOfTerminalStatesDAO.isTerminal(state.id)) {
+                    !vsb.getSetOfTerminalStatesDAO().isTerminal(state.id)) {
 
                 if (state.nofActions == 0) {
                     logger.warning("No actions in state = " + state.id);

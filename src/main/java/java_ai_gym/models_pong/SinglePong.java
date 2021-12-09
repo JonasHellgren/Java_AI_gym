@@ -2,6 +2,7 @@ package java_ai_gym.models_pong;
 
 import java_ai_gym.helpers.MathUtils;
 import java_ai_gym.models_common.*;
+import java_ai_gym.models_agent_search.VisitedStatesBuffer;
 import java_ai_gym.swing.FrameEnvironment;
 import java_ai_gym.swing.Position2D;
 import java_ai_gym.swing.ScaleLinear;

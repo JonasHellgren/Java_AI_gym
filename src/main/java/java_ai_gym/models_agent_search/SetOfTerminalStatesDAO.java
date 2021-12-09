@@ -1,4 +1,4 @@
-package java_ai_gym.models_pong;
+package java_ai_gym.models_agent_search;
 
 import java_ai_gym.models_common.StepReturn;
 import lombok.Getter;

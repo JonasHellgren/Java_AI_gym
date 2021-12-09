@@ -1,8 +1,11 @@
-package java_ai_gym.models_common;
+package java_ai_gym.models_agent_search;
 
 import java_ai_gym.helpers.CpuTimer;
 import java_ai_gym.helpers.MathUtils;
-import java_ai_gym.models_pong.VisitedStatesBuffer;
+import java_ai_gym.models_common.Environment;
+import java_ai_gym.models_common.EnvironmentParametersAbstract;
+import java_ai_gym.models_common.StateForSearch;
+import java_ai_gym.models_common.StepReturn;
 import lombok.Getter;
 
 import java.util.ArrayList;

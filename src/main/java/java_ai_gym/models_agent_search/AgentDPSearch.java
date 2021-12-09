@@ -1,9 +1,10 @@
-package java_ai_gym.models_pong;
+package java_ai_gym.models_agent_search;
 
 import java_ai_gym.helpers.CpuTimeAccumulator;
 import java_ai_gym.helpers.CpuTimer;
 import java_ai_gym.helpers.MathUtils;
 import java_ai_gym.models_common.*;
+import java_ai_gym.models_pong.SinglePong;
 import lombok.Getter;
 import lombok.Setter;
 

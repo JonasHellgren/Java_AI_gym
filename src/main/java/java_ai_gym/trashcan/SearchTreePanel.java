@@ -1,7 +1,7 @@
 package java_ai_gym.trashcan;
 
-import java_ai_gym.models_pong.StateExperience;
-import java_ai_gym.models_pong.VisitedStatesBuffer;
+import java_ai_gym.models_agent_search.StateExperience;
+import java_ai_gym.models_agent_search.VisitedStatesBuffer;
 import lombok.SneakyThrows;
 
 import javax.swing.*;

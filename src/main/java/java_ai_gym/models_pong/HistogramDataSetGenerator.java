@@ -1,6 +1,7 @@
 package java_ai_gym.models_pong;
 
 import java_ai_gym.models_common.StateForSearch;
+import java_ai_gym.models_agent_search.VisitedStatesBuffer;
 import lombok.ToString;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
@@ -84,7 +85,7 @@ public class HistogramDataSetGenerator {
         }
         else {
             for (StateForSearch state : states) {
-                if (vsb.setOfTerminalStatesDAO.isTerminal(state.id))    {
+                if (vsb.getSetOfTerminalStatesDAO().isTerminal(state.id))    {
                     depthStatistics.nofFailStates++;
                 } else if (vsb.nofActionsTested(state.id) == 0 && (state.depth != searchDepth)) {
                     depthStatistics.nofNoActionTestedStates++;
