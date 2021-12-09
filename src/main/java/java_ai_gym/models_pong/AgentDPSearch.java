@@ -29,8 +29,9 @@ public abstract class AgentDPSearch extends AgentSearch {
 
     final int MAX_NOF_SELECTION_TRIES = 1000;
     double VSB_SIZE_INCREASE_FACTOR = 2.0;
-    final double PROB_SELECT_STATE_FROM_NEW_DEPTH_SET = 0.9;  //0.5
-    final double PROB_SELECT_FROM_OPTIMAL_PATH = 0.5;
+    final double PROB_SELECT_STATE_FROM_NEW_DEPTH_SET = 0.8;  //0.5
+    final double PROB_SELECT_FROM_OPTIMAL_PATH = 0.9;
+    final double PROB_SELECT_FROM_END_OF_OPTIMAL_PATH=0.5;
 
     double explorationFactorLimitStart;
     double explorationFactorLimit;
@@ -115,7 +116,7 @@ public abstract class AgentDPSearch extends AgentSearch {
             }
 
             if (isAnyStateAtSearchDepth() && areManyActionsTested()) {
-                this.dpSearchServants.printResultInfo();
+            //    this.dpSearchServants.printResultInfo();
                 System.out.println(vsbForNewDepthSet.toStringLight());
                 this.dpSearchServants.increaseSearchDepthDoResets();
                 performDynamicProgramming();

@@ -2,6 +2,7 @@ package java_ai_gym.models_pong;
 
 import java_ai_gym.helpers.MathUtils;
 import java_ai_gym.models_common.StateForSearch;
+import org.opencv.ximgproc.SelectiveSearchSegmentation;
 
 /***
  * This class is used for state selection of the AgentDPSearch class.
@@ -23,7 +24,18 @@ public class DPSearchStateSelector {
                 selectedState = agent.vsbForNewDepthSet.selectRandomState();
             } else {
                 if (MathUtils.calcRandomFromIntervall(0, 1) < agent.PROB_SELECT_FROM_OPTIMAL_PATH && agent.optimalStateSequence.size() > 0) {
-                    selectedState = agent.optimalStateSequence.get(MathUtils.randInt(0, agent.optimalStateSequence.size() - 1));
+                    //selectedState = agent.optimalStateSequence.get(MathUtils.randInt(0, agent.optimalStateSequence.size() - 1));
+                   // int prevDepth = Math.max(0, agent.optimalStateSequence.size() - 1 - agent.searchDepthStep);
+                   // selectedState = agent.optimalStateSequence.get(MathUtils.randInt(prevDepth, agent.optimalStateSequence.size() - 1));
+
+                    if (MathUtils.calcRandomFromIntervall(0, 1) < agent.PROB_SELECT_FROM_END_OF_OPTIMAL_PATH) {
+                        selectedState = agent.optimalStateSequence.get(agent.optimalStateSequence.size() - 1);
+                    } else
+                    {
+                        selectedState = agent.optimalStateSequence.get(MathUtils.randInt(0, agent.optimalStateSequence.size() - 1));
+                    }
+
+                 //   System.out.println("prevDepth = "+prevDepth+", size = "+(agent.optimalStateSequence.size() - 1));
                 } else {
                     selectedState = agent.vsb.selectRandomState();
                 }

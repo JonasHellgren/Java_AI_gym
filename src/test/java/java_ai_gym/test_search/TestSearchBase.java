@@ -15,7 +15,7 @@ public class TestSearchBase {
     final int NOF_ACTIONS=3;
     final int TIME_BUDGET_MS=1000;  //200
     final int SEARCH_DEPTH_STEP=5;
-    final int SEARCH_DEPTH_UPPER =30;  //15
+    final int SEARCH_DEPTH_UPPER =15;  //15
     final double explorationFactorLimit=0.8;
     final double discountFactorReward=0.95;
     final double discountFactorExpFactor=0.98;  //0.99
@@ -26,7 +26,6 @@ public class TestSearchBase {
     PongAgentDPSearch agent= new PongAgentDPSearch(env,TIME_BUDGET_MS, SEARCH_DEPTH_UPPER,SEARCH_DEPTH_STEP,explorationFactorLimit,discountFactorReward,discountFactorExpFactor);
 
     public void setupMoves() {
-
         moves.put("left",0);
         moves.put("still",1);
         moves.put("right",2);

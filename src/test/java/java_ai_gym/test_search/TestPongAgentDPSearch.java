@@ -145,7 +145,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
         int nofActions = p.discreteActionsSpace.size();
 
         for (int i = 0; i < nofSteps; i++) {
-            StateForSearch selectedState = (StateForSearch) agent.getDpSearchStateSelector().selectState();
+            StateForSearch selectedState =  agent.getDpSearchStateSelector().selectState();
             int action = agent.chooseAction(selectedState, agent.getVsb());
             StepReturn stepReturn = env.step(action, selectedState);
             StateForSearch stateNew = (StateForSearch) stepReturn.state;
