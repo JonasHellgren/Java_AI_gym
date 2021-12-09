@@ -13,16 +13,19 @@ public class StateVisitsDAO implements  DAO<StateForSearch> {
 
     Map<String, StateForSearch> stateBuffer;   //<id,stat>
     List<String> idList;
+    Map<Integer, List<String>> idListAtDepth;   //<depth,ids>
 
     public StateVisitsDAO() {
         stateBuffer = new HashMap<>();
         idList = new ArrayList<>();
+        idListAtDepth = new HashMap<>();
     }
 
     @Override
     public void clear() {
         stateBuffer.clear();
         idList.clear();
+        idListAtDepth.clear();
     }
 
 @Override
@@ -49,11 +52,19 @@ public class StateVisitsDAO implements  DAO<StateForSearch> {
         item.id=id;
         stateBuffer.put(id, item);
         idList.add(id);
+        if (!idListAtDepth.containsKey(item.depth)) {
+            idListAtDepth.put(item.depth,new ArrayList<>());
+        }
+        idListAtDepth.get(item.depth).add(id);
     }
 
     @Override
     public Set<String> keySet() {
         return stateBuffer.keySet();
+    }
+
+    public List<String> getAllIdsAtDepth(int depth) {
+       return idListAtDepth.get(depth);
     }
 
     public void remove(String id) {
@@ -62,6 +73,13 @@ public class StateVisitsDAO implements  DAO<StateForSearch> {
         } else {
             stateBuffer.remove(id);
             idList.remove(id);
+            removeIdFromIdListAtDepth(id);  //todo test
+        }
+    }
+
+    private void removeIdFromIdListAtDepth(String id) {
+        for(int depth: idListAtDepth.keySet()) {
+            idListAtDepth.get(depth).remove(id);
         }
     }
 
@@ -91,7 +109,14 @@ public class StateVisitsDAO implements  DAO<StateForSearch> {
         for (String id:idList) {
             sbIdList.append(id+", ");
         }
-        return  sbBuffer.toString()+ sbIdList.toString();
+
+        StringBuilder sbIdListAtDepth = new StringBuilder();
+        sbBuffer.append("idListAtDepth =");
+        for(int depth: idListAtDepth.keySet()) {
+            sbIdListAtDepth.append(idListAtDepth.get(depth));
+        }
+
+        return  sbBuffer.toString()+ sbIdList.toString()+sbIdListAtDepth.toString();
 
     }
 

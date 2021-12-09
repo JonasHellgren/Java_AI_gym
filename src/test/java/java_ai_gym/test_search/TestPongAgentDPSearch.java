@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 public class TestPongAgentDPSearch extends TestSearchBase {
 
-    final int SLEEP_TIME = 10000;
+    final int SLEEP_TIME = 2000;
 
     @Before
     public void setup() {
@@ -101,7 +101,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
 
     @SneakyThrows
     @Test
-    @Ignore("Takes time")
+    //@Ignore("Takes time")
     public void testAnimate() {
 
         env.setRandomStateValuesStart(state);

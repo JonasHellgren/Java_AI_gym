@@ -27,7 +27,7 @@ public class DPSearchServant {
         agent.timeAccumulatorStep.reset();
         agent.timeAccumulatorBellman.reset();
         agent.timeAccumulatorExpFactor.reset();
-        vsbForNewDepthSetSizePrev= Integer.MAX_VALUE;
+        vsbForNewDepthSetSizePrev= 0;
     }
 
     public void increaseSearchDepthDoResets() {
