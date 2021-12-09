@@ -13,10 +13,10 @@ public class TestSearchBase {
     static final Logger logger = Logger.getLogger(TestSearchBase.class.getName());
 
     final int NOF_ACTIONS=3;
-    final int TIME_BUDGET_MS=50;  //200
+    final int TIME_BUDGET_MS=200;  //200
     final int SEARCH_DEPTH_STEP=5;
-    final int SEARCH_DEPTH_UPPER =15;  //15
-    final double explorationFactorLimit=0.5;
+    final int SEARCH_DEPTH_UPPER =10;  //15
+    final double explorationFactorLimit=0.6;
     final double discountFactorReward=0.95;
     final double discountFactorExpFactor=0.99;  //0.99
     SinglePong env=new SinglePong();

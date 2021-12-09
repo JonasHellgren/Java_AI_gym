@@ -12,7 +12,7 @@ public class DPSearchStateSelector {
     AgentDPSearch agent;
 
     public DPSearchStateSelector(AgentDPSearch agentDPSearch) {
-        this.agent=agentDPSearch;
+        this.agent = agentDPSearch;
     }
 
     public StateForSearch selectState() {
@@ -23,22 +23,15 @@ public class DPSearchStateSelector {
                 selectedState = agent.vsbForNewDepthSet.selectRandomState();
             } else {
                 if (MathUtils.calcRandomFromIntervall(0, 1) < agent.PROB_SELECT_FROM_OPTIMAL_PATH && agent.optimalStateSequence.size() > 0) {
-                    //selectedState = agent.optimalStateSequence.get(MathUtils.randInt(0, agent.optimalStateSequence.size() - 1));
-                   // int prevDepth = Math.max(0, agent.optimalStateSequence.size() - 1 - agent.searchDepthStep);
-                   // selectedState = agent.optimalStateSequence.get(MathUtils.randInt(prevDepth, agent.optimalStateSequence.size() - 1));
-
                     if (MathUtils.calcRandomFromIntervall(0, 1) < agent.PROB_SELECT_FROM_PREVIOUS_DEPTH) {
                         selectedState = agent.optimalStateSequence.get(agent.optimalStateSequence.size() - 1);
-                    } else
-                    {
+                    } else {
                         selectedState = agent.optimalStateSequence.get(MathUtils.randInt(0, agent.optimalStateSequence.size() - 1));
                     }
 
-                 //   System.out.println("prevDepth = "+prevDepth+", size = "+(agent.optimalStateSequence.size() - 1));
                 } else {
                     if (MathUtils.calcRandomFromIntervall(0, 1) < agent.PROB_SELECT_FROM_PREVIOUS_DEPTH) {
                         selectedState = agent.vsb.selectRandomStateFromDepth(agent.searchDepthPrev);
-                       // System.out.println("selectedState = "+selectedState);
                     } else {
                         selectedState = agent.vsb.selectRandomState();
                     }
