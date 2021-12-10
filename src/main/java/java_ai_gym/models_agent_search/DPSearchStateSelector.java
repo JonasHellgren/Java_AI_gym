@@ -7,12 +7,19 @@ import java_ai_gym.models_common.StateForSearch;
  * This class is used for state selection of the AgentDPSearch class.
  */
 
+
 public class DPSearchStateSelector {
 
     AgentDPSearch agent;
+    boolean wasSelectStateFailing;
 
     public DPSearchStateSelector(AgentDPSearch agentDPSearch) {
         this.agent = agentDPSearch;
+        this.wasSelectStateFailing=false;
+    }
+
+    public boolean wasSelectStateFailing() {
+        return wasSelectStateFailing;
     }
 
     public StateForSearch selectState() {
@@ -39,15 +46,15 @@ public class DPSearchStateSelector {
             }
 
             if (!isTerminalStateOrAllActionsTestedOrIsAtSearchDepthOrNull(selectedState)) {
-                agent.wasSelectStateFailing = false;
+                this.wasSelectStateFailing = false;
                 agent.timeAccumulatorSelectState.pause();
                 return selectedState;
             }
         }
 
         agent.timeAccumulatorSelectState.pause();
-        agent.wasSelectStateFailing = true;
-        agent.dpSearchServants.logsForFailedToFindState(selectedState);
+        this.wasSelectStateFailing = true;
+        agent.dpSearchServant.logsForFailedToFindState(selectedState);
         return null;
     }
 

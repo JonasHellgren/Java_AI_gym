@@ -1,21 +1,36 @@
 package java_ai_gym.models_agent_search;
 
 import java_ai_gym.models_common.StateForSearch;
+import lombok.Getter;
 
 import java.util.logging.Logger;
 
 /**--------------- below are methods of more dummy/supporting nature ------------------
 **/
+
+@Getter
 public class DPSearchServant {
 
     protected final static Logger logger = Logger.getLogger(DPSearchServant.class.getName());
 
     AgentDPSearch agent;
     int vsbForNewDepthSetSizePrev;
+    double explorationFactorLimitStart;
+    double discountFactorExpFactor;
+    double explorationFactorLimit;
+    double discountFactorReward;
 
-    public DPSearchServant(AgentDPSearch agentDPSearch) {
+    public DPSearchServant(AgentDPSearch agentDPSearch,
+                           double explorationFactorLimitStart,
+                           double discountFactorExpFactor,
+                           double discountFactorReward) {
         this.agent=agentDPSearch;
         this.vsbForNewDepthSetSizePrev=1;
+        this.explorationFactorLimitStart=explorationFactorLimitStart;
+        this.explorationFactorLimit=explorationFactorLimitStart;
+        this.discountFactorExpFactor=discountFactorExpFactor;
+        this.discountFactorReward=discountFactorReward;
+
     }
 
     public void resetAgent() {
@@ -31,21 +46,25 @@ public class DPSearchServant {
         this.vsbForNewDepthSetSizePrev=1;
     }
 
-    public void increaseSearchDepthDoResets() {
+    public void doResets() {
         if (agent.vsb.getDepthMax() > agent.searchDepth) {
             logger.warning("vsb.getMaxDepth() > searchDept");
         }
         logger.info("increaseSearchDepthDoResets" + ", getDepthMax =" + agent.vsb.getDepthMax() + ", searchDepth =" + agent.searchDepth);
-        addEvaluatedSearchDepth(agent.searchDepth);
+
+        agent.vsbForNewDepthSet.clear();
+        agent.vsbSizeForNewDepthSetAtPreviousExplorationFactorCalculation = 1;
+        logger.fine("searchDept increased to = " + agent.searchDepth + ". VSB size = " + agent.vsb.size());
+    }
+
+    protected void increaseSearchDepth() {
         agent.searchDepthPrev = agent.searchDepth;
         agent.searchDepth = agent.searchDepth + agent.searchDepthStep;
-        agent.vsbForNewDepthSet.clear();
-        agent.explorationFactorLimit = Math.max(agent.EXP_FACTOR_LIMIT_MIN,
-                agent.explorationFactorLimitStart * Math.pow(agent.discountFactorExpFactor, agent.searchDepthPrev));
-        agent.nofStatesVsbForNewDepthSetPrev = 1;
-        agent.explorationFactor = 0;
-        agent.wasSelectStateFailing = false;
-        logger.fine("searchDept increased to = " + agent.searchDepth + ". VSB size = " + agent.vsb.size());
+    }
+
+    protected void updateExplorationFactorLimit() {
+        this.explorationFactorLimit = Math.max(agent.EXP_FACTOR_LIMIT_MIN,
+                this.explorationFactorLimitStart * Math.pow(this.discountFactorExpFactor, agent.searchDepthPrev));
     }
 
     public void addEvaluatedSearchDepth(int searchDepth) {
@@ -59,15 +78,15 @@ public class DPSearchServant {
         agent.startState.setIdDepthNofActions(agent.startState.START_STATE_ID, 0, nofActions);
         agent.vsb = new VisitedStatesBuffer(agent.startState);
         agent.vsbForNewDepthSet = new VisitedStatesBuffer();
-        agent.nofStatesVsbForNewDepthSetPrev = 1;
+        agent.vsbSizeForNewDepthSetAtPreviousExplorationFactorCalculation = 1;
         agent.searchDepth = agent.searchDepthStep;
         agent.searchDepthPrev = 0;
-        agent.explorationFactor = 0;
-        agent.explorationFactorLimit = agent.explorationFactorLimitStart;
+        agent.vsbForNewDepthSet.clear();
+      //  agent.explorationFactorLimit = this.explorationFactorLimitStart;
         agent.bellmanCalculator = new BellmanCalculator(
                 agent.vsb,
                 new FindMax(),
-                agent.discountFactorReward,
+                this.discountFactorReward,
                 agent.getTimeBudgetChecker());
     }
 
@@ -86,10 +105,10 @@ public class DPSearchServant {
         logger.info("search finished, vsb size = " + agent.vsb.size());
         System.out.println("statesAtDepth vsb = " + agent.vsb.calcStatesAtDepth(agent.searchDepth));
         System.out.println("statesAtDepth vsbForSpecificDepthStep= " + agent.vsbForNewDepthSet.calcStatesAtDepth(agent.searchDepth));
-        System.out.println("searchDepth = " + agent.searchDepth + ", searchDepthPrev = " + agent.searchDepthPrev+ ", explorationFactorLimit = " + agent.explorationFactorLimit);
+        System.out.println("searchDepth = " + agent.searchDepth + ", searchDepthPrev = " + agent.searchDepthPrev+ ", explorationFactorLimit = " + this.explorationFactorLimit);
         System.out.println("evaluatedSearchDepths = " + agent.evaluatedSearchDepths);
         System.out.println("maxDepth  = " + agent.vsb.getDepthMax());
-        System.out.println("isAnyStateAtSearchDepth() = " + agent.isAnyStateAtSearchDepth() + ", areManyActionsTested() = " + agent.areManyActionsTestedAndFewLooseNodesAndVsbBigEnough() + ", wasSelectStateFailing = " + agent.wasSelectStateFailing);
+        System.out.println("isAnyStateAtSearchDepth() = " + agent.isAnyStateAtSearchDepth() + ", areManyActionsTested() = " + agent.areManyActionsTestedAndFewLooseNodesAndVsbBigEnough() + ", wasSelectStateFailing = " + agent.dpSearchStateSelector.wasSelectStateFailing());
         if (agent.wasSearchFailing()) {
             logger.warning("Failed search, despite many steps there is no state at search depth, i.e end of search horizon");
         }
@@ -107,9 +126,9 @@ public class DPSearchServant {
 
 
         logger.info("searchDepth =" + agent.searchDepth +
-                ", explorationFactor =" + agent.explorationFactor +
-                ", explorationFactorLimit =" + agent.explorationFactorLimit +
-                ", fraction loose nodes =" + agent.fractionLooseNodes +
+                ", explorationFactor =" + agent.vsbForNewDepthSet.getExplorationFactor() +
+                ", explorationFactorLimit =" + this.explorationFactorLimit +
+                ", fraction loose nodes =" + agent.vsbForNewDepthSet.getFractionLooseNodes() +
                 ", vsbForNewDepthSet size =" + agent.vsbForNewDepthSet.size());
     }
 

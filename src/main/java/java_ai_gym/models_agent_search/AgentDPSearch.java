@@ -28,7 +28,7 @@ public abstract class AgentDPSearch extends AgentSearch {
     final int SEARCH_DEPTH_UPPER_DEFAULT = 100;
     final double EXP_FACTOR_LIMIT_MIN=0.2;
     final double FRAC_LOOSE_NODES_MAX=0.15;
-    final double VSB_SIZE_INCREASE_FACTOR_MIN=1.5;
+    final double VSB_SIZE_INCREASE_FACTOR_MIN=2;
 
     final int MAX_NOF_SELECTION_TRIES = 1000;
     double VSB_SIZE_INCREASE_FACTOR = 5.0;
@@ -36,30 +36,20 @@ public abstract class AgentDPSearch extends AgentSearch {
     final double PROB_SELECT_FROM_OPTIMAL_PATH = 0.1;
     final double PROB_SELECT_FROM_PREVIOUS_DEPTH =0.1;  //0.5
 
-
-    double explorationFactorLimitStart;
-    double explorationFactorLimit;
-    double fractionLooseNodes;
-    double discountFactorReward;
-    double discountFactorExpFactor;
     int searchDepthUpper;
     int searchDepthStep;
-
     int searchDepthPrev;
     int searchDepth;
-    double explorationFactor;
     StateForSearch startState;
     List<Integer> evaluatedSearchDepths;
     VisitedStatesBuffer vsb;
     VisitedStatesBuffer vsbForNewDepthSet;
     List<StateForSearch> optimalStateSequence;
-    int nofStatesVsbForNewDepthSetPrev;
-
-    boolean wasSelectStateFailing;
+    int vsbSizeForNewDepthSetAtPreviousExplorationFactorCalculation;
 
     BellmanCalculator bellmanCalculator;
     DPSearchStateSelector dpSearchStateSelector;
-    DPSearchServant dpSearchServants;
+    DPSearchServant dpSearchServant;
     protected CpuTimeAccumulator timeAccumulatorSelectState;
     protected CpuTimeAccumulator timeAccumulatorStep;
     protected CpuTimeAccumulator timeAccumulatorBellman;
@@ -73,19 +63,14 @@ public abstract class AgentDPSearch extends AgentSearch {
         this.searchDepth = searchDepthStep;
         this.evaluatedSearchDepths = new ArrayList<>();
         super.timeBudgetChecker = new CpuTimer(timeBudget);
-        this.wasSelectStateFailing = false;
         this.optimalStateSequence = new ArrayList<>();
         this.timeAccumulatorSelectState = new CpuTimeAccumulator();
         this.timeAccumulatorStep = new CpuTimeAccumulator();
         this.timeAccumulatorBellman = new CpuTimeAccumulator();
         this.timeAccumulatorExpFactor = new CpuTimeAccumulator();
         this.searchDepthUpper = SEARCH_DEPTH_UPPER_DEFAULT;
-        this.explorationFactorLimit = EF_LIMIT_DEFAULT;
-        this.explorationFactorLimitStart = explorationFactorLimit;
-        this.discountFactorReward = DISCOUNT_FACTOR_REWARD_DEFAULT;
-        this.discountFactorExpFactor = DISCOUNT_FACTOR_EXP_FACTOR_DEFAULT;
         this.dpSearchStateSelector=new DPSearchStateSelector(this);
-        this.dpSearchServants= new DPSearchServant(this);
+        this.dpSearchServant = new DPSearchServant(this,EF_LIMIT_DEFAULT,DISCOUNT_FACTOR_EXP_FACTOR_DEFAULT,DISCOUNT_FACTOR_REWARD_DEFAULT);
     }
 
     public AgentDPSearch(SinglePong env,
@@ -97,52 +82,54 @@ public abstract class AgentDPSearch extends AgentSearch {
                          double discountFactorExpFactor) {
         this(env, timeBudget, searchDepthStep);
         this.searchDepthUpper = searchStepUpper;
-        this.explorationFactorLimit = explorationFactorLimit;
-        this.explorationFactorLimitStart = explorationFactorLimit;
-        this.discountFactorReward = discountFactorReward;
-        this.discountFactorExpFactor = discountFactorExpFactor;
+        this.dpSearchServant = new DPSearchServant(this,explorationFactorLimit,discountFactorExpFactor,discountFactorReward);
     }
 
     @Override
     public SearchResults search(final StateForSearch startState) {
 
-        this.dpSearchServants.initInstanceVariables(startState);
-        this.dpSearchServants.resetAgent();
+        this.dpSearchServant.initInstanceVariables(startState);
+        this.dpSearchServant.resetAgent();
 
         while (timeAndDepthNotExceededAndNoFailure()) {
             StateForSearch selectedState = dpSearchStateSelector.selectState();  //can be of type NullState
             takeStepAndSaveExperience(selectedState);
 
             if (hasVsbSizeIncreasedSignificantly()) {
-                nofStatesVsbForNewDepthSetPrev = vsbForNewDepthSet.size();
+                vsbSizeForNewDepthSetAtPreviousExplorationFactorCalculation = vsbForNewDepthSet.size();
                 timeAccumulatorExpFactor.play();
-                explorationFactor = vsbForNewDepthSet.calcExplorationFactor(searchDepth);
-                fractionLooseNodes = vsbForNewDepthSet.calcFractionLooseNodes(searchDepth);
+                vsbForNewDepthSet.calcExplorationFactor(searchDepth);
+                vsbForNewDepthSet.calcFractionLooseNodes(searchDepth);
                 timeAccumulatorExpFactor.pause();
-                this.dpSearchServants.logProgress1();
-             //   System.out.println("BeforePreviousDpCalc = "+vsbForNewDepthSet.getBufferHealthCalculator().getNofStatesBeforePreviousDpCalc()+
-              //         "vsbForNewDepthSet. size = "+vsbForNewDepthSet.size() );
+                this.dpSearchServant.logProgress1();
             }
 
             if (isAnyStateAtSearchDepth() && areManyActionsTestedAndFewLooseNodesAndVsbBigEnough()) {
+
+                System.out.println("BeforePreviousDpCalc = "+vsbForNewDepthSet.getBufferHealthCalculator().getNofStatesBeforePreviousDpCalc()+
+                        ", vsbForNewDepthSet. size = "+vsbForNewDepthSet.size() );
+
                 vsbForNewDepthSet.getBufferHealthCalculator().setNofStatesBeforePreviousDpCalc();
-                this.dpSearchServants.logWarningIfMotivated();
+                this.dpSearchServant.logWarningIfMotivated();
              //   System.out.println(vsbForNewDepthSet.toStringLight());
-                this.dpSearchServants.increaseSearchDepthDoResets();
+                this.dpSearchServant.addEvaluatedSearchDepth(searchDepth);
+                this.dpSearchServant.increaseSearchDepth();
+                this.dpSearchServant.doResets();
+                this.dpSearchServant.updateExplorationFactorLimit();
                 performDynamicProgramming();
 
             }
         }
 
         SearchResults searchResults = super.defineSearchResults(bellmanCalculator.actionsOptPath, this.startState);
-        this.dpSearchServants.printResultInfo();
+        this.dpSearchServant.printResultInfo();
         return searchResults;
     }
 
 
     private void takeStepAndSaveExperience(StateForSearch selectedState) {
 
-        if (wasSelectStateFailing || selectedState == null) {
+        if (dpSearchStateSelector.wasSelectStateFailing() || selectedState == null) {
             logger.warning("Cant step when failed or null state selection");
         } else {
             timeAccumulatorStep.play();
@@ -177,10 +164,10 @@ public abstract class AgentDPSearch extends AgentSearch {
     }
 
     boolean areManyActionsTestedAndFewLooseNodesAndVsbBigEnough() {
-        return explorationFactor >= explorationFactorLimit &&
-                fractionLooseNodes <= FRAC_LOOSE_NODES_MAX &&
+        return  vsbForNewDepthSet.getExplorationFactor() >= dpSearchServant.explorationFactorLimit &&
+                vsbForNewDepthSet.getFractionLooseNodes() <= FRAC_LOOSE_NODES_MAX &&
                 vsbForNewDepthSet.getBufferHealthCalculator().isVsbBigEnough(VSB_SIZE_INCREASE_FACTOR_MIN) ||
-                wasSelectStateFailing; //isSelectFailed
+                dpSearchStateSelector.wasSelectStateFailing(); //isSelectFailed
     }
 
     boolean isAnyStateAtSearchDepth() {
@@ -188,11 +175,11 @@ public abstract class AgentDPSearch extends AgentSearch {
     }
 
     public boolean wasSearchFailing() {
-        return !isAnyStateAtSearchDepth() && wasSelectStateFailing;
+        return !isAnyStateAtSearchDepth() && dpSearchStateSelector.wasSelectStateFailing();
     }
 
     private boolean hasVsbSizeIncreasedSignificantly() {
-        return (double) vsbForNewDepthSet.size() / (double) nofStatesVsbForNewDepthSetPrev > VSB_SIZE_INCREASE_FACTOR;
+        return (double) vsbForNewDepthSet.size() / (double) vsbSizeForNewDepthSetAtPreviousExplorationFactorCalculation > VSB_SIZE_INCREASE_FACTOR;
     }
 
 }

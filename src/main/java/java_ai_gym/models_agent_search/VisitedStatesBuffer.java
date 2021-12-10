@@ -21,8 +21,10 @@ public class VisitedStatesBuffer {
     StateVisitsDAO stateVisitsDAO;
     ExperiencesDAO experiencesDAO;
     SetOfTerminalStatesDAO setOfTerminalStatesDAO;
-    int depthMax;
     BufferHealthCalculator bufferHealthCalculator;
+    int depthMax;
+    double explorationFactor;
+    double fractionLooseNodes;
 
     public VisitedStatesBuffer() {
         stateVisitsDAO = new StateVisitsDAO();
@@ -52,6 +54,7 @@ public class VisitedStatesBuffer {
         stateVisitsDAO.clear();
         experiencesDAO.clear();
         setOfTerminalStatesDAO.clear();
+        explorationFactor = 0;
     }
 
     public StateForSearch getState(String id) {
@@ -151,12 +154,12 @@ public class VisitedStatesBuffer {
         return (getExperienceList(id).size() == stateVisitsDAO.get(id).nofActions);
     }
 
-    public double calcExplorationFactor(int excludedDepth) {
-        return bufferHealthCalculator.calcExplorationFactor(excludedDepth);
+    public void calcExplorationFactor(int excludedDepth) {
+        this.explorationFactor = bufferHealthCalculator.calcExplorationFactor(excludedDepth);
     }
 
-    public double calcFractionLooseNodes(int excludedDepth) {
-        return bufferHealthCalculator.calcFractionLooseNodes(excludedDepth);
+    public void calcFractionLooseNodes(int excludedDepth) {
+        fractionLooseNodes = bufferHealthCalculator.calcFractionLooseNodes(excludedDepth);
     }
 
 

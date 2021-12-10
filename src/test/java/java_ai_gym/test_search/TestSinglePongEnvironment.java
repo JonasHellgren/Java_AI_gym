@@ -117,7 +117,7 @@ public class TestSinglePongEnvironment extends TestSearchBase {
                 " ,isTimerOn = "+state.getDiscreteVariable("isTimerOn")+
                 " ,nofStepsStillBeforeCollision = "+state.getDiscreteVariable("nofStepsStillBeforeCollision")+
                 ", reward = "+stepReturn.reward);
-        return sumReward+stepReturn.reward*Math.pow(agent.getDiscountFactorReward(),state.getDiscreteVariable("nofSteps")-1);
+        return sumReward+stepReturn.reward*Math.pow(agent.getDpSearchServant().getDiscountFactorReward(),state.getDiscreteVariable("nofSteps")-1);
     }
 
     @Test

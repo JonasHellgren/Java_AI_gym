@@ -138,7 +138,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
 
     private void createVSB(int nofSteps, int maxDepth) {
 
-        agent.getDpSearchServants().initInstanceVariables(state);
+        agent.getDpSearchServant().initInstanceVariables(state);
         agent.setSearchDepth(maxDepth);
         Assert.assertEquals(1, agent.getVsb().nofStates());
         System.out.println(agent.getVsb());
@@ -153,7 +153,7 @@ public class TestPongAgentDPSearch extends TestSearchBase {
             agent.getVsb().addNewStateAndExperienceFromStep(selectedState.id, action, stepReturn);
         }
 
-        agent.getDpSearchServants().addEvaluatedSearchDepth(maxDepth);
+        agent.getDpSearchServant().addEvaluatedSearchDepth(maxDepth);
 
     }
 
