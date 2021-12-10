@@ -2,12 +2,14 @@ package java_ai_gym.models_agent_search;
 
 import java_ai_gym.helpers.MathUtils;
 import java_ai_gym.models_common.StateForSearch;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.DoubleSummaryStatistics;
 import java.util.List;
 import java.util.logging.Logger;
 
+@Getter
 public class BufferHealthCalculator {
 
     protected final static Logger logger = Logger.getLogger(BufferHealthCalculator.class.getName());
@@ -16,11 +18,15 @@ public class BufferHealthCalculator {
     final double EXPLORATION_FACTOR_IF_NO_STATE_FOUND=0.0;
 
     VisitedStatesBuffer vsb;
+    int nofStatesBeforePreviousDpCalc;
 
     public BufferHealthCalculator(VisitedStatesBuffer vsb) {
         this.vsb = vsb;
     }
 
+    public void setNofStatesBeforePreviousDpCalc () {
+        nofStatesBeforePreviousDpCalc=vsb.size();
+    }
     public double calcExplorationFactor(int excludedDepth) {
 
         List<Double> explorationFactorList = new ArrayList<>();
@@ -59,6 +65,12 @@ public class BufferHealthCalculator {
         return (vsb.size()==0)
                 ?0
                 :nofNonTerminalStatesWithZeroTriedActions(excludedDepth)/(double) vsb.size();
+    }
+
+    public boolean isVsbBigEnough(double VSB_SIZE_INCREASE_FACTOR_MIN) {
+
+      return   vsb.size()/(double) (nofStatesBeforePreviousDpCalc +1)>VSB_SIZE_INCREASE_FACTOR_MIN;
+
     }
 
     private int nofNonTerminalStatesWithZeroTriedActions(int searchDepth) {

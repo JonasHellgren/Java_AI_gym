@@ -15,6 +15,7 @@ public class DPSearchServant {
 
     public DPSearchServant(AgentDPSearch agentDPSearch) {
         this.agent=agentDPSearch;
+        this.vsbForNewDepthSetSizePrev=1;
     }
 
     public void resetAgent() {
@@ -27,7 +28,7 @@ public class DPSearchServant {
         agent.timeAccumulatorBellman.reset();
         agent.timeAccumulatorExpFactor.reset();
         vsbForNewDepthSetSizePrev= 0;
-        agent.nofStatesVsbForNewDepthSetPrevDP=0;
+        this.vsbForNewDepthSetSizePrev=1;
     }
 
     public void increaseSearchDepthDoResets() {

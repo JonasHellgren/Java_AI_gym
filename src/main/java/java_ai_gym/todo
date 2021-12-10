@@ -113,7 +113,7 @@ ta veck timeBudget och startTime från AgentSearch x
 
 fler tester TestVisitedStatesBuffer  x
 logga ev inför gräns på antal fria noder (noll antal actions) - funkar bra x
-vsb måste blivit stort nog
+vsb måste blivit stort nog  x
 select state, favorisera med högre value
 
 pusha
