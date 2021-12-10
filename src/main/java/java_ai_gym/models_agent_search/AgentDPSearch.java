@@ -27,13 +27,13 @@ public abstract class AgentDPSearch extends AgentSearch {
     final double DISCOUNT_FACTOR_EXP_FACTOR_DEFAULT = 0.99;
     final int SEARCH_DEPTH_UPPER_DEFAULT = 100;
     final double EXP_FACTOR_LIMIT_MIN=0.2;
-    final double FRAC_LOOSE_NODES_MAX=0.1;
+    final double FRAC_LOOSE_NODES_MAX=0.15;
 
     final int MAX_NOF_SELECTION_TRIES = 1000;
     double VSB_SIZE_INCREASE_FACTOR = 5.0;
     final double PROB_SELECT_STATE_FROM_NEW_DEPTH_SET = 0.90;  //0.5
     final double PROB_SELECT_FROM_OPTIMAL_PATH = 0.1;
-    final double PROB_SELECT_FROM_PREVIOUS_DEPTH =0.5;  //0.5
+    final double PROB_SELECT_FROM_PREVIOUS_DEPTH =0.1;  //0.5
 
     double explorationFactorLimitStart;
     double explorationFactorLimit;
@@ -52,6 +52,7 @@ public abstract class AgentDPSearch extends AgentSearch {
     VisitedStatesBuffer vsbForNewDepthSet;
     List<StateForSearch> optimalStateSequence;
     int nofStatesVsbForNewDepthSetPrev;
+    int nofStatesVsbForNewDepthSetPrevDP;
     boolean wasSelectStateFailing;
 
     BellmanCalculator bellmanCalculator;
@@ -119,7 +120,8 @@ public abstract class AgentDPSearch extends AgentSearch {
                 this.dpSearchServants.logProgress1();
             }
 
-            if (isAnyStateAtSearchDepth() && areManyActionsTestedAndFewLooseNodes()) {
+            if (isAnyStateAtSearchDepth() && areManyActionsTestedAndFewLooseNodesAndVsbBigEnough()) {
+                nofStatesVsbForNewDepthSetPrevDP = vsbForNewDepthSet.size();
                 this.dpSearchServants.logWarningIfMotivated();
              //   System.out.println(vsbForNewDepthSet.toStringLight());
                 this.dpSearchServants.increaseSearchDepthDoResets();
@@ -170,8 +172,11 @@ public abstract class AgentDPSearch extends AgentSearch {
         return !timeBudgetChecker.isTimeExceeded() && searchDepth <= searchDepthUpper && !wasSearchFailing();
     }
 
-    boolean areManyActionsTestedAndFewLooseNodes() {
-        return explorationFactor >= explorationFactorLimit && fractionLooseNodes <= FRAC_LOOSE_NODES_MAX || wasSelectStateFailing; //isSelectFailed
+    boolean areManyActionsTestedAndFewLooseNodesAndVsbBigEnough() {
+        return explorationFactor >= explorationFactorLimit &&
+                fractionLooseNodes <= FRAC_LOOSE_NODES_MAX &&
+                vsbForNewDepthSet.size()/(double) (nofStatesVsbForNewDepthSetPrevDP+1)>2 ||
+                wasSelectStateFailing; //isSelectFailed
     }
 
     boolean isAnyStateAtSearchDepth() {
