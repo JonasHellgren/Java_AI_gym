@@ -106,10 +106,15 @@ selectRandomStateFromDepth för långsam  x
 dokumentera selectState  x
 plantuml pong  x
 placera klasser mer logiskt  x
-fler tester TestVisitedStatesBuffer
+
 flytta klasser  x
 testGameOver fuckar  x
-ta veck timeBudget och startTime från AgentSearch
+ta veck timeBudget och startTime från AgentSearch x
+
+fler tester TestVisitedStatesBuffer
+logga ev inför gräns på antal fria noder (null antal actions)
+select state, favorisera med högre value
+
 pusha
 
 när tid:

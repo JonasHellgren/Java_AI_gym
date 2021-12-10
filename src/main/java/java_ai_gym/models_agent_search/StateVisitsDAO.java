@@ -1,10 +1,12 @@
 package java_ai_gym.models_agent_search;
 
 import java_ai_gym.models_common.StateForSearch;
+import lombok.Getter;
 
 import java.util.*;
 import java.util.logging.Logger;
 
+@Getter
 public class StateVisitsDAO implements  DAO<StateForSearch> {
 
     protected final static Logger logger = Logger.getLogger(StateVisitsDAO.class.getName());
@@ -62,7 +64,16 @@ public class StateVisitsDAO implements  DAO<StateForSearch> {
     }
 
     public List<String> getAllIdsAtDepth(int depth) {
-       return idListAtDepth.get(depth);
+        if (idListAtDepth==null) {
+            logger.warning("idListAtDepth is null");
+            return  new ArrayList<>();
+        } else {
+            if (idListAtDepth.containsKey(depth)) {
+                return idListAtDepth.get(depth);
+            } else {
+                return new ArrayList<>();
+            }
+        }
     }
 
     public void remove(String id) {

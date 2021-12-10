@@ -22,8 +22,6 @@ public class TestPongAgentRandomSearch extends TestSearchBase {
         SEARCH_DEPTH= (int) (p.MAX_X_POSITION/p.MAX_SPEED_RACKET);
 
         logger.info("Search depth = "+SEARCH_DEPTH);
-
-
         state.setVariable("xPosBall", p.MAX_X_POSITION/2);
         state.setVariable("yPosBall",  p.SPEED_BALL*SEARCH_DEPTH*0.75);
         state.setVariable("xSpdBall", 0.0);

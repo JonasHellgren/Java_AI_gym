@@ -17,6 +17,7 @@ public class VisitedStatesBuffer {
 
     protected final static Logger logger = Logger.getLogger(VisitedStatesBuffer.class.getName());
 
+    public final String ID_STATE_EMPTY_BUFFER="";
     StateVisitsDAO stateVisitsDAO;
     ExperiencesDAO experiencesDAO;
     SetOfTerminalStatesDAO setOfTerminalStatesDAO;
@@ -94,7 +95,7 @@ public class VisitedStatesBuffer {
     public String selectRandomStateId() {
         if (stateVisitsDAO.idList.size()==0) {
             logger.warning("No state visits");
-            return "";
+            return ID_STATE_EMPTY_BUFFER;
         }
         return MathUtils.getRandomItemFromList(stateVisitsDAO.idList);
     }
@@ -111,15 +112,17 @@ public class VisitedStatesBuffer {
         }
     }
 
+
     public List<StateForSearch> getAllStatesAtDepth(int depth) {
-        List<StateForSearch> statesAtDepth = new ArrayList<>();
-        for (StateForSearch state : stateVisitsDAO.getAll()) {
-            if (state.depth == depth) {
-                statesAtDepth.add(state);
+        List<StateForSearch> states = new ArrayList<>();
+        if (stateVisitsDAO.getAllIdsAtDepth(depth)==null) {
+            logger.fine("stateVisitsDAO.getAllIdsAtDepth(depth) is null");
+        } else {
+            for (String id : stateVisitsDAO.getAllIdsAtDepth(depth)) {
+                states.add(getState(id));
             }
         }
-
-        return statesAtDepth;
+        return states;
     }
 
     public void addNewStateAndExperienceFromStep(String idFromState, int action, StepReturn stepReturn) {
@@ -171,7 +174,6 @@ public class VisitedStatesBuffer {
         return (getExperienceList(id).size() == stateVisitsDAO.get(id).nofActions);
     }
 
-
     public double calcExplorationFactor(int excludedDepth) {
         return explorationFactorCalculator.calc(excludedDepth);
     }
@@ -186,6 +188,10 @@ public class VisitedStatesBuffer {
         return statePerDepthList;
     }
 
+    public void remove(String id) {
+        stateVisitsDAO.remove(id);
+        experiencesDAO.removeExpItemWithNewStateId(id);
+    }
 
     @Override
     public String toString() {
@@ -201,7 +207,6 @@ public class VisitedStatesBuffer {
             sb.append(System.getProperty("line.separator"));
         }
         return sb.toString();
-
     }
 
     public String toStringLight() {
