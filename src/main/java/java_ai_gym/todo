@@ -111,8 +111,8 @@ flytta klasser  x
 testGameOver fuckar  x
 ta veck timeBudget och startTime från AgentSearch x
 
-fler tester TestVisitedStatesBuffer
-logga ev inför gräns på antal fria noder (null antal actions)
+fler tester TestVisitedStatesBuffer  x
+logga ev inför gräns på antal fria noder (noll antal actions) - funkar bra x
 select state, favorisera med högre value
 
 pusha

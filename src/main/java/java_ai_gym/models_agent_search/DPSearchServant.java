@@ -87,7 +87,7 @@ public class DPSearchServant {
         System.out.println("searchDepth = " + agent.searchDepth + ", searchDepthPrev = " + agent.searchDepthPrev+ ", explorationFactorLimit = " + agent.explorationFactorLimit);
         System.out.println("evaluatedSearchDepths = " + agent.evaluatedSearchDepths);
         System.out.println("maxDepth  = " + agent.vsb.getDepthMax());
-        System.out.println("isAnyStateAtSearchDepth() = " + agent.isAnyStateAtSearchDepth() + ", areManyActionsTested() = " + agent.areManyActionsTested() + ", wasSelectStateFailing = " + agent.wasSelectStateFailing);
+        System.out.println("isAnyStateAtSearchDepth() = " + agent.isAnyStateAtSearchDepth() + ", areManyActionsTested() = " + agent.areManyActionsTestedAndFewLooseNodes() + ", wasSelectStateFailing = " + agent.wasSelectStateFailing);
         if (agent.wasSearchFailing()) {
             logger.warning("Failed search, despite many steps there is no state at search depth, i.e end of search horizon");
         }
@@ -101,7 +101,14 @@ public class DPSearchServant {
     }
 
     protected void logProgress1() {
-        logger.info("searchDepth =" + agent.searchDepth + ", explorationFactor =" + agent.explorationFactor + ", explorationFactorLimit =" + agent.explorationFactorLimit + ", time =" + agent.getTimeBudgetChecker().getTimeSinceStartInMillis() + ", vsbForNewDepthSet size =" + agent.vsbForNewDepthSet.size());
+
+
+
+        logger.info("searchDepth =" + agent.searchDepth +
+                ", explorationFactor =" + agent.explorationFactor +
+                ", explorationFactorLimit =" + agent.explorationFactorLimit +
+                ", fraction loose nodes =" + agent.fractionLooseNodes +
+                ", vsbForNewDepthSet size =" + agent.vsbForNewDepthSet.size());
     }
 
     protected void logWarningIfMotivated() {

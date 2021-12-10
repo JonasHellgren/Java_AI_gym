@@ -22,14 +22,14 @@ public class VisitedStatesBuffer {
     ExperiencesDAO experiencesDAO;
     SetOfTerminalStatesDAO setOfTerminalStatesDAO;
     int depthMax;
-    ExplorationFactorCalculator explorationFactorCalculator;
+    BufferHealthCalculator bufferHealthCalculator;
 
     public VisitedStatesBuffer() {
         stateVisitsDAO = new StateVisitsDAO();
         experiencesDAO = new ExperiencesDAO();
         setOfTerminalStatesDAO = new SetOfTerminalStatesDAO();
         depthMax = 0;
-        explorationFactorCalculator = new ExplorationFactorCalculator(this);
+        bufferHealthCalculator = new BufferHealthCalculator(this);
     }
 
     public VisitedStatesBuffer(StateForSearch startState) {
@@ -45,7 +45,7 @@ public class VisitedStatesBuffer {
         experiencesDAO.copy(vsb.getExperiencesDAO());
         setOfTerminalStatesDAO.copy(vsb.getSetOfTerminalStatesDAO());
         depthMax = vsb.depthMax;
-        explorationFactorCalculator=vsb.explorationFactorCalculator;
+        bufferHealthCalculator =vsb.bufferHealthCalculator;
     }
 
     public void clear() {
@@ -63,33 +63,7 @@ public class VisitedStatesBuffer {
     }
 
     public StateForSearch selectRandomStateFromDepth(int depth) {
-        /*
-        List<StateForSearch> states=getAllStatesAtDepth(depth);
-        List<String> ids=new ArrayList<>();
-        for (StateForSearch state:states) {
-            ids.add(state.id);
-        }
-        if (ids.size()==0) {
-            logger.warning("No state visits at depth = "+depth);
-            return getState("");
-        }
-        return getState(MathUtils.getRandomItemFromList(ids));  */
-
-        /*
-        String id=selectRandomStateId();
-        for (int i = 0; i < depth*100 ; i++) {
-            id= selectRandomStateId();
-            if (getState(id).depth==depth) {
-                break;
-            }
-        }
-        if (getState(id).depth!=depth && depth!=0)  {
-            logger.warning("Failed to find state at depth = "+depth);
-        }
-
-        */
         return getState(MathUtils.getRandomItemFromList(stateVisitsDAO.getAllIdsAtDepth(depth)));
-
     }
 
     public String selectRandomStateId() {
@@ -112,6 +86,9 @@ public class VisitedStatesBuffer {
         }
     }
 
+    public List<String> getAllIds() {
+        return stateVisitsDAO.idList;
+    }
 
     public List<StateForSearch> getAllStatesAtDepth(int depth) {
         List<StateForSearch> states = new ArrayList<>();
@@ -175,8 +152,14 @@ public class VisitedStatesBuffer {
     }
 
     public double calcExplorationFactor(int excludedDepth) {
-        return explorationFactorCalculator.calc(excludedDepth);
+        return bufferHealthCalculator.calcExplorationFactor(excludedDepth);
     }
+
+    public double calcFractionLooseNodes(int excludedDepth) {
+        return bufferHealthCalculator.calcFractionLooseNodes(excludedDepth);
+    }
+
+
 
     public Map<Integer, Integer> calcStatesAtDepth(int searchDepth) {
         Map<Integer, Integer> statePerDepthList = new HashMap<>();
@@ -192,6 +175,8 @@ public class VisitedStatesBuffer {
         stateVisitsDAO.remove(id);
         experiencesDAO.removeExpItemWithNewStateId(id);
     }
+
+
 
     @Override
     public String toString() {

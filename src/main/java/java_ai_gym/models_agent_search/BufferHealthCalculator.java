@@ -8,20 +8,20 @@ import java.util.DoubleSummaryStatistics;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class ExplorationFactorCalculator {
+public class BufferHealthCalculator {
 
-    protected final static Logger logger = Logger.getLogger(ExplorationFactorCalculator.class.getName());
+    protected final static Logger logger = Logger.getLogger(BufferHealthCalculator.class.getName());
     final double PROB_SELECTING_STATE_FOR_EXPLORATION_FACTOR_CALCULATION = 0.2;  //for speeding up
     final int MIN_LENGTH_EXP_FACTOR_LIST=100; //only regard PROB_SELECTING_STATE.. above this length
     final double EXPLORATION_FACTOR_IF_NO_STATE_FOUND=0.0;
 
     VisitedStatesBuffer vsb;
 
-    public ExplorationFactorCalculator(VisitedStatesBuffer vsb) {
+    public BufferHealthCalculator(VisitedStatesBuffer vsb) {
         this.vsb = vsb;
     }
 
-    public double calc(int excludedDepth) {
+    public double calcExplorationFactor(int excludedDepth) {
 
         List<Double> explorationFactorList = new ArrayList<>();
         for (StateForSearch state : vsb.getStateVisitsDAO().getAll()) {
@@ -51,6 +51,24 @@ public class ExplorationFactorCalculator {
 
         DoubleSummaryStatistics stats = explorationFactorList.stream().mapToDouble(a -> a).summaryStatistics();
         return stats.getAverage();
+    }
+
+
+    public double calcFractionLooseNodes(int excludedDepth) {
+
+        return (vsb.size()==0)
+                ?0
+                :nofNonTerminalStatesWithZeroTriedActions(excludedDepth)/(double) vsb.size();
+    }
+
+    private int nofNonTerminalStatesWithZeroTriedActions(int searchDepth) {
+        int nofStates=0;
+        for (String id:vsb.getAllIds()) {
+            if (vsb.isNoActionTriedInStateWithId(id) && !vsb.isExperienceOfStateTerminal(id) && vsb.getState(id).depth!=searchDepth) {
+                nofStates++;
+            }
+        }
+        return nofStates;
     }
 
 }

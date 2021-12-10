@@ -63,6 +63,8 @@ public class StateVisitsDAO implements  DAO<StateForSearch> {
         return stateBuffer.keySet();
     }
 
+
+
     public List<String> getAllIdsAtDepth(int depth) {
         if (idListAtDepth==null) {
             logger.warning("idListAtDepth is null");
