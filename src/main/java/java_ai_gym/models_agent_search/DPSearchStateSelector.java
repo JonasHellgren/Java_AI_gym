@@ -3,12 +3,16 @@ package java_ai_gym.models_agent_search;
 import java_ai_gym.helpers.MathUtils;
 import java_ai_gym.models_common.StateForSearch;
 
+import java.util.logging.Logger;
+
 /***
  * This class is used for state selection of the AgentDPSearch class.
  */
 
 
 public class DPSearchStateSelector {
+
+    protected final static Logger logger = Logger.getLogger(DPSearchStateSelector.class.getName());
 
     AgentDPSearch agent;
     boolean wasSelectStateFailing;
@@ -20,6 +24,10 @@ public class DPSearchStateSelector {
 
     public boolean wasSelectStateFailing() {
         return wasSelectStateFailing;
+    }
+
+    public void setWasSelectStateFailing(boolean wasSelectStateFailing) {
+        this.wasSelectStateFailing = wasSelectStateFailing;
     }
 
     public StateForSearch selectState() {
@@ -54,7 +62,7 @@ public class DPSearchStateSelector {
 
         agent.timeAccumulatorSelectState.pause();
         this.wasSelectStateFailing = true;
-        agent.dpSearchServant.logsForFailedToFindState(selectedState);
+        this.logsForFailedToFindState(selectedState);
         return null;
     }
 
@@ -74,6 +82,16 @@ public class DPSearchStateSelector {
         }
 
         return false;
+    }
+
+    protected void logsForFailedToFindState(StateForSearch selectedState) {
+        logger.warning("MAX_NOF_SELECTION_TRIES exceeded !!! Probably is explorationFactorLimit high = "+agent.dpSearchServant.explorationFactorLimit);
+        logger.warning("id =" + selectedState.id +
+                ", depth =" + selectedState.depth +
+                // ", null status =" + (selectedState == null) +
+                ", depth status =" + (selectedState.depth == agent.searchDepth) +
+                ", nofActionsTested status =" + (agent.vsb.nofActionsTested(selectedState.id) == selectedState.nofActions) +
+                ",isExperienceOfStateTerminal =" + agent.vsb.isExperienceOfStateTerminal(selectedState.id));
     }
 
 }

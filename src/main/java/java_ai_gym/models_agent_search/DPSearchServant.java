@@ -54,6 +54,7 @@ public class DPSearchServant {
 
         agent.vsbForNewDepthSet.clear();
         agent.vsbSizeForNewDepthSetAtPreviousExplorationFactorCalculation = 1;
+        agent.dpSearchStateSelector.setWasSelectStateFailing(false);
         logger.fine("searchDept increased to = " + agent.searchDepth + ". VSB size = " + agent.vsb.size());
     }
 
@@ -90,15 +91,7 @@ public class DPSearchServant {
                 agent.getTimeBudgetChecker());
     }
 
-    protected void logsForFailedToFindState(StateForSearch selectedState) {
-        logger.warning("MAX_NOF_SELECTION_TRIES exceeded !!!");
-        logger.warning("id =" + selectedState.id +
-                ", depth =" + selectedState.depth +
-                // ", null status =" + (selectedState == null) +
-                ", depth status =" + (selectedState.depth == agent.searchDepth) +
-                ", nofActionsTested status =" + (agent.vsb.nofActionsTested(selectedState.id) == selectedState.nofActions) +
-                ",isExperienceOfStateTerminal =" + agent.vsb.isExperienceOfStateTerminal(selectedState.id));
-    }
+
 
 
     protected void printResultInfo() {
