@@ -5,6 +5,10 @@ import java_ai_gym.models_common.StateForSearch;
 
 import java.util.logging.Logger;
 
+/***
+ * A set of hyper parameters influence this class, for example PROB_SELECT_STATE_FROM_NEW_DEPTH_SET.
+ */
+
 public class PrimaryStateSelector implements StateSelector {
 
     protected final static Logger logger = Logger.getLogger(PrimaryStateSelector.class.getName());
@@ -21,7 +25,7 @@ public class PrimaryStateSelector implements StateSelector {
     }
 
     @Override
-    public StateForSearch selectState() {  //todo vsbForNewDepthSet
+    public StateForSearch selectState() {
 
         StateForSearch selectedState = null;  //hopefully will change type later
 

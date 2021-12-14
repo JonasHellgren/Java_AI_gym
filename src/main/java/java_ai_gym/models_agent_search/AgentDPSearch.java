@@ -31,7 +31,7 @@ public abstract class AgentDPSearch extends AgentSearch {
     final double VSB_SIZE_INCREASE_FACTOR_MIN=1.1;
 
     final int MAX_NOF_SELECTION_TRIES = 100;
-    double VSB_SIZE_INCREASE_FACTOR = 5.0;
+    double VSB_SIZE_INCREASE_FACTOR = 10.0;
     final double PROB_SELECT_STATE_FROM_NEW_DEPTH_SET = 0.90;  //0.5
     final double PROB_SELECT_FROM_OPTIMAL_PATH = 0.1;
     final double PROB_SELECT_FROM_PREVIOUS_DEPTH =0.1;  //0.5
@@ -181,7 +181,7 @@ public abstract class AgentDPSearch extends AgentSearch {
 
     private boolean timeAndDepthNotExceededAndNoFailure() {
         return !timeBudgetChecker.isTimeExceeded() &&
-                searchDepth <= searchDepthUpper && // &&
+                searchDepth <= searchDepthUpper &&
                 !failedStateSelectionAndAllActionsTested();
     }
 

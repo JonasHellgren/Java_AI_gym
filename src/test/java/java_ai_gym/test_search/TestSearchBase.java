@@ -15,7 +15,7 @@ public class TestSearchBase {
     final int NOF_ACTIONS=3;
     final int TIME_BUDGET_MS=500;  //200
     final int SEARCH_DEPTH_STEP=5;
-    final int SEARCH_DEPTH_UPPER =15;  //15
+    final int SEARCH_DEPTH_UPPER =10;  //10
     final double explorationFactorLimit=0.99;  //0.99
     final double discountFactorReward=0.95;
     final double discountFactorExpFactor=0.95;  //0.97

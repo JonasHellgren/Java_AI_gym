@@ -116,7 +116,7 @@ logga ev inför gräns på antal fria noder (noll antal actions) - funkar bra x
 vsb måste blivit stort nog  x
 buggar för stor explorationFactorLimit x
 även stora explorationFactorLimit skall funka  x
-selectState med vsb parameter
+selectState med vsb parameter NEJ väljer ju fårn båda
 kommentera StateSelector klasser
 select state, favorisera med högre value
 
