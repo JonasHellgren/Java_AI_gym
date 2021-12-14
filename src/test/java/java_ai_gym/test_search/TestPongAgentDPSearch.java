@@ -110,7 +110,6 @@ public class TestPongAgentDPSearch extends TestSearchBase {
         agent.setTimeBudgetMillis(100);
         StepReturn stepReturn;
         for (int i = 0; i < 1000; i++) {
-            System.out.println("i = " + i);
             AgentSearch.SearchResults sr = agent.search(state);
             stepReturn = env.step(sr.firstAction(), state);
             copyVSBsToFrame(agent.getVsb());

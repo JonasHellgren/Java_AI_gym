@@ -117,12 +117,17 @@ vsb måste blivit stort nog  x
 buggar för stor explorationFactorLimit x
 även stora explorationFactorLimit skall funka  x
 selectState med vsb parameter NEJ väljer ju fårn båda
-kommentera StateSelector klasser
-select state, favorisera med högre value
+kommentera StateSelector klasser  x
+
+diverse clean up, färre loggar, dvs fler som fine  x
+uppdatera plantuml utifrån StateSelector
+md fil some beskriver pong grovt
 
 pusha
 
-när tid:
+senare om/när tid:
+krymp sökrymden med ny state nofStepsSameSpeed, skall vara minst tex 2
+select state, favorisera med högre value - osäkert om ger ngt
 removeExpItemWithNewStateId är inte effektiv
 grafik för plan
 EnvironmentParametersAbstract, sub för tabular

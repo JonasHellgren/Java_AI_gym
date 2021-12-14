@@ -5,7 +5,7 @@ import java_ai_gym.models_common.StateForSearch;
 import java.util.logging.Logger;
 
 /***
- * This class is used for state selection of the AgentDPSearch class.
+ * This class is used for state selection from the VisitedStatesBuffer class.
  * The field stateSelector is of interface type StateSelector.
  * It sets the selection mode: 1) Primary, constrained random selection 2) Backup, the first item in a list fullfilling constraints
  * Example constraint is that not all actions are tested.

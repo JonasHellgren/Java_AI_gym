@@ -27,8 +27,8 @@ public abstract class AgentDPSearch extends AgentSearch {
     final double DISCOUNT_FACTOR_EXP_FACTOR_DEFAULT = 0.99;
     final int SEARCH_DEPTH_UPPER_DEFAULT = 100;
     final double EXP_FACTOR_LIMIT_MIN=0.2;
-    final double FRAC_LOOSE_NODES_MAX=0.2;
-    final double VSB_SIZE_INCREASE_FACTOR_MIN=1.1;
+    final double FRAC_LOOSE_NODES_MAX=0.1;
+    final double VSB_SIZE_INCREASE_FACTOR_MIN=1.5;
 
     final int MAX_NOF_SELECTION_TRIES = 100;
     double VSB_SIZE_INCREASE_FACTOR = 10.0;
@@ -36,9 +36,9 @@ public abstract class AgentDPSearch extends AgentSearch {
     final double PROB_SELECT_FROM_OPTIMAL_PATH = 0.1;
     final double PROB_SELECT_FROM_PREVIOUS_DEPTH =0.1;  //0.5
 
-    int searchDepthUpper;  //upper limit of search depth
+    int searchDepthUpper;  //upper limit of search depth, if large timeBudget restricts
     int searchDepthStep;  //search depth increase step
-    int searchDepthPrev;    //search depth in previous set
+    int searchDepthPrev;    //search depth in previous set, new states are mostly in [searchDepthPrev.searchDepth]
     int searchDepth;        //present search depth
     StateForSearch startState;
     List<Integer> evaluatedSearchDepths;
@@ -96,48 +96,16 @@ public abstract class AgentDPSearch extends AgentSearch {
             takeStepAndSaveExperience(selectedState);
 
             if (dpSearchStateSelector.wasPrimarySelectStateFailing()) {
-                vsbForNewDepthSet.calcExplorationFactor(searchDepth);
-                logger.info("wasPrimarySelectStateFailing == true. Switching state selector to backup type. Exp factor = "+vsbForNewDepthSet.explorationFactor);
-                dpSearchStateSelector.setStateSelectorAsBackupType();
-                selectedState = dpSearchStateSelector.selectState();
-                takeStepAndSaveExperience(selectedState);
-
-              //  System.out.println("exp factor = "+vsbForNewDepthSet.explorationFactor);
-               // System.out.println("findStateWithNotAllActionsTestedAndNotTerminal = "+vsbForNewDepthSet.findStateWithNotAllActionsTestedAndNotTerminal(searchDepth));
+                changeSelectStateTypeToBackupAndRetrySelectStateAndStep();
             }
 
-
-            /*
-            if (!dpSearchStateSelector.stateSelector.isStateSelectorOfPrimaryType() && selectedState==null) {
-                vsbForNewDepthSet.calcExplorationFactor(searchDepth);
-                vsb.calcExplorationFactor(searchDepth);
-           //    System.out.println("selectedState = "+selectedState);
-                logger.warning("state selected of backup type && selectedState==null");
-                System.out.println(vsb.toStringLight());
-                System.out.println(vsbForNewDepthSet.toStringLight());
-                System.out.println("searchDepth = " + searchDepth+  ", isNoStateFulfillsCriteria = " + vsbForNewDepthSet.isNoStateFulfillsCriteriaForExplorationFactorCalculation()+  ", explorationFactor new = " + vsbForNewDepthSet.explorationFactor);
-            }  */
-
             if (hasVsbSizeIncreasedSignificantly()) {
-
-                vsbSizeForNewDepthSetAtPreviousExplorationFactorCalculation = vsbForNewDepthSet.size();
-                timeAccumulatorExpFactor.play();
-                vsbForNewDepthSet.calcExplorationFactor(searchDepth);
-                vsbForNewDepthSet.calcFractionLooseNodes(searchDepth);
-                timeAccumulatorExpFactor.pause();
-                this.dpSearchServant.logProgress1();
+                calculateSomeVsbMeasures();
             }
 
             if (isAnyStateAtSearchDepth() && areManyActionsTestedAndFewLooseNodesAndVsbBigEnough()) {
-                vsbForNewDepthSet.getBufferHealthCalculator().setNofStatesBeforePreviousDpCalc();
-                this.dpSearchServant.logWarningIfMotivated();
-             //   System.out.println(vsbForNewDepthSet.toStringLight());
-                this.dpSearchServant.addEvaluatedSearchDepth(searchDepth);
-                this.dpSearchServant.increaseSearchDepth();
-                this.dpSearchServant.doResets();
-                this.dpSearchServant.updateExplorationFactorLimit();
+                increaseSearchDepthAndSomeMoreStuff();
                 performDynamicProgramming();
-
             }
         }
 
@@ -146,11 +114,38 @@ public abstract class AgentDPSearch extends AgentSearch {
         return searchResults;
     }
 
+    private void calculateSomeVsbMeasures() {
+        vsbSizeForNewDepthSetAtPreviousExplorationFactorCalculation = vsbForNewDepthSet.size();
+        timeAccumulatorExpFactor.play();
+        vsbForNewDepthSet.calcExplorationFactor(searchDepth);
+        vsbForNewDepthSet.calcFractionLooseNodes(searchDepth);
+        timeAccumulatorExpFactor.pause();
+        this.dpSearchServant.logProgress1();
+    }
+
+    private void increaseSearchDepthAndSomeMoreStuff() {
+        vsbForNewDepthSet.getBufferHealthCalculator().setNofStatesBeforePreviousDpCalc();
+        this.dpSearchServant.logWarningIfMotivated();
+        this.dpSearchServant.addEvaluatedSearchDepth(searchDepth);
+        this.dpSearchServant.increaseSearchDepth();
+        this.dpSearchServant.doResets();
+        this.dpSearchServant.updateExplorationFactorLimit();
+    }
+
+    private void changeSelectStateTypeToBackupAndRetrySelectStateAndStep() {
+        StateForSearch selectedState;
+        logger.fine("wasPrimarySelectStateFailing == true. Switching state selector to backup type.");
+        vsbForNewDepthSet.calcExplorationFactor(searchDepth);
+        dpSearchStateSelector.setStateSelectorAsBackupType();
+        selectedState = dpSearchStateSelector.selectState();
+        takeStepAndSaveExperience(selectedState);
+    }
+
 
     private void takeStepAndSaveExperience(StateForSearch selectedState) {
 
         if (selectedState == null) {
-            logger.warning("Cant step when null state selection");
+            logger.fine("Cant step when null state selection");
         } else {
             timeAccumulatorStep.play();
             int action = this.chooseAction(selectedState,vsb);
@@ -210,7 +205,9 @@ public abstract class AgentDPSearch extends AgentSearch {
     }
 
     private boolean hasVsbSizeIncreasedSignificantly() {
-        return (double) vsbForNewDepthSet.size() / (double) vsbSizeForNewDepthSetAtPreviousExplorationFactorCalculation > VSB_SIZE_INCREASE_FACTOR;
+        return (double) vsbForNewDepthSet.size() /
+                (double) vsbSizeForNewDepthSetAtPreviousExplorationFactorCalculation
+                > VSB_SIZE_INCREASE_FACTOR;
     }
 
 }

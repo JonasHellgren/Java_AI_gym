@@ -77,8 +77,8 @@ public class PrimaryStateSelector implements StateSelector {
     }
 
     protected void logsForFailedToFindState(StateForSearch selectedState) {
-        logger.warning("MAX_NOF_SELECTION_TRIES exceeded !!! Probably is explorationFactorLimit high = "+agent.dpSearchServant.explorationFactorLimit);
-        logger.warning("id =" + selectedState.id +
+        logger.fine("MAX_NOF_SELECTION_TRIES exceeded !!! Probably is explorationFactorLimit high = "+agent.dpSearchServant.explorationFactorLimit);
+        logger.fine("id =" + selectedState.id +
                 ", depth =" + selectedState.depth +
                 // ", null status =" + (selectedState == null) +
                 ", depth status =" + (selectedState.depth == agent.searchDepth) +
