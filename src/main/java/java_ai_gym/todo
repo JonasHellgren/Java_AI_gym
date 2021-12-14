@@ -115,7 +115,9 @@ fler tester TestVisitedStatesBuffer  x
 logga ev inför gräns på antal fria noder (noll antal actions) - funkar bra x
 vsb måste blivit stort nog  x
 buggar för stor explorationFactorLimit x
-även stora explorationFactorLimit skall funka
+även stora explorationFactorLimit skall funka  x
+selectState med vsb parameter
+kommentera StateSelector klasser
 select state, favorisera med högre value
 
 pusha

@@ -15,13 +15,19 @@ public class BufferHealthCalculator {
     protected final static Logger logger = Logger.getLogger(BufferHealthCalculator.class.getName());
     final double PROB_SELECTING_STATE_FOR_EXPLORATION_FACTOR_CALCULATION = 0.2;  //for speeding up
     final int MIN_LENGTH_EXP_FACTOR_LIST=100; //only regard PROB_SELECTING_STATE.. above this length
-    final double EXPLORATION_FACTOR_IF_NO_STATE_FOUND=0.0;
+    final double EXPLORATION_FACTOR_IF_NO_STATE_FOUND=1.0;
 
     VisitedStatesBuffer vsb;
     int nofStatesBeforePreviousDpCalc;
+    boolean noStateFulfillsCriteriaForExplorationFactorCalculation;
 
     public BufferHealthCalculator(VisitedStatesBuffer vsb) {
         this.vsb = vsb;
+        this.noStateFulfillsCriteriaForExplorationFactorCalculation=false;
+    }
+
+    public boolean isNoStateFulfillsCriteriaForExplorationFactorCalculation() {
+        return noStateFulfillsCriteriaForExplorationFactorCalculation;
     }
 
     public void setNofStatesBeforePreviousDpCalc () {
@@ -30,6 +36,7 @@ public class BufferHealthCalculator {
     public double calcExplorationFactor(int excludedDepth) {
 
         List<Double> explorationFactorList = new ArrayList<>();
+        noStateFulfillsCriteriaForExplorationFactorCalculation=false;
         for (StateForSearch state : vsb.getStateVisitsDAO().getAll()) {
             double probability=explorationFactorList.size()>MIN_LENGTH_EXP_FACTOR_LIST
                     ?PROB_SELECTING_STATE_FOR_EXPLORATION_FACTOR_CALCULATION
@@ -48,6 +55,7 @@ public class BufferHealthCalculator {
 
         if (explorationFactorList.size() == 0) {
             logger.warning("No state fulfills criteria for exploration factor calculation");
+            noStateFulfillsCriteriaForExplorationFactorCalculation=true;
             return EXPLORATION_FACTOR_IF_NO_STATE_FOUND;
         }
 

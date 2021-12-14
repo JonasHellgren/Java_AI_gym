@@ -46,14 +46,10 @@ public class PrimaryStateSelector implements StateSelector {
             }
 
             if (!isTerminalStateOrAllActionsTestedOrIsAtSearchDepthOrNull(selectedState)) {
-            //    this.wasSelectStateFailing = false;
-             //
-                return selectedState;
+                  return selectedState;
             }
         }
 
-      //  agent.timeAccumulatorSelectState.pause();
-      //  this.wasSelectStateFailing = true;
         this.logsForFailedToFindState(selectedState);
         return null;
     }

@@ -158,6 +158,10 @@ public class VisitedStatesBuffer {
         this.explorationFactor = bufferHealthCalculator.calcExplorationFactor(excludedDepth);
     }
 
+    public boolean isNoStateFulfillsCriteriaForExplorationFactorCalculation() {
+        return bufferHealthCalculator.isNoStateFulfillsCriteriaForExplorationFactorCalculation();
+    }
+
     public void calcFractionLooseNodes(int excludedDepth) {
         fractionLooseNodes = bufferHealthCalculator.calcFractionLooseNodes(excludedDepth);
     }
@@ -209,7 +213,11 @@ public class VisitedStatesBuffer {
         for (int depth=0;depth<=getDepthMax();depth++) {
             List<StateForSearch> states= getAllStatesAtDepth(depth);
             sb.append("depth ="+depth+", nof states "+states.size());
-         //   sb.append(state.searchSpecificPropertiesAsString());
+         //
+            for (StateForSearch state:states) {
+                sb.append("[na="+nofActionsTested(state.id)+", T="+isExperienceOfStateTerminal(state.id)+"],");
+
+            }
 
 
             sb.append(System.getProperty("line.separator"));

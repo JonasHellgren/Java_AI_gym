@@ -47,6 +47,7 @@ public class DPSearchServant {
         this.vsbForNewDepthSetSizePrev=1;
         agent.dpSearchStateSelector.setStateSelectorAsPrimaryType();
         agent.dpSearchStateSelector.setWasSelectStateFailing(false);
+        agent.dpSearchServant.updateExplorationFactorLimit();
 
     }
 
@@ -102,7 +103,7 @@ public class DPSearchServant {
     protected void printResultInfo() {
         logger.info("search finished, vsb size = " + agent.vsb.size());
         System.out.println("statesAtDepth vsb = " + agent.vsb.calcStatesAtDepth(agent.searchDepth));
-        System.out.println("statesAtDepth vsbForSpecificDepthStep= " + agent.vsbForNewDepthSet.calcStatesAtDepth(agent.searchDepth));
+      //  System.out.println("statesAtDepth vsbForSpecificDepthStep= " + agent.vsbForNewDepthSet.calcStatesAtDepth(agent.searchDepth));
         System.out.println("searchDepth = " + agent.searchDepth + ", searchDepthPrev = " + agent.searchDepthPrev+ ", explorationFactorLimit = " + this.explorationFactorLimit);
         System.out.println("evaluatedSearchDepths = " + agent.evaluatedSearchDepths);
         System.out.println("maxDepth  = " + agent.vsb.getDepthMax());
