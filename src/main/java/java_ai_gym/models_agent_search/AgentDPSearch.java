@@ -30,7 +30,7 @@ public abstract class AgentDPSearch extends AgentSearch {
     final double FRAC_LOOSE_NODES_MAX=0.15;
     final double VSB_SIZE_INCREASE_FACTOR_MIN=1.1;
 
-    final int MAX_NOF_SELECTION_TRIES = 10000;
+    final int MAX_NOF_SELECTION_TRIES = 100;
     double VSB_SIZE_INCREASE_FACTOR = 5.0;
     final double PROB_SELECT_STATE_FROM_NEW_DEPTH_SET = 0.90;  //0.5
     final double PROB_SELECT_FROM_OPTIMAL_PATH = 0.1;
@@ -94,6 +94,13 @@ public abstract class AgentDPSearch extends AgentSearch {
         while (timeAndDepthNotExceededAndNoFailure()) {
             StateForSearch selectedState = dpSearchStateSelector.selectState();  //can be of type NullState
             takeStepAndSaveExperience(selectedState);
+
+            if (dpSearchStateSelector.wasSelectStateFailing()) {
+                logger.warning("wasSelectStateFailing == true");
+                vsbForNewDepthSet.calcExplorationFactor(searchDepth);
+                System.out.println("exp factor = "+vsbForNewDepthSet.explorationFactor);
+                System.out.println("findStateWithNotAllActionsTestedAndNotTerminal = "+vsbForNewDepthSet.findStateWithNotAllActionsTestedAndNotTerminal(searchDepth));
+            }
 
             if (hasVsbSizeIncreasedSignificantly()) {
                 vsbSizeForNewDepthSetAtPreviousExplorationFactorCalculation = vsbForNewDepthSet.size();

@@ -179,6 +179,18 @@ public class VisitedStatesBuffer {
         experiencesDAO.removeExpItemWithNewStateId(id);
     }
 
+    public StateForSearch findStateWithNotAllActionsTestedAndNotTerminal(int searchDepth)  {
+
+        for (StateForSearch state : this.stateVisitsDAO.getAll()) {
+            if (!areAllActionsTriedInStateWithId(state.id) &&
+                    !isExperienceOfStateTerminal(state.id) &&
+                    state.depth!=searchDepth) {
+                return stateVisitsDAO.get(state.id);
+            }
+        }
+        return null;
+    }
+
 
 
     @Override
