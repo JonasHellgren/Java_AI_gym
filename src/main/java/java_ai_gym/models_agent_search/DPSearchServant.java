@@ -45,6 +45,9 @@ public class DPSearchServant {
         agent.timeAccumulatorExpFactor.reset();
         vsbForNewDepthSetSizePrev= 0;
         this.vsbForNewDepthSetSizePrev=1;
+        agent.dpSearchStateSelector.setStateSelectorAsPrimaryType();
+        agent.dpSearchStateSelector.setWasSelectStateFailing(false);
+
     }
 
     public void doResets() {
@@ -55,6 +58,7 @@ public class DPSearchServant {
 
         agent.vsbForNewDepthSet.clear();
         agent.vsbSizeForNewDepthSetAtPreviousExplorationFactorCalculation = 1;
+        agent.dpSearchStateSelector.setStateSelectorAsPrimaryType();
         agent.dpSearchStateSelector.setWasSelectStateFailing(false);
         logger.fine("searchDept increased to = " + agent.searchDepth + ". VSB size = " + agent.vsb.size());
     }
@@ -102,7 +106,7 @@ public class DPSearchServant {
         System.out.println("searchDepth = " + agent.searchDepth + ", searchDepthPrev = " + agent.searchDepthPrev+ ", explorationFactorLimit = " + this.explorationFactorLimit);
         System.out.println("evaluatedSearchDepths = " + agent.evaluatedSearchDepths);
         System.out.println("maxDepth  = " + agent.vsb.getDepthMax());
-        System.out.println("isAnyStateAtSearchDepth() = " + agent.isAnyStateAtSearchDepth() + ", areManyActionsTested() = " + agent.areManyActionsTestedAndFewLooseNodesAndVsbBigEnough() + ", wasSelectStateFailing = " + agent.dpSearchStateSelector.wasSelectStateFailing());
+        System.out.println("isAnyStateAtSearchDepth() = " + agent.isAnyStateAtSearchDepth() + ", areManyActionsTested() = " + agent.areManyActionsTestedAndFewLooseNodesAndVsbBigEnough() + ", was backup selectStateFailing = " + agent.dpSearchStateSelector.wasBackupSelectStateFailing());
         if (agent.wasSearchFailing()) {
             logger.warning("Failed search, despite many steps there is no state at search depth, i.e end of search horizon");
         }
