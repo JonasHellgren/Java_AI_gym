@@ -5,7 +5,8 @@ import lombok.Getter;
 
 import java.util.logging.Logger;
 
-/**--------------- below are methods of more dummy/supporting nature ------------------
+/**  Class included in AgentDPSearch, keeps tracks of some variable and performs simpler functionality.
+ * For example increasing the search depth.
 **/
 
 @Getter

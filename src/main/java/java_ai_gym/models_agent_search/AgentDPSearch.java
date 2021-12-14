@@ -12,9 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /***
- * This class is an abstract class used for dynamic programming based search.
+ * This class is an abstract class used for dynamic programming based tree search.
  * Settings are defined by the constructor and search is the only public method.
- * The idea is to let the search depth increase stepwise. In increases when a specific
+ * The idea is to let the search depth increase stepwise. It increases when a specific
  * fraction of actions has been tested for the states so far visited.
  */
 
@@ -36,10 +36,10 @@ public abstract class AgentDPSearch extends AgentSearch {
     final double PROB_SELECT_FROM_OPTIMAL_PATH = 0.1;
     final double PROB_SELECT_FROM_PREVIOUS_DEPTH =0.1;  //0.5
 
-    int searchDepthUpper;
-    int searchDepthStep;
-    int searchDepthPrev;
-    int searchDepth;
+    int searchDepthUpper;  //upper limit of search depth
+    int searchDepthStep;  //search depth increase step
+    int searchDepthPrev;    //search depth in previous set
+    int searchDepth;        //present search depth
     StateForSearch startState;
     List<Integer> evaluatedSearchDepths;
     VisitedStatesBuffer vsb;
@@ -105,10 +105,6 @@ public abstract class AgentDPSearch extends AgentSearch {
             }
 
             if (isAnyStateAtSearchDepth() && areManyActionsTestedAndFewLooseNodesAndVsbBigEnough()) {
-
-                System.out.println("BeforePreviousDpCalc = "+vsbForNewDepthSet.getBufferHealthCalculator().getNofStatesBeforePreviousDpCalc()+
-                        ", vsbForNewDepthSet. size = "+vsbForNewDepthSet.size() );
-
                 vsbForNewDepthSet.getBufferHealthCalculator().setNofStatesBeforePreviousDpCalc();
                 this.dpSearchServant.logWarningIfMotivated();
              //   System.out.println(vsbForNewDepthSet.toStringLight());
