@@ -1,6 +1,0 @@
-# Single Pong environment
-
-##
-
-
-

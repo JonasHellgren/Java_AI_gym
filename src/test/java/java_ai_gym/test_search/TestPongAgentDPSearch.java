@@ -36,8 +36,6 @@ public class TestPongAgentDPSearch extends TestSearchBase {
         createVSB(NOF_STEPS, MAX_DEPTH);
 
         System.out.println(agent.getVsb());
-        env.leftTreePanel.createTreeFromVisitedStatesBuffer(agent.getVsb(), agent.getSearchDepthPrev());
-        env.leftTreePanel.expandTree();
         Assert.assertEquals(NOF_STEPS + 1, agent.getVsb().nofStates());
         TimeUnit.MILLISECONDS.sleep(25000);
 

@@ -26,13 +26,9 @@ public class SinglePong extends EnvironmentForSearchAgent {
     final int plotFrameHeight= (int) (gfxSettings.FRAME_HEIGHT*1.5);
     public PanelPongAnimation animationPanel;
 
-    public SearchTreePanel leftTreePanel;
-    public SearchTreePanel rightTreePanel;
     public HistogramPanel leftChartPanel;
     public HistogramPanel rightChartPanel;
     HistogramDataSetGenerator histogramDataSetGenerator;
-    public JLabel labelBallPosX;
-    public JLabel labelBallPosY;
 
 
     public class EnvironmentParameters extends EnvironmentParametersAbstract {
@@ -47,8 +43,6 @@ public class SinglePong extends EnvironmentForSearchAgent {
         public final double Y_POSITION_RACKET = 0.02;  //shall not be at zero, fail state when ball hit then
         public  double MAX_SPEED_RACKET = 0.1;
 
-        public int MAX_NOF_STEPS =200;
-        public final int MAX_NOF_STEPS_POLICY_TEST=500;
         public  double TERMINAL_REWARD = -10.0;  //1.0
         public  double NON_TERMINAL_REWARD_MOTION = -.01;  //1.0
         public  double NON_TERMINAL_REWARD_STILL = 0.0;  //1.0
@@ -138,7 +132,8 @@ public class SinglePong extends EnvironmentForSearchAgent {
     }
 
     public double calcRewardNotTerminal(State state,State stepReturnState) {
-        double r1=(MathUtils.isZero((state.getContinuousVariable("xPosRacket") - stepReturnState.getContinuousVariable("xPosRacket"))))?
+        //double r1=(MathUtils.isZero((state.getContinuousVariable("xPosRacket") - stepReturnState.getContinuousVariable("xPosRacket"))))?
+        double r1=MathUtils.isZero(state.getContinuousVariable("xSpdRacket"))?
                 parameters.NON_TERMINAL_REWARD_STILL:
                 parameters.NON_TERMINAL_REWARD_MOTION;
         int collision= state.getDiscreteVariable("collision");
@@ -244,7 +239,6 @@ public class SinglePong extends EnvironmentForSearchAgent {
         state.setVariable("xPosRacket", MathUtils.calcRandomFromIntervall(parameters.MIN_X_POSITION,parameters.MAX_X_POSITION));
         state.setVariable("xSpdRacket", 0.0);
         state.setVariable("rapidRacketChange", 0);
-       // state.setVariable("racketHasStopped", 0.0);
         state.setVariable("nofSteps", state.getDiscreteVariable("nofSteps")+1);
 
     }
@@ -276,14 +270,6 @@ public class SinglePong extends EnvironmentForSearchAgent {
         plotFrame.setLayout(new GridLayout(1,2));
         plotFrame.setVisible(true);
     }
-
-    private void defineTreePanel(SearchTreePanel panel,String title) {
-        panel.setBackground(Color.lightGray);
-        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
-        panel.createLabel(title);
-        panel.createTreeWithOnlyRootNode(plotFrameWidth, plotFrameHeight,title);
-    }
-
 
     public  void createHistogramsFromVisitedStatesBuffer(VisitedStatesBuffer vsb, List<Integer> evaluatedSearchDepths) {
         histogramDataSetGenerator.updateDatasetForDepthStatistics(leftChartPanel.getDataset(),vsb,evaluatedSearchDepths);
