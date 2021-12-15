@@ -30,7 +30,6 @@ public abstract class AgentSearch {
             this.bestReturn=0;
             this.bestStepReturnSequence = new ArrayList<>();
             this.bestActionSequence = new ArrayList<>();
-            nofEpisodes=0;
             this.discreteActionsSpace = new ArrayList<>();
         }
 
@@ -149,7 +148,6 @@ public abstract class AgentSearch {
                 bestReturn = bestReturn + stepReturn.reward;
 
             }
-            searchResults.nofEpisodes = 0;
             searchResults.bestReturn = bestReturn;
         }
         return searchResults;

@@ -70,7 +70,7 @@ public class DPSearchServant {
     }
 
     protected void updateExplorationFactorLimit() {
-        this.explorationFactorLimit = Math.max(agent.EXP_FACTOR_LIMIT_MIN,
+        this.explorationFactorLimit = Math.max(agent.EXPLORATION_FACTOR_LIMIT_MIN,
                 this.explorationFactorLimitStart * Math.pow(this.discountFactorExpFactor, agent.searchDepthPrev));
     }
 
@@ -89,7 +89,6 @@ public class DPSearchServant {
         agent.searchDepth = agent.searchDepthStep;
         agent.searchDepthPrev = 0;
         agent.vsbForNewDepthSet.clear();
-      //  agent.explorationFactorLimit = this.explorationFactorLimitStart;
         agent.bellmanCalculator = new BellmanCalculator(
                 agent.vsb,
                 new FindMax(),
@@ -103,15 +102,11 @@ public class DPSearchServant {
     protected void printResultInfo() {
         logger.info("search finished, vsb size = " + agent.vsb.size());
         logger.info("Nof statesAtDepth vsb = " + agent.vsb.calcStatesAtDepth(agent.searchDepth));
-      //  System.out.println("statesAtDepth vsbForSpecificDepthStep= " + agent.vsbForNewDepthSet.calcStatesAtDepth(agent.searchDepth));
         logger.info("searchDepth = " + agent.searchDepth +
                 ", searchDepthPrev = " + agent.searchDepthPrev+
                 ", explorationFactorLimit = " + this.explorationFactorLimit+
                 ", evaluatedSearchDepths = " + agent.evaluatedSearchDepths);
-     //   System.out.println();
-     //   System.out.println("maxDepth  = " + agent.vsb.getDepthMax());
-     //   System.out.println("isAnyStateAtSearchDepth() = " + agent.isAnyStateAtSearchDepth() + ", areManyActionsTested() = " + agent.areManyActionsTestedAndFewLooseNodesAndVsbBigEnough() + ", was backup selectStateFailing = " + agent.dpSearchStateSelector.wasBackupSelectStateFailing());
-        if (agent.wasSearchFailing()) {
+         if (agent.wasSearchFailing()) {
             logger.warning("Failed search, despite many steps there is no state at search depth, i.e end of search horizon");
         }
 

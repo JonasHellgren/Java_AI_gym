@@ -1,0 +1,34 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+ class DPSearchStateSelector {
+
+        AgentDPSearch agent;
+        boolean wasSelectStateFailing;
+        StateSelector stateSelector;
+
+        + setStateSelectorAsPrimaryType()
+        +setStateSelectorAsBackupType()
+        + StateForSearch selectState()
+}
+
+interface StateSelector {
+
+    boolean isStateSelectorOfPrimaryType();
+    StateForSearch selectState();
+}
+
+class PrimaryStateSelector {
+
+}
+
+
+class BackupStateSelector {
+
+}
+
+
+StateSelector  <|-- PrimaryStateSelector
+StateSelector  <|-- BackupStateSelector
+
+@enduml

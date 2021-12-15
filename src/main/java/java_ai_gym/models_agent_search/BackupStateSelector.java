@@ -19,15 +19,7 @@ public class BackupStateSelector implements StateSelector {
     @Override
     public StateForSearch selectState() {
 
-        VisitedStatesBuffer vsb;
-        if (MathUtils.calcRandomFromIntervall(0, 1) < agent.PROB_SELECT_STATE_FROM_NEW_DEPTH_SET && agent.vsbForNewDepthSet.size() > 0) {
-            vsb=agent.vsbForNewDepthSet;
-        } else
-        {
-            vsb=agent.vsb;
-        }
-
-        vsb=agent.vsbForNewDepthSet; //TODO
+           VisitedStatesBuffer  vsb=agent.vsbForNewDepthSet;
 
             for (StateForSearch state : vsb.stateVisitsDAO.getAll()) {
                 if (!vsb.areAllActionsTriedInStateWithId(state.id) &&

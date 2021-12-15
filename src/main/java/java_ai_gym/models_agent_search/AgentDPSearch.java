@@ -26,24 +26,24 @@ public abstract class AgentDPSearch extends AgentSearch {
     final double DISCOUNT_FACTOR_REWARD_DEFAULT = 0.9;
     final double DISCOUNT_FACTOR_EXP_FACTOR_DEFAULT = 0.99;
     final int SEARCH_DEPTH_UPPER_DEFAULT = 100;
-    final double EXP_FACTOR_LIMIT_MIN=0.2;
-    final double FRAC_LOOSE_NODES_MAX=0.1;
+    final double EXPLORATION_FACTOR_LIMIT_MIN =0.2;
+    final double FRACTION_LOOSE_NODES_MAX =0.1;
     final double VSB_SIZE_INCREASE_FACTOR_MIN=1.5;
 
-    final int MAX_NOF_SELECTION_TRIES = 100;
-    double VSB_SIZE_INCREASE_FACTOR = 10.0;
+    final int MAX_NOF_SELECTION_TRIES = 1000;
+    double VSB_SIZE_INCREASE_FACTOR = 10.0; //determines how frequently vsb "health" measures is calculated
     final double PROB_SELECT_STATE_FROM_NEW_DEPTH_SET = 0.90;  //0.5
     final double PROB_SELECT_FROM_OPTIMAL_PATH = 0.1;
     final double PROB_SELECT_FROM_PREVIOUS_DEPTH =0.1;  //0.5
 
-    int searchDepthUpper;  //upper limit of search depth, if large timeBudget restricts
+    int searchDepthUpper;  //upper limit of search depth, if large, timeBudget restricts
     int searchDepthStep;  //search depth increase step
-    int searchDepthPrev;    //search depth in previous set, new states are mostly in [searchDepthPrev.searchDepth]
+    int searchDepthPrev;    //search depth in previous set, new states are mostly in set [searchDepthPrev,searchDepth]
     int searchDepth;        //present search depth
     StateForSearch startState;
     List<Integer> evaluatedSearchDepths;
-    VisitedStatesBuffer vsb;
-    VisitedStatesBuffer vsbForNewDepthSet;
+    VisitedStatesBuffer vsb;   //all states visited in single search call
+    VisitedStatesBuffer vsbForNewDepthSet;  //vsb in new "territory"
     List<StateForSearch> optimalStateSequence;
     int vsbSizeForNewDepthSetAtPreviousExplorationFactorCalculation;
 
@@ -191,9 +191,9 @@ public abstract class AgentDPSearch extends AgentSearch {
 
     boolean areManyActionsTestedAndFewLooseNodesAndVsbBigEnough() {
         return  vsbForNewDepthSet.getExplorationFactor() >= dpSearchServant.explorationFactorLimit &&
-                vsbForNewDepthSet.getFractionLooseNodes() <= FRAC_LOOSE_NODES_MAX &&
+                vsbForNewDepthSet.getFractionLooseNodes() <= FRACTION_LOOSE_NODES_MAX &&
                 vsbForNewDepthSet.getBufferHealthCalculator().isVsbBigEnough(VSB_SIZE_INCREASE_FACTOR_MIN) ||
-                dpSearchStateSelector.wasBackupSelectStateFailing(); //isSelectFailed
+                dpSearchStateSelector.wasBackupSelectStateFailing();
     }
 
     boolean isAnyStateAtSearchDepth() {
